@@ -1,0 +1,81 @@
+
+\section{Novelty Detection Methods}
+
+Building on the notion that anomalies occur in areas of low density, we consider methods of
+  estimating the statistical density of observed data.  As we saw in~\cite{trubey:pg}, density
+  estimation on the surface of ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem, so for purposes
+  of establishing inference on the dependence structure of the data we opted to project from
+  ${\mathbb S}_{\infty}^{d-1}$ onto ${\mathbb S}_p^{d-1}$ for some large but finite $p$.  This makes
+  density estimation \emph{possible}, but for purposes of anomaly detection, the projection onto
+  ${\mathbb S}_p^{d-1}$ is strongly dependent on \emph{which} dimension was used--that is, which
+  dimension became a function of the others, hereafter referred to as the \emph{dependent} variable.
+  In~\cite{trubey:pg}, we declared $y_d = (1 - \sum_{\ell = 1}^{d-1}y_{\ell}^p)^{1-p}$ as the dependent
+  variable.  This worked well for establishing the projected Gamma density, and via proportionality,
+  inference on the projected Gamma parameters was not affected by the choice of the summary variable.
+
+However, when we look to establish density estimation routines for purposes of anomaly detection,
+  where we do take into account the full calculated density, the choice of summary variable does affect
+  the calculated density. As such, we need to consider methods that take this into account.
+
+\makenote{needs serious rewrite}
+\begin{enumerate}
+  \item Density Estimation via application of KNN
+  \item Explicit probability of dependent variable; projected gamma conditional on dependent variable = max
+\end{enumerate}
+
+\subsection{Local Density Estimation on the hypersphere via $k$-Nearest Neighbors}
+
+We establish a local posterior predictive density under the $k$NN estimator by assuming a locally
+  uniform density within a $d-1$ dimensional ball, centered on $\bm{V}_i$, with a radius specified by the
+  negative definite kernel metric defined in \cite{trubey:pg}, to the $k$th nearest neighbor in a sample
+  from the posterior predictive distribution.  The reciprocal of the volume of such a sphere,
+  multiplied by $k$, the number of posterior predictive replicates inside the sphere,
+  provides a rough estimate of local density around $\bm{V}_i$. Low values indicate low density.
+  To make a score that interprets as larger indicates more anomalous, we take the reciprocal:
+\begin{equation}
+  \label{eqn:ad_knn}
+    S_{i,(k)}^{\text{kNN}} = \frac{N}{k}
+      \frac{\pi^{\frac{d-1}{2}}D_{k}^{d-1}(V_i)}{\Gamma\left(\frac{d-1}{2} - 1\right)}
+\end{equation}
+  This score can be used as specified to declare anomalies in the angular sense.  We can also
+  consider the magnitude, or radial component.  Recall that $r_i \sim \text{Pareto}(1)$, then
+  $P(R > r_i) = r_i^{-1}$.  A larger radial component \emph{might} be thought of as more anomalous,
+  so following similar logic, to establish a score, we take $r_i$ directly.
+  Multiplying the above $k$NN score with this Pareto score provides a combined score:
+\begin{equation}
+  \label{eqn:ad_knn_p}
+  S_{i,(k)}^{\text{kNN-P}} = S_{i,(k)}^{\text{kNN}}\times r_i.
+\end{equation}
+
+Combined scores can be further weighted, to prefer the angular component or radial component score.
+Let $\kappa \in [-1,1]$.  Then
+\begin{equation}
+  S_{i,(k),\kappa}^{\text{kNN-P}} = \left(S_{i,(k)}^{\text{kNN}}\right)^{1 + \kappa}r_i^{1-\kappa}
+\end{equation}
+where $\kappa = 0$ indicates no preferential weighting.
+
+\subsection{Posterior Predictive Density via Conditional Projected Gamma}
+
+\makenote{spitballing.  ignore.}
+Recall the projected Gamma density from~\cite{trubey:pg}.
+  \[
+    \text{\makenote{PG equation}}
+  \]
+Note that the Jacobian is dependent upon $y_d$, and if $p = \infty$, the transformation becomes
+  non-differentiable.  The Jacobian becomes dependent upon $x_d = \max_ix_i$.  If we pre-condition
+  on $x_d = \max_ix_i$, then the determinant of the Jacobian approaches $x_d^{-1} = 1$.
+
+\subsubsection{Contribution to posterior predictive loss}
+Another way we can think of anomalies is as observations that are difficult to fit--that is, difficult
+    for a fitted model to predict.  We assume that the greater the difficulty encountered in fitting a
+    given observation, the more anomalous it is.  The posterior predictive loss criterion in
+    Equation~\ref{eq:ppl} provides one such metric.  The first term measures the posterior predictive
+    variance--a larger variance corresponds to less precision in the prediction, or alternatively, a lower
+    density in the predictive distribution.  The second term measures squared bias--the squared distance
+    between the average predicted value, and the observation.  Both of these terms provide a metric of
+    how \emph{difficult} a particular observation is to fit.
+
+
+
+
+% EOF

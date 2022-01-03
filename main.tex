@@ -1,0 +1,62 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{natbib}
+\usepackage{amsthm}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{soul}
+\usepackage{algorithm2e}
+\usepackage{bm}
+% \usepackage{setspace}
+% \linespread{1.8}
+
+\newtheorem{prop}{Proposition}
+\DeclareMathOperator{\tr}{Tr}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\newcommand{\bruno}[1]{\textcolor{blue}{#1}} % Bruno Sanso edits - blue
+\newcommand{\makenote}[1]{\textcolor{red}{#1}} % Peter edits - red
+\newcommand{\findcite}{\textcolor{red}{[Find Citation]}}
+\newcommand{\needcite}{\findcite}
+\newcommand{\Chi}{\mbox{\Large$\chi$}}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\inorm}[1]{\norm{#1}_{\infty}}
+\newcommand{\pnorm}[2]{\norm{#1}_{#2}}
+\newcommand{\prob}[1]{\text{Pr}\left[#1\right]}
+\newcommand{\expect}[1]{\text{E}\left[#1\right]}
+
+\title{Novelty Detection in Extremes}
+\author{Peter Trubey and Bruno Sans\'o\\
+Department of Statistics, University of California Santa Cruz\\
+{\tt ptrubey@ucsc.edu, bruno@soe.ucsc.edu}}
+
+
+\begin{document}
+
+%--------title page
+\maketitle
+\thispagestyle{empty}
+\begin{abstract}
+  \input{abstract}
+\end{abstract}
+
+
+%--------content
+\input{introduction}
+
+\input{methodology}
+
+\input{results}
+
+\input{conclusion}
+
+\bibliographystyle{chicago}
+\bibliography{./refs}
+
+\end{document}
+
+% EOF

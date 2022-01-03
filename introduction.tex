@@ -1,0 +1,77 @@
+\section{Introduction}
+
+Anomaly detection describes a field of methods for identifying observations as \emph{anomalous}.  That
+  is to say, observations which do not fit the general distribution of the data from which they came.
+  Equivalent names for this field are \emph{outlier detection}, and \emph{novelty detection}, though
+  some authors will separate the use of those terms by whether or not it is assumed that anomalous
+  observations are included in the training dataset.  Crucial to this distinction is the assumption
+  of a \emph{clean} training data set.
+
+The applicability of extreme value theory to anomaly detection is predicated on the belief that
+  extreme observations are more susecptible to anomalies.  \cite{goix2017} provides a discussion to
+  this effect, that extreme observations exist at the border between anomalous and non-anomalous regions.
+
+For our purpose, we do not assume the existence of labels in the training dataset, and seek an
+  algorithm that can produce anomaly scores in an absence of class labels. As such, we will offer
+  a brief overview of unsupervised anomaly detection methods, as well as discussion of the methods
+  we are preparing here as competing models.
+
+
+\subsection{Existing Methods}
+The complete field of anomaly detection is wide, and we could not hope to provide a comprehensive review
+    it.  However, most methods can be roughly grouped into three main ideas: statistical models, clustering
+    methods, and non-statistical models. Core to the development of a method lies a basic question,
+    \emph{what is an anomaly?}  The answer to this question depends on application and what we hope to
+    learn.  For instance, in a regression setting, observations that produce large outliers may be considered
+    anomalous.  In a classification setting, common to most methods of anomaly detection is the belief
+    that data belonging to regions of relative data sparsity are more likely to be anomalous.  Methods in
+    this space work to find these regions of relative data sparsity, or equivalently, regions of relative
+    data abundance.
+
+\subsubsection{Statistical Models}
+Statistical modelling for anomaly detection employs attempts to model the distribution of
+    data, with the goal that the model can be to estimate the data density around an observation.
+    The assumption made is that observations in regions of low estimated density are more likely to be
+    anomalous.  This can include non-parametric density estimation routines such as the $k$-Nearest
+    Neighbors, or \emph{$k$-NN}~\citep{kramer2013}; kernel density estimation such as the Parzen-Rosenblatt
+    windowing method~\citep{parzen1962,rosenblatt1956}.  This can also include parametric density estimation
+    routines, such as Gaussian mixture models~\citep{mcnicholas2010}.
+
+\subsubsection{Clustering Methods}
+Clustering methods tend to sort data into groups \emph{near} each-other.  These rely on \emph{distance}
+    metrics and tend to make no assumptions regarding the underlying distribution of the data.  We can
+    further sub-divide this sub-field into density-based, centroid-based, and linkage-based clustering
+    methods.  For all of these methods, we can regard observations with less association to their identified
+    cluster as being more anomalous.
+
+Linkage-based clustering methods group data based on pairwise distance point-to-point, or between
+    elements of clusters.  \cite{ackerman2010} offers a review of the topic.  An illustrative example
+    is single linkage, where the distance between two clusters is defined as the minimum distance between
+    a point in each set.   Similarly, complete linkage defines the metric to be the maximum pairwise
+    between a point in each set.  The goal of the linkage-based clustering algorithm is to maximize the
+    total distance between clusters under whatever metric of distance is used, along with minimizing
+    distance within clusters.  An observation's anomaly score might be a function of distance to its nearest
+    neighbor within its assigned cluster, or distance to its assigned cluster's centroid.
+
+Centroid based clustering methods instead generate $k$ cluster centroids according to some metric,
+    then an observation's \emph{anomaly} score is a function of the distance from that
+    observation to the nearest cluster centroid.  The algorithm used to find the cluster
+    centroids is also variable, changing what metric is optimized in finding the location of the
+    centroids.  The very popular \emph{$k$-Means} \citep{hartigan1979} is an example of this type of
+    method.  Under $k$-Means, cluster assignment is decided by minimizing within-cluster distance,
+    which for a given $k$ simultaneously maximizes between-cluster distance.
+
+Density based methods will use pairwise distances to establish some measure of local density, then
+    establish local modes as clusters.  \emph{DBSCAN} \citep{ester1996} follows this, by forming
+    neighborhoods of observations and establishing labels based on the neighborhood.
+
+\subsubsection{Non-Statistical Models}
+There are additional non-statistical families of methods beyond clustering, adapted from the realm
+    of general classification models to unsupervised learning.  The Isolation Forest,\citep{liu2000}
+    adapted from random forests~\citep{breiman2001} uses decision trees to isolate observations--the
+    observations that are more easily isolable are regarded as more anomalous.  One-class SVM
+    \citep{chang2011} is a variant of the support vector machine classification system optimized towards
+    anomaly detection. In a similar manner to the support vector machine using support vectors to
+    describe a decision boundary separating classes of data, the one-class SVM uses support vectors to
+    describe a decision boundary around \emph{normal} behavior.  A higher distance to that decision
+    boundary on the anomalous side is regarded as \emph{more anomalous}.
