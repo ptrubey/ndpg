@@ -1,19 +1,50 @@
 \section{Review of Extreme Value Theory}
 
+If there exists a limiting distribution on the maximum of a sample, then that limiting 
+    distribution will exist within the generalized extreme value family.  If that is the 
+    case, then the distribution of excesses above a threshold will exist within the 
+    generalized Pareto family.  Modelling such excesses is called \emph{peak over threshold}
+    modelling, and typically involves first establishing a sufficiently large threshold, 
+    and fitting a generalized Pareto distribution to the excesses.  When working with multivariate
+    data, this action is done marginally.  Then using the fitted distribution parameters,
+    we transform the data to a common distribution to estimate the dependence structure.
 
 \subsection{Separation of radial and angular components}
 Assuming the existence of a limiting measure $\mu$ such that
 \[
     \lim_{n\to\infty} n\text{Pr}\left[\frac{1}{n}\bm{Z} \geq \bm{z}\right] = \mu\left([\bm{0},\bm{z}]^c\right),
 \]
-then $\mu$ is the asymptotic distribution of $\bm{Z}$ under extreme regions, and is referred to as the \emph{exponent measure}.  Under such condition, $\mu$ features the homogeneity property $\mu(tA) = \frac{1}{t}\mu(A)$.  Now, define $R = \max_{\ell} Z_{\ell}$, and $\bm{V} = \frac{\bm{Z}}{\max_{\ell}Z_{\ell}}$ such that $\bm{Z} = R\bm{V}$.  Then by the homogeneity property, $\mu$ can be factorized as
-\begin{equation}
-    \mu\left(\{\bm{Z} : \bm{V} \in A, R > r\}\right) = r^{-1}\Phi(A),
-\end{equation}
-where $\Phi$ denotes the \emph{angular} or \emph{spectral} measure.  By this, we see that in extreme regions, the distribution of the angular component of $\bm{Z}$ is independent from that of the radial.  This property permits us to model them separately.
+then $\mu$ is the asymptotic distribution of $\bm{Z}$ under extreme regions, and is referred to as the 
+    \emph{exponent measure}.  Under such condition, $\mu$ features the homogeneity property 
+    $\mu(tA) = \frac{1}{t}\mu(A)$.  Now, define $R = \max_{\ell} Z_{\ell}$, and 
+    $\bm{V} = \frac{\bm{Z}}{\max_{\ell}Z_{\ell}}$ such that $\bm{Z} = R\bm{V}$.  Then by the homogeneity 
+    property, $\mu$ can be factorized as
+    \[
+        \mu\left(\{\bm{Z} : \bm{V} \in A, R > r\}\right) = r^{-1}\Phi(A),    
+    \]
+    where $\Phi$ denotes the \emph{angular} or \emph{spectral} measure.  By this, we see that in extreme 
+    regions, the distribution of the angular component of $\bm{Z}$ is independent from that of the radial.  
+    This property permits us to model them separately.
 
 \subsection{Modeling the angular component}
+We find a generative form for a multivariate standard Pareto model as a finite case of the 
+    standard Pareto process model described in~\cite{ferreria2014}.  In this model, let 
+    $Z_{\ell}\mid Z_{\ell} > 1$ marginally follow a standard Pareto distribution, and let 
+    $\max_{\ell}Z_{\ell} >= 1$ for some $\ell$.  Then, following the transformation 
+    $\bm{Z} = R\bm{V}$, we observe that $R = \max_{\ell}Z_{\ell}$ follows a standard
+    Pareto distribution, and $\bm{V}$ follows an unspecified distribution with support on 
+    ${\mathbb S}_{\infty}^{d-1}$; the positive orthant of the unit hypersphere defined under the 
+    $\mathcal{L}_{\infty}$ norm.  As the dependence structure for $\bm{Z}$ is entirely
+    within the distribution of $\bm{V}$, it follows that describing the distibution of $\bm{V}$ 
+    effectively describes the dependence structure of $\bm{Z}$.
 
+As in \cite{trubeypg}, we begin our model by establishing 
+    \[
+        Z_{\ell} = \left(1 + \chi_{\ell}\frac{X_{\ell} - b_{\ell}}{a_{\ell}}\right)_{+}^{-\frac{1}{\chi_{\ell}}}
+    \]
+    Then $R = \max_{\ell}Z_{\ell}$, and $\bm{V} = \frac{\bm{Z}}{R}$.
+
+    
 
 
 
