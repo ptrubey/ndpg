@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+
+\title{Mathematical Conventions for Papers}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\paragraph{Current Form}
+\begin{description}
+\item[$\bm{X}$]: Original data
+\item[$\bm{X}_i$]: An observation vector from original data.
+\item[$\bm{Z}_i$]: The variable $\bm{X}_i$ transformed to standard multivariate Pareto
+\item[$\bm{Y}_i$]: The vector $\bm{Z}_i$ projected onto ${\mathbb S}_{\infty}^{d-1}$
+\item[$\bm{\theta}_j$]: Cluster Parameter vector, distributed under mixture model
+\item[$n$]: Sample size / number of observations.
+\item[$i$]: iterator over data (potentially from 1 to $n$)
+\item[$h$]: alternative iterator over data
+\item[$J$]: Number of extant clusters
+\item[$j$]: iterator over clusters (potentially from 1 to $J$)
+\item[$d$]: dimensionality (number of columns in $X$)
+\item[$\ell$]: iterator over dimensions (potentially from 1 to $d$)
+\item[$\jmath$]: Alternative iterator over dimensions
+\end{description}
+
+\paragraph{Alternative Form}
+\begin{description}
+\item[$\bm{X}$]: Original data
+\item[$\bm{X}_n$]: An observation vector from original data.
+\item[$\bm{Z}_n$]: The variable $\bm{X}_n$ transformed to standard multivariate Pareto
+\item[$\bm{Y}_n$]: The vector $\bm{Z}_n$ projected onto ${\mathbb S}_{\infty}^{D-1}$
+\item[$\bm{\theta}_j$]: Cluster Parameter vector, distributed under mixture model
+\item[$N$]: Sample size / number of observations.
+\item[$n$]: iterator over data (potentially from 1 to $N$)
+\item[$m$]: alternative iterator over data
+\item[$J$]: Number of extant clusters
+\item[$j$]: iterator over clusters (potentially from 1 to $J$)
+\item[$k$]: Alternative iterator over clusters
+\item[$D$]: dimensionality (number of columns in $X$)
+\item[$d$]: iterator over dimensions (potentially from 1 to $d$)
+\item[$e$]: Alternative iterator over dimensions
+\end{description}
+
+\paragraph{Evolved, alternative Form}
+\begin{description}
+\item[$\bm{X}$]: Original \emph{real} data
+\item[$\bm{C}$]: Original \emph{categorical} data
+\item[$\bm{W}$]: $\bm{C}$, re-coded to binary variables for each category.
+\item[$\bm{x}_n$]: An observation vector from the original \emph{real} data
+\item[$\bm{z}_n$]: $\bm{x}_n$ transformed to standard multivariate Pareto.
+\item[$\bm{c}_n$]: The categorical data vector associated with observation $n$.
+\item[$\bm{\theta}_j$]: Parameter vector for cluster $j$
+\end{description}
+
+\end{document}
+
+
+
+
+% EOF 
