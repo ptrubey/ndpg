@@ -1,0 +1,150 @@
+\documentclass[10pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{xcolor}
+
+\newcommand{\makenote}[1]{\textcolor{red}{#1}} % Peter edits - red
+
+
+\title{Math for Mixed Data Dirichlet-Process Projected Gamma Model}
+
+\begin{document}
+\maketitle
+
+\subsection*{Dirichlet Process Projected Gamma for Angular Data}
+Let $\bm{y}_i\in {\mathbb S}_{p}^{d-1}$ for some arbitrary $p$.  Then
+\begin{equation*}
+    \begin{aligned}
+    \bm{y}_i &\sim \mathcal{PG}_p\left(\bm{y}\mid\bm{\zeta}_i,\bm{\sigma}_i\right)\\
+    (\bm{\zeta}_i,\bm{\sigma}_i) &\sim G \\
+    G &\sim \mathcal{DP}\left(\eta, G_0\right)\\
+    \eta &\sim \mathcal{G}\left(\eta\mid a_{\eta}, b_{\eta}\right)\\
+    G_0 = \prod_{\ell = 1}^d\mathcal{G}(\zeta_{\ell}&\mid\alpha_{\ell},\beta_{\ell})\times\prod_{\ell = 2}^d\mathcal{G}(\sigma_{\ell}\mid\xi_{\ell},\tau_{\ell})\\
+    \end{aligned}
+    \hspace{2cm}
+    \begin{aligned}
+    \alpha_{\ell} &\sim \mathcal{G}(\alpha_{\ell} \mid a_{\alpha},b_{\alpha})\\
+    \beta_{\ell} &\sim \mathcal{G}(\beta_{\ell}\mid a_{\beta}, b_{\beta})\\
+    \xi_{\ell} &\sim \mathcal{G}(\xi_{\ell} \mid a_{\xi}, b_{\xi})\\
+    \tau_{\ell} &\sim \mathcal{G}(\tau_{\ell}\mid a_{\tau},b_{\tau})\\
+    \end{aligned}
+\end{equation*}
+The centering distribution is a product of Gamma densities, with the hyper-prior distributions 
+    each being gamma densities. Inference for this model can be simplified by reintroducing a 
+    latent variable $r_i$ which was previously integrated out to form the projected gamma model.  
+    That is to say,
+\[
+    (r,\bm{y}_i) \sim \prod_{\ell = 1}^d \mathcal{G}\left(r_iy_{i\ell}\mid\zeta_{i\ell},\sigma_{i\ell}\right)r^{d-1}\lvert J \rvert
+\]
+where $\lvert J \rvert$ is a function of $\bm{y}_i$, representing the rest of the Jacobian of
+    the transformation from ${\mathbb R}_+^d$ to $r\in {\mathbb R}_+$, and $\bm{y}\in{\mathbb S}_p^{d-1}$.
+    The latent $r_i$ can be sampled as
+\begin{equation*}
+    r_i \mid \bm{y}_i,\bm{\zeta}_i,\bm{\sigma}_i\sim \mathcal{G}\left(r\mid{\small \sum}_{\ell}\zeta_\ell,{\small\sum}_{\ell} \sigma_{\ell}y_{\ell}\right)
+\end{equation*}
+Then, given $r_i$, following \makenote{Algorithm 8 of Neal 2000}, the cluster identifier can be sampled as
+\begin{equation*}
+    \text{P}(\delta_i = j \mid r_i, \bm{y}_i, \zeta, \sigma, \eta) \propto \begin{cases}
+    n_j^{\neg i}\prod_{\ell}\mathcal{G}\left(r_i y_{i\ell}\mid\zeta_{j\ell},\sigma_{j\ell}\right) &\text{ for }j = 1,\ldots, J^{\neg i} \\
+    \frac{\eta}{m}\prod_{\ell}\mathcal{G}\left(r_i y_{i\ell}\mid\zeta_{j\ell},\sigma_{j\ell}\right) &\text{ for }j = J^{\neg i} + 1,\ldots, J^{\neg i} + m\\
+    \end{cases}
+\end{equation*}
+where $J^{\neg i}$ specifies the current number of extant clusters not including observation $i$.  Cluster
+    parameters $\bm{\zeta}_j,\bm{\sigma}_j$ for $j = J^{\neg i} + 1$ to $J^{\neg i} + m$ are sampled from
+    the updated hyper-prior.  The likelihood for a given set of cluster parameters 
+    $\bm{\zeta}_j,\bm{\sigma}_j$ is then:
+\begin{equation*}
+    \text{L}\left(\bm{\zeta}_j,\bm{\sigma}_j\mid\ldots\right) \propto \prod_{i:\delta_i = j}\prod_{\ell = 1}^d\mathcal{G}\left(r_i y_{i\ell}\mid\zeta_{j\ell},\sigma_{j\ell}\right)\times \prod_{\ell  1}^d\mathcal{G}\left(\zeta_{j\ell}\mid \alpha_{\ell},\beta_{\ell}\right)\times\prod_{\ell = 2}^d\mathcal{G}\left(\sigma_{j\ell}\mid\xi_{\ell},\tau_{\ell}\right).
+\end{equation*}
+We see that conditional on $\bm{r}$, the likelihood becomes separable along axis $\ell$, so updating can
+    be accomplished independently.  Further, $\sigma_{j\ell}$ for $\ell = 2,\ldots, d$, can be integrated 
+    out to improve mixing on $\zeta_{j\ell}$. For $\ell = 1$, $\sigma_{j1} := 1$ to avoid non-identifiability.
+    In the \emph{restricted} form of this model, $\sigma_{j\ell} := 1$ for all $\ell$.  In both cases, we 
+    omit the gamma prior on $\sigma_{j\ell}$, as if it is fixed, it is not integrated out.  The likelihood 
+    for $\zeta_{j\ell}$ is then proportional to:
+\begin{equation*}
+    \begin{aligned}
+    L(\zeta_{j\ell}\mid\ldots) &\propto \frac{\left(\prod_{i:\gamma_i = j}r_i y_{i\ell}\right)^{\zeta_{j\ell} - 1}}{\Gamma^{n_j}(\zeta_{j\ell})}\times \zeta_{j\ell}^{\alpha_{\ell} - 1}e^{-\sigma\zeta_{j\ell}}\times\frac{\Gamma(n_j\zeta_{j\ell} + \xi_{\ell})}{\left(\sum_{i:\gamma_i = j}r_iy_{i\ell} + \tau\right)^{n_j\zeta_{j\ell} + \xi_{\ell}}}
+    \end{aligned}
+\end{equation*}
+where $n_j = \sum_i 1_{\gamma_i = j}$ For $\ell = 1$, or in the restricted model, the last fraction 
+    (being the normalizing component from integrating out $\sigma_{j\ell}$) is omitted.  Updates for
+    $\zeta_{j\ell}$ use a Metropolis-within-Gibbs step, transforming $\zeta_{j\ell}$ to log scale and 
+    using a normal proposal distribution.  Updates for $\sigma_{j\ell}$ can be accomplished as a gamma
+    distribution:
+\begin{equation*}
+    \sigma_{j\ell}\mid \ldots \sim \mathcal{G}\left(\sigma_{j\ell}\mid n_j\zeta_{j\ell} + \xi_{\ell}, {\small\sum}_{i:\gamma_i = j}r_iy_{i\ell} + \tau_{\ell}\right).
+\end{equation*}
+Updates for $\bm{\alpha},\bm{\beta},\bm{\xi},\bm{\tau}$ are accomplished using similar gamma-gamma forms.
+
+\subsection*{Dirichlet Process Projected Gamma for Categorical Data}
+Let $x_{ic}$ represent a \emph{categorical} variable; that is, it can take one of a fixed number of 
+    non-ordinal values.  Let $w_{ic}$ be $x_{ic}$ encoded in \emph{one-hot} encoding.  That is, it is a 
+    vector with value 0 for all elements save one, and value 1 for that element associated with the 
+    specified category.  Let the iterator $c$ represent iterating over categorical variables.  Then the 
+    vector $w_i$ is the concatenation of the $w_{ic}$ vectors.  Each $w_{ic}$ (or the underlying $x_{ic}$ 
+    is associated with a latent class probability vector $\pi_{ic} \in {\mathbb S}_1^{d_{c}-1}$.  $\pi_i$
+    is then the concatenation of those class probability vectors.
+    
+In this fashion, with some abuse of notation we say $w_i$ follows a 
+    \emph{concatenated categorical distribution}, identified by the label $\mathcal{CC}$.  As $\pi_{ic}$ 
+    follows a $\mathcal{PG}_1$ distribution of dimension $d_c - 1$, We will \emph{further} abuse notation 
+    to say that $\pi_i$ follows a \emph{concatenated} $\mathcal{PG}_1$, which we will identify by the
+    label $\mathcal{CPG}_1$.  Accepting these minor abuses thus far, we allow a slightly more egregious abuse to say that $r_i\pi_{i\ell} = r_{ic}\pi_{ic\ell}$ for the appropriate $c$.  That is to say, for simplicity of notation, we're assuming we're pairing up the \emph{correct} $r$ given the $\ell$th column.
+\begin{equation*}
+  \begin{aligned}  
+    \bm{w}_{i} &\sim \mathcal{CC}(w \mid \bm{\pi}_{ic})\\
+    \bm{\pi}_{i} &\sim \mathcal{CPG}_1(\bm{\pi}_i \mid \bm{\zeta}_i,\bm{\sigma}_i)\\
+    (\bm{\zeta}_i,\bm{\sigma}_i) &\sim G\\
+    G &\sim \mathcal{DP}(\eta, G_0)\\
+    G_0 = \prod_{\ell = 1}^d\mathcal{G}(\zeta_{\ell}&\mid\alpha_{\ell},\beta_{\ell})\times\prod_{\ell = 2}^d\mathcal{G}(\sigma_{\ell}\mid\xi_{\ell},\tau_{\ell})\\
+    \end{aligned}
+    \hspace{2cm}
+    \begin{aligned}
+    \alpha_{\ell} &\sim \mathcal{G}(\alpha_{\ell} \mid a, b)\\
+    \beta_{\ell} &\sim \mathcal{G}(\beta_{\ell}\mid c, d)\\
+    \xi_{\ell} &\sim \mathcal{G}(\xi_{\ell} \mid a, b)\\
+    \tau_{\ell} &\sim \mathcal{G}(\tau_{\ell}\mid c, d)\\
+  \end{aligned}
+\end{equation*}
+In much the same fashion as Bayesian updating of the Dirichlet parameters, the 
+    $\mathcal{PG}_1$ parameters can be updated as:
+\begin{equation*}
+    \begin{aligned}
+    \bm{\pi}_i\mid \bm{w}_i,\bm{\zeta}_i,\bm{\sigma}_i &\sim \mathcal{CPG}_1(\bm{\pi}\mid\bm{\zeta} + \bm{w}, \sigma)
+    &= \prod_c\int_{r_{ic}}\prod_{\ell = 1}^{d_c}\mathcal{G}(r_{ic}\pi_{ic\ell}\mid\zeta_{ic\ell} + w_{ic\ell}, \sigma_{ic\ell})r_i^{d-1}dr_{ic}.
+    \end{aligned}
+\end{equation*}
+Using this, we can sample the latent $\pi_i$.  With the latent $\pi$ (or rather, latent $\bm{\rho}_i = r_i\bm{\pi}_i$, we can establish cluster membership as
+\begin{equation*}
+    \text{P}(\delta_i = j\mid\ldots) \propto \begin{cases}
+    n_j^{\neg i}\prod_{\ell = 1}^d\mathcal{G}(\rho_{i\ell}\mid\zeta_{j\ell},\sigma_{j\ell}) &\text{ for }j = 1,\ldots, J^{\neg i} \\
+    \frac{\eta}{m}\prod_{\ell = 1}^d\mathcal{G}(\rho_{i\ell}\mid\zeta_{j\ell},\sigma_{j\ell}) &\text{ for }j = J^{\neg i} + 1,\ldots, J^{\neg i} + m \\
+    \end{cases}
+\end{equation*}
+
+
+
+
+which makes the likelihood for $\zeta_{j\ell},\sigma_{j\ell}$ proportional to 
+\begin{equation*}
+    \begin{aligned}
+        L(\zeta_{j\ell},\sigma_{j\ell}\mid\ldots) \propto \prod_{i:\delta_i = j}\frac{\sigma_{j\ell}^{\zeta_{j\ell} + w_{i\ell}}}{\Gamma(\zeta_{j\ell} + w_{i\ell}}\left(r_i\pi_{i\ell}\right)^{\zeta_{j\ell} + w_{i\ell} - 1}e^{-\sigma_{j\ell}r_i\pi_{i\ell}}\zeta_{j\ell}^{\alpha_{\ell} - 1}e^{-\zeta_{j\ell}\beta_{j\ell}}\sigma^{\xi - 1}e^{-\sigma\tau},
+    \end{aligned}
+\end{equation*}
+where $\sigma_{jl}$ is not defined to be 1.  To be consistent with the projected 
+    gamma, the first column of every projection has its associated $\sigma_{j1} := 1$.
+    From this likelihood, we can identify the full conditional for $\sigma_{j\ell}$ as 
+    having the kernel of a gamma distribution.  Thus,
+\begin{equation*}
+   \sigma_{j\ell}\mid\ldots \sim \mathcal{G}\left(\sigma_{j\ell}\mid n_j\zeta_{j\ell} + \sum_{i:\delta_i = j}w_{i\ell} + \xi_{\ell}, \sum_{i:\delta_i = j}r_i\pi_{i\ell} + \tau_{\ell}\right)
+\end{equation*}
+Integrating it out $\sigma_{j\ell}$ we are left with the likelihood for $\zeta_{j\ell}$:
+\begin{equation*}
+    L(\zeta_{j\ell} \mid \ldots) \propto \frac{\prod_{i:\delta_i = j}(r_i\pi_{i\ell})^{\zeta_{j\ell} + w_{i\ell} - 1}}{\prod_{i : \delta_i = j}\Gamma(\zeta_{j\ell} + w_{i\ell})}\zeta_{j\ell}^{\alpha_{\ell} - 1}e^{-\zeta_{j\ell}\beta_{\ell}}\frac{\Gamma(n_j\zeta_{j\ell} + \sum_{i:\gamma_i = j}w_{j\ell} + \xi_{\ell})}{\left(\sum_{i:\gamma_i = j}r_i\pi_{i\ell} + \tau_{\ell}\right)^{n_j\zeta_{j\ell} + \sum_{i:\gamma_i = j}w_{j\ell} + \xi_{\ell}}}
+\end{equation*}
+Updates for $\bm{\alpha},\bm{\beta},\bm{\xi},\bm{\tau}$ then follow the familiar gamma-gamma forms.
+
+\end{document}

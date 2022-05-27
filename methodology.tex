@@ -20,13 +20,14 @@ This coding corresponds to a multinomial random variable with size 1. To incorpo
 As has been established in~\cite{trubey:pg}, the Dirichlet distribution is a special case of the projected gamma class, projected on the $\mathcal{L}_1$ norm.  The more general $\mathcal{PG}_1$ similarly serves as a conjugate prior for the multinomial, with posterior inference identical.  We can then write a model for categorical data as
 \begin{equation}
     \label{model:cat}
-    \bm{w} \sim \int_{\theta}\int_{\pi}\text{Multinom}(\bm{w}\mid \pi)\mathcal{PG}_1(\pi\mid \theta)dG(\theta).
+    \bm{w} \sim \int_{\theta}\int_{\pi}\text{Multinom}(\bm{w}\mid \pi)\mathcal{PG}_1(\pi\mid \theta)d\pi dG(\theta).
 \end{equation}
 When we consider $\theta = (\alpha,\beta)$, then the latent $\pi\mid \bm{w},\theta$ can be sampled from
 \begin{equation}
     \label{eqn:pifc}
     \pi\mid \bm{w},\bm{\alpha},\bm{\beta} \sim \mathcal{PG}_1(\pi\mid\alpha + \bm{w}, \beta)
 \end{equation}
+
 
 \section{Mixed Models}
 We make a strong assumption at this point, for establishment of the angular measure,
@@ -36,7 +37,7 @@ independent of $\bm{W}$.  This is not unreasonable, as the generalized Pareto pa
 estimated to transform $\bm{X}$ into $\bm{Z}$ are estimated marginally, and the transformation $\bm{Z}\to\bm{Y}$ is independent of $\bm{W}$.  Thus we can establish a \emph{mixed} model as
 \begin{equation}
     \label{model:mixed}
-    (\bm{y},\bm{w})\sim \int_{\theta}\mathcal{PG}_{p}(\bm{y}\mid\theta_1)\prod_{m = 1}^M\int_{\pi_m}\left[\text{Multinom}(\bm{w}_m\mid\pi_m)\mathcal{PG}_1(\pi_k\mid\theta_2)d\pi_{m}\right]dG(\theta),
+    (\bm{y},\bm{w})\sim \int_{\theta}\mathcal{PG}_{p}(\bm{y}\mid\theta_1)\prod_{m = 1}^M\int_{\pi_m}\left[\text{Multinom}(\bm{w}_m\mid\pi_m)\mathcal{PG}_1(\pi_m\mid\theta_{2m})d\pi_{m}\right]dG(\theta),
 \end{equation}
 where $m$ indexes over categorical variables in the data. By this assumption, the dependence 
 structure (and associated inference) between $\bm{y}$ and $\bm{w}$ is transferred up to the 
@@ -146,7 +147,7 @@ Another way we can think of anomalies is as observations that are difficult to f
 
 Gaussian kernel density estimation using kernel metric $g(\cdot,\cdot)$ defined in \cite{trubey:pg}.
 \begin{equation}
-    f(\bm{x}\mid \bm{X}) \approx \frac{1}{N}\sum_{i = 1}^Ne^{-\frac{1}{2}\left(\frac{g(\bm{x},\bm{X}_i)}{h}\right)^2}
+    f(\bm{x}\mid \bm{X}) \approx \frac{1}{N}\sum_{i = 1}^Ne^{-\frac{1}{2}\left(\frac{g(\bm{x},\bm{X}_i^{\prime})}{h}\right)^2}
 \end{equation}
 
 blah blah blah.
@@ -175,8 +176,28 @@ In the second case, we can regard categorical variables as canonically separate 
 In the third case, rather than evaluating distance to $\bm{c}_i$, we can also evaluate distance to $\bm{\pi}_i$,
     the latent categorical probability of membership.  This is likely to result in a smoother decision curve.
 \begin{equation*}
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\text{E}\left[\lVert \bm{c} - \bm{\pi}^{\prime}\rVert_2\right]
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\lVert \bm{c} - \bm{\pi}^{\prime}\rVert_2
 \end{equation*}
+
+\[
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\lVert \text{E}[\bm{\pi}] - \bm{\pi}^{\prime}\rVert_2
+\]
+
+\[
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\lVert \text{E}[\bm{\rho}]_1 - \bm{\pi}^{\prime}\rVert_2
+\]
+
+
+
+
+\begin{equation*}
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\text{E}\left[\lVert \bm{\pi} - \bm{\pi}^{\prime}\rVert_2\right]
+\end{equation*}
+
+\[
+    \text{E}\lVert (R\bm{y},\bm{\rho}), (R^\prime\bm{Y}^\prime,\bm{\rho}^\prime)\rVert_2
+\]
+
 
 And in the fourth case, we can project $\pi$ from $\mathbb{S}_1$ to $\mathbb{S}_{\infty}$, allowing use of
     the previously developed kernel.
