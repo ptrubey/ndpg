@@ -77,8 +77,13 @@ Density based clustering methods will use pairwise distances to establish some
 
 
 \subsection{Current trends of extreme value theory in novelty detection}
-
-Thus far extreme value theory has found some ground within the field of 
-novelty detection. 
+Extreme value theory has thus far found some ground within the field of novelty 
+    detection, though not always directly in model construction.  For instance,
+    \cite{clifton2011} uses a Gaussian mixture model, and \cite{gu2021} use a
+    Gaussian process to establish density estimates, then employing univariate 
+    EVT to then establish a decision threshold for those density esimates.  This 
+    use of EVT provides a theoretical  justification for a particular threshold, 
+    allowing them to avoid setting a threshold heuristically.
+    
     
 % EOF
