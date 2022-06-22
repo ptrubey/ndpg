@@ -82,8 +82,24 @@ Extreme value theory has thus far found some ground within the field of novelty
     \cite{clifton2011} uses a Gaussian mixture model, and \cite{gu2021} use a
     Gaussian process to establish density estimates, then employing univariate 
     EVT to then establish a decision threshold for those density esimates.  This 
-    use of EVT provides a theoretical  justification for a particular threshold, 
-    allowing them to avoid setting a threshold heuristically.
+    use of EVT provides a theoretical justification for setting the decision
+    boundary, avoiding the problem of setting a threshold heuristically.
+
+Some 
+
+\cite{goix2017} submits real data to the standard Pareto transformation, 
+    $T(x) = \frac{1}{1 - \hat{F}(x)}$.  Then, via establishing an appropriate
+    threshold $\bm{b}$, the space $[1,\infty)^d$ is partitioned into 
+    $\alpha$-cones, where $z_{\ell} > b_{\ell}$ for those $\ell \in \alpha$.
     
-    
+\cite{goix2017} employs a theoretical argument from EVT to establish a threshold
+  such that it partitions the space $[1,\infty)^d$ into $\alpha$-cones, where 
+  $\alpha$ indicates which dimensions exceed the threshold.  It then submits 
+  real data to the standard Pareto transformation,
+  $T(x) = \frac{1}{1 - \hat{F}(x)}$, and bins the data according to which 
+  $\alpha$-cone it falls in.  Data coming from $\alpha$-cones with fewer 
+  observations are thought to be more anomalous, so the anomaly score 
+
+
+
 % EOF

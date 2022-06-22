@@ -1,126 +1,66 @@
-
-\section{Binary and Categorical Data}
-
-Many applications for which novelty detection methods might be applied will feature both real and categorical data.  \makenote{rewrite}
-The most apparent shortcoming of the projected Gamma model developed in~\cite{trubey:pg} is
-its inability to handle binary or categorical data.  To ameliorate this shortcoming, we propose
-the following.
-
-Let $C$ be a random categorical variable, with $K \geq 2$ categories.  Note that a binary variable is categorical, with $K = 2$. We re-code $C$ into the random vector $\bm{W}$ with length $K$, taking the form
-\[
-    W_k = \begin{cases}
-    1 &\text{if }C = k\\
-    0 &\text{otherwise}
-    \end{cases} \text{ for }k = 1,\ldots, K.
-\]
-This coding corresponds to a multinomial random variable with size 1. To incorporate this information within our existing projected gamma structure, let us consider the Dirichlet-multinomial model.  This model is established by assuming the categorical variable distributed multinomial with a latent parameter $\pi$, and a Dirichlet prior on $\pi$. The Dirichlet-multinomial is then established by integrating out the latent parameter $\pi$. 
-\[
-    \bm{w} \sim \int_{\pi} \text{Multinom}(\bm{w}\mid\pi)\text{Dir}(\pi\mid\theta)\text{d}\pi
-\]
-As has been established in~\cite{trubey:pg}, the Dirichlet distribution is a special case of the projected gamma class, projected on the $\mathcal{L}_1$ norm.  The more general $\mathcal{PG}_1$ similarly serves as a conjugate prior for the multinomial, with posterior inference identical.  We can then write a model for categorical data as
-\begin{equation}
-    \label{model:cat}
-    \bm{w} \sim \int_{\theta}\int_{\pi}\text{Multinom}(\bm{w}\mid \pi)\mathcal{PG}_1(\pi\mid \theta)d\pi dG(\theta).
-\end{equation}
-When we consider $\theta = (\alpha,\beta)$, then the latent $\pi\mid \bm{w},\theta$ can be sampled from
-\begin{equation}
-    \label{eqn:pifc}
-    \pi\mid \bm{w},\bm{\alpha},\bm{\beta} \sim \mathcal{PG}_1(\pi\mid\alpha + \bm{w}, \beta)
-\end{equation}
-
-
-\section{Mixed Models}
-We make a strong assumption at this point, for establishment of the angular measure,
-that conditional on $\theta$, the distribution of the categorical variables is independent 
-of that of the real variables.  That is, $Y \in {\mathbb S}_{p}^{d-1}$ is established
-independent of $\bm{W}$.  This is not unreasonable, as the generalized Pareto parameters 
-estimated to transform $\bm{X}$ into $\bm{Z}$ are estimated marginally, and the transformation $\bm{Z}\to\bm{Y}$ is independent of $\bm{W}$.  Thus we can establish a \emph{mixed} model as
-\begin{equation}
-    \label{model:mixed}
-    (\bm{y},\bm{w})\sim \int_{\theta}\mathcal{PG}_{p}(\bm{y}\mid\theta_1)\prod_{m = 1}^M\int_{\pi_m}\left[\text{Multinom}(\bm{w}_m\mid\pi_m)\mathcal{PG}_1(\pi_m\mid\theta_{2m})d\pi_{m}\right]dG(\theta),
-\end{equation}
-where $m$ indexes over categorical variables in the data. By this assumption, the dependence 
-structure (and associated inference) between $\bm{y}$ and $\bm{w}$ is transferred up to the 
-distribution of $\theta$.
-\begin{equation*}
-    \label{model:mixeddp}
-    \begin{aligned}
-    w_i\mid \pi_i &\sim \text{Multinom}(w_i\mid \pi_i)\\
-    y_i\mid\theta &\sim\mathcal{PG}_p(y_i\mid\theta^{(1)})\\
-    \pi_i\mid\theta &\sim \mathcal{PG}_1(\pi_i\mid\theta^{(2)})\\
-    \theta &\sim \text{DP}(\theta\mid\alpha, G_0).
-    \end{aligned}
-\end{equation*}
-
-In the general projected gamma case, the integration for $\pi$ in Equation~\ref{model:cat} is not
-  available in closed form.  Under a sample based inference approach, we can augment the data by 
-  sampling $\pi$ according to Eqn.~\ref{eqn:pifc}, then calculate the likelihood of $\pi$ under 
-  the projected Gamma distribution.  That is, for a given sample iteration,
-\begin{equation*}
-    \begin{aligned}
-    P(\delta_i = j\mid \ldots) \propto \begin{cases} 
-    n_j^{\neg i}\mathcal{PG}_p(y_i\mid\theta_j^{(1)})\mathcal{PG}_1(\pi_i\mid\theta_j^{(2)}) \hspace{0.5cm}&\text{for }j = 1,\ldots,J,\\
-    \frac{\eta}{m}\mathcal{PG}_p(y_i\mid\theta_j^{(1)})\mathcal{PG}_1(\pi_i\mid\theta_j^{(2)}) \hspace{0.5cm}&\text{for }j = J + 1,\ldots, J + m.\\
-    \end{cases}
-    \end{aligned}
-\end{equation*}
-As both are projected Gamma distributions, the hyper-prior structures mentioned 
-  in~\cite{trubey:pg} will still be appropriate.
-
 \section{Novelty Detection Methods}
+Building on the notion that anomalies occur in areas of low density, we consider 
+  methods of estimating the statistical density of observed data.  As we saw 
+  in~\cite{trubey:pg}, density estimation on the surface of 
+  ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem, so for purposes of 
+  establishing inference on the dependence structure of the data we opted to 
+  project from ${\mathbb S}_{\infty}^{d-1}$ onto ${\mathbb S}_p^{d-1}$ for some 
+  large but finite $p$.  This makes density estimation \emph{possible}, but for 
+  purposes of anomaly detection, the projection onto ${\mathbb S}_p^{d-1}$ is 
+  strongly dependent on \emph{which} dimension was used--that is, which 
+  dimension became a function of the others, hereafter referred to as the 
+  \emph{dependent} variable. In~\cite{trubey:pg}, we declared 
+  $y_d = (1 - \sum_{\ell = 1}^{d-1}y_{\ell}^p)^{1-p}$ as the dependent variable.
+  This worked well for establishing the projected Gamma density, and via 
+  proportionality, inference on the projected Gamma parameters was not affected
+  by the choice of the summary variable.
 
-Building on the notion that anomalies occur in areas of low density, we consider methods of
-  estimating the statistical density of observed data.  As we saw in~\cite{trubey:pg}, density
-  estimation on the surface of ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem, so for purposes
-  of establishing inference on the dependence structure of the data we opted to project from
-  ${\mathbb S}_{\infty}^{d-1}$ onto ${\mathbb S}_p^{d-1}$ for some large but finite $p$.  This makes
-  density estimation \emph{possible}, but for purposes of anomaly detection, the projection onto
-  ${\mathbb S}_p^{d-1}$ is strongly dependent on \emph{which} dimension was used--that is, which
-  dimension became a function of the others, hereafter referred to as the \emph{dependent} variable.
-  In~\cite{trubey:pg}, we declared $y_d = (1 - \sum_{\ell = 1}^{d-1}y_{\ell}^p)^{1-p}$ as the dependent
-  variable.  This worked well for establishing the projected Gamma density, and via proportionality,
-  inference on the projected Gamma parameters was not affected by the choice of the summary variable.
-
-However, when we look to establish density estimation routines for purposes of anomaly detection,
-  where we do take into account the full calculated density, the choice of summary variable does affect
-  the calculated density. As such, we need to consider methods that take this into account.
+However, when we look to establish density estimation routines for purposes of 
+  anomaly detection, where we do take into account the full calculated density, 
+  the choice of summary variable does affect the calculated density. As such, we 
+  need to consider methods that take this into account.
 
 \makenote{needs serious rewrite}
 \begin{enumerate}
   \item Density Estimation via application of KNN
-  \item Explicit probability of dependent variable; projected gamma conditional on dependent variable = max
+  \item Explicit probability of dependent variable; projected gamma conditional 
+        on dependent variable = max
 \end{enumerate}
 
 \subsection{Local Density Estimation on the hypersphere via $k$-Nearest Neighbors}
 
-We establish a local posterior predictive density under the $k$NN estimator by assuming a locally
-  uniform density within a $d-1$ dimensional ball, centered on $\bm{V}_i$, with a radius specified by the
-  negative definite kernel metric defined in \cite{trubey:pg}, to the $k$th nearest neighbor in a sample
-  from the posterior predictive distribution.  The reciprocal of the volume of such a sphere,
-  multiplied by $k$, the number of posterior predictive replicates inside the sphere,
-  provides a rough estimate of local density around $\bm{V}_i$. Low values indicate low density.
-  To make a score that interprets as larger indicates more anomalous, we take the reciprocal:
-\begin{equation}
-  \label{eqn:ad_knn}
+We establish a local posterior predictive density under the $k$NN estimator by 
+  assuming a locally uniform density within a $d-1$ dimensional ball, centered 
+  on $\bm{V}_i$, with a radius specified by the negative definite kernel metric 
+  defined in \cite{trubey:pg}, to the $k$th nearest neighbor in a sample from 
+  the posterior predictive distribution.  The reciprocal of the volume of such 
+  a sphere, multiplied by $k$, the number of posterior predictive replicates 
+  inside the sphere, provides a rough estimate of local density around 
+  $\bm{V}_i$. Low values indicate low density. To make a score that interprets 
+  as larger indicates more anomalous, we take the reciprocal:
+  \begin{equation}
+    \label{eqn:ad_knn}
     S_{i,(k)}^{\text{kNN}} = \frac{N}{k}
       \frac{\pi^{\frac{d-1}{2}}D_{k}^{d-1}(V_i)}{\Gamma\left(\frac{d-1}{2} - 1\right)}
-\end{equation}
-  This score can be used as specified to declare anomalies in the angular sense.  We can also
-  consider the magnitude, or radial component.  Recall that $r_i \sim \text{Pareto}(1)$, then
-  $P(R > r_i) = r_i^{-1}$.  A larger radial component \emph{might} be thought of as more anomalous,
-  so following similar logic, to establish a score, we take $r_i$ directly.
-  Multiplying the above $k$NN score with this Pareto score provides a combined score:
-\begin{equation}
-  \label{eqn:ad_knn_p}
-  S_{i,(k)}^{\text{kNN-P}} = S_{i,(k)}^{\text{kNN}}\times r_i.
-\end{equation}
+  \end{equation}
+  This score can be used as specified to declare anomalies in the angular sense.
+  We can also consider the magnitude, or radial component.  Recall that 
+  $r_i \sim \text{Pareto}(1)$, then $P(R > r_i) = r_i^{-1}$.  A larger radial 
+  component \emph{might} be thought of as more anomalous, so following similar
+  logic, to establish a score, we take $r_i$ directly.  Multiplying the above 
+  $k$NN score with this Pareto score provides a combined score:
+  \begin{equation}
+    \label{eqn:ad_knn_p}
+    S_{i,(k)}^{\text{kNN-P}} = S_{i,(k)}^{\text{kNN}}\times r_i.
+  \end{equation}
 
-Combined scores can be further weighted, to prefer the angular component or radial component score.
-Let $\kappa \in [-1,1]$.  Then
-\begin{equation}
-  S_{i,(k),\kappa}^{\text{kNN-P}} = \left(S_{i,(k)}^{\text{kNN}}\right)^{1 + \kappa}r_i^{1-\kappa}
-\end{equation}
-where $\kappa = 0$ indicates no preferential weighting.
+Combined scores can be further weighted, to prefer the angular component or 
+  radial component score. Let $\kappa \in [-1,1]$.  Then
+  \begin{equation}
+    S_{i,(k),\kappa}^{\text{kNN-P}} = 
+        \left(S_{i,(k)}^{\text{kNN}}\right)^{1 + \kappa}r_i^{1-\kappa}
+  \end{equation}
+  where $\kappa = 0$ indicates no preferential weighting.
 
 \subsection{Posterior Predictive Density via Conditional Projected Gamma}
 
@@ -129,83 +69,196 @@ Recall the projected Gamma density from~\cite{trubey:pg}.
   \[
     \text{\makenote{PG equation}}
   \]
-Note that the Jacobian is dependent upon $y_d$, and if $p = \infty$, the transformation becomes
-  non-differentiable.  The Jacobian becomes dependent upon $x_d = \max_ix_i$.  If we pre-condition
-  on $x_d = \max_ix_i$, then the determinant of the Jacobian approaches $x_d^{-1} = 1$.
+Note that the Jacobian is dependent upon $y_d$, and if $p = \infty$, the 
+  transformation becomes non-differentiable.  The Jacobian becomes dependent 
+  upon $x_d = \max_ix_i$.  If we pre-condition on $x_d = \max_ix_i$, then the 
+  determinant of the Jacobian approaches $x_d^{-1} = 1$.
 
 \subsubsection{Contribution to posterior predictive loss}
-Another way we can think of anomalies is as observations that are difficult to fit--that is, difficult
-    for a fitted model to predict.  We assume that the greater the difficulty encountered in fitting a
-    given observation, the more anomalous it is.  The posterior predictive loss criterion in
-    Equation~\ref{eq:ppl} provides one such metric.  The first term measures the posterior predictive
-    variance--a larger variance corresponds to less precision in the prediction, or alternatively, a lower
-    density in the predictive distribution.  The second term measures squared bias--the squared distance
-    between the average predicted value, and the observation.  Both of these terms provide a metric of
-    how \emph{difficult} a particular observation is to fit.
+Another way we can think of anomalies is as observations that are difficult to 
+  fit---that is, difficult for a fitted model to predict.  We assume that the 
+  greater the difficulty encountered in fitting a given observation, the more 
+  anomalous it is.  The posterior predictive loss criterion in
+  Equation~\ref{eq:ppl} provides one such metric.  The first term measures the 
+  posterior predictive variance--a larger variance corresponds to less precision 
+  in the prediction, or alternatively, a lower density in the predictive 
+  distribution.  The second term measures squared bias--the squared distance 
+  between the average predicted value, and the observation.  Both of these terms 
+  provide a metric of how \emph{difficult} a particular observation is to fit.
 
 \subsection{Kernel Density Estimation}
 
-Gaussian kernel density estimation using kernel metric $g(\cdot,\cdot)$ defined in \cite{trubey:pg}.
-\begin{equation}
-    f(\bm{x}\mid \bm{X}) \approx \frac{1}{N}\sum_{i = 1}^Ne^{-\frac{1}{2}\left(\frac{g(\bm{x},\bm{X}_i^{\prime})}{h}\right)^2}
-\end{equation}
+Gaussian kernel density estimation using kernel metric $g(\cdot,\cdot)$ defined 
+  in \cite{trubey:pg}.
+  \begin{equation}
+    f(\bm{x}\mid \bm{X}) \approx 
+      \frac{1}{N}\sum_{i = 1}^N
+      e^{-\frac{1}{2}\left(\frac{g(\bm{x},\bm{X}_i^{\prime})}{h}\right)^2}
+  \end{equation}
 
 blah blah blah.
 
-\section{Mixed Model Kernel Metrics}https://www.overleaf.com/project/61aa7ebcfc1c07f984e2abf8
-For strictly angular data, the kernel metric detailed in~\cite{trubey:pg} can serve as a 
-  performant analogue for \emph{distance} measurement in these anomaly detection metrics.  However, 
-  when we include categorical data to the analysis, this may require some adjustment of the kernel 
-  metric.  We elaborate on a few possibilities.
+
+\section{Binary and Categorical Data}
+
+Many applications for which novelty detection methods might be applied will 
+  feature both real and categorical data.  \makenote{rewrite} The most apparent 
+  shortcoming of the projected Gamma model developed in~\cite{trubey:pg} is
+  its inability to handle binary or categorical data.  To ameliorate this 
+  shortcoming, we propose the following.
+
+Let $C$ be a random categorical variable, with $K \geq 2$ categories.  Note 
+  that a binary variable is categorical, with $K = 2$. We re-code $C$ into the 
+  random vector $\bm{W}$ with length $K$, taking the form
+  \[
+    W_k = \begin{cases}
+    1 &\text{if }C = k\\
+    0 &\text{otherwise}
+    \end{cases} \text{ for }k = 1,\ldots, K.
+  \]
+  This coding corresponds to a multinomial random variable with size 1. To 
+  incorporate this information within our existing projected gamma structure, 
+  let us consider the Dirichlet-multinomial model.  This model is established by
+  assuming the categorical variable distributed multinomial with a latent 
+  parameter $\pi$, and a Dirichlet prior on $\pi$. The Dirichlet-multinomial is 
+  then established by integrating out the latent parameter $\pi$. 
+  \[
+    \bm{w} \sim \int_{\pi} \text{Multinom}(\bm{w}\mid\pi)\text{Dir}(\pi\mid\theta)\text{d}\pi
+  \]
+  As has been established in~\cite{trubey:pg}, the Dirichlet distribution is a 
+  special case of the projected gamma class, projected on the $\mathcal{L}_1$ 
+  norm.  The more general $\mathcal{PG}_1$ similarly serves as a conjugate prior 
+  for the multinomial, with posterior inference identical.  We can then write a 
+  model for categorical data as
+  \begin{equation}
+    \label{model:cat}
+    \bm{w} \sim \int_{\theta}\int_{\pi}\text{Multinom}(\bm{w}\mid \pi)
+                              \mathcal{PG}_1(\pi\mid \theta)d\pi dG(\theta).
+  \end{equation}
+  When we consider $\theta = (\alpha,\beta)$, then the latent 
+  $\pi\mid \bm{w},\theta$ can be sampled from
+  \begin{equation}
+    \label{eqn:pifc}
+    \pi\mid \bm{w},\bm{\alpha},\bm{\beta} \sim \mathcal{PG}_1(\pi\mid\alpha + \bm{w}, \beta)
+  \end{equation}
 
 
-In the first case, we can treat the categorical variables as merely sets of additional faces.  Data then lie 
-    along the intersection between their \emph{angular} face, and their \emph{categorical} face.  
-\begin{equation}
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g\left((\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right)
-\end{equation}
-\makenote{This actually requires some additional work/thought.  We would have to transverse  $\sum_i(c_i - c_{i}^{\prime})^2$ faces at a minimum. I'm still trying to imagine how that works--as each point would lie on the intersection of some number of faces.}
+\section{Mixed Models}
+We make a strong assumption at this point, for establishment of the angular 
+  measure, that conditional on $\theta$, the distribution of the categorical 
+  variables is independent of that of the real variables.  That is, 
+  $Y \in {\mathbb S}_{p}^{d-1}$ is established independent of $\bm{W}$.  This is 
+  not unreasonable, as the generalized Pareto parameters estimated to transform 
+  $\bm{X}$ into $\bm{Z}$ are estimated marginally, and the transformation 
+  $\bm{Z}\to\bm{Y}$ is independent of $\bm{W}$.  Thus we can establish a 
+  \emph{mixed} model as
+  \begin{equation}
+    \label{model:mixed}
+    (\bm{y},\bm{w})\sim \int_{\theta}\mathcal{PG}_{p}(\bm{y}\mid\theta_1)
+      \prod_{m = 1}^M\int_{\pi_m}
+      \left[\text{Multinom}(\bm{w}_m\mid\pi_m)
+                \mathcal{PG}_1(\pi_m\mid\theta_{2m})d\pi_{m}\right]dG(\theta),
+  \end{equation}
+  where $m$ indexes over categorical variables in the data. By this assumption, 
+  the dependence structure (and associated inference) between $\bm{y}$ and 
+  $\bm{w}$ is transferred up to the distribution of $\theta$.
+  \begin{equation*}
+    \label{model:mixeddp}
+    \begin{aligned}
+    w_i\mid \pi_i &\sim \text{Multinom}(w_i\mid \pi_i)\\
+    y_i\mid\theta &\sim\mathcal{PG}_p(y_i\mid\theta^{(1)})\\
+    \pi_i\mid\theta &\sim \mathcal{PG}_1(\pi_i\mid\theta^{(2)})\\
+    \theta &\sim \text{DP}(\theta\mid\alpha, G_0).
+    \end{aligned}
+  \end{equation*}
 
-In the second case, we can regard categorical variables as canonically separate from the angular variables. 
-    A kernel metric in this case could be gathered as the linear combination of two kernels--the angular, and one relating to the categorical.
+In the general projected gamma case, the integration for $\pi$ in 
+  Equation~\ref{model:cat} is not available in closed form.  Under a sample 
+  based inference approach, we can augment the data by sampling $\pi$ according 
+  to Eqn.~\ref{eqn:pifc}, then calculate the likelihood of $\pi$ under the 
+  projected Gamma distribution.  That is, for a given sample iteration,
+  \begin{equation*}
+    \begin{aligned}
+    P(\delta_i = j\mid \ldots) \propto \begin{cases} 
+    n_j^{\neg i}\mathcal{PG}_p(y_i\mid\theta_j^{(1)})
+      \mathcal{PG}_1(\pi_i\mid\theta_j^{(2)}) \hspace{0.5cm}&\text{for }j = 1,\ldots,J,\\
+    \frac{\eta}{m}\mathcal{PG}_p(y_i\mid\theta_j^{(1)})
+      \mathcal{PG}_1(\pi_i\mid\theta_j^{(2)}) \hspace{0.5cm}&\text{for }j = J + 1,\ldots, J + m.\\
+    \end{cases}
+    \end{aligned}
+  \end{equation*}
+  As both are projected Gamma distributions, the hyper-prior structures mentioned 
+  in~\cite{trubey:pg} will still be appropriate.
+
+
+\section{Mixed Model Kernel Metrics}
+For strictly angular data, the kernel metric detailed in~\cite{trubey:pg} can 
+  serve as a performant analogue for \emph{distance} measurement in these 
+  anomaly detection metrics.  However, when we include categorical data to the 
+  analysis, this may require some adjustment of the kernel metric.  We elaborate 
+  on a few possibilities.
+
+In the first case, we can treat the categorical variables as merely sets of 
+  additional faces.  Data then lie along the intersection between their 
+  \emph{angular} face, and their \emph{categorical} face.
+  \begin{equation}
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+        g\left((\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right)
+  \end{equation}
+  \makenote{This actually requires some additional work/thought.  We would have 
+  to transverse  $\sum_i(c_i - c_{i}^{\prime})^2$ faces at a minimum. I'm still 
+  trying to imagine how that works--as each point would lie on the intersection 
+  of some number of faces.}
+
+In the second case, we can regard categorical variables as canonically separate 
+  from the angular variables. A kernel metric in this case could be gathered as 
+  the linear combination of two kernels--the angular, and one relating to the 
+  categorical.  
+  \begin{equation*}
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+          \frac{k}{1 + k}\lVert \bm{c} - \bm{c}^{\prime}\rVert_2
+  \end{equation*}
     
-\begin{equation*}
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\lVert \bm{c} - \bm{c}^{\prime}\rVert_2
-\end{equation*}
-    
-In the third case, rather than evaluating distance to $\bm{c}_i$, we can also evaluate distance to $\bm{\pi}_i$,
-    the latent categorical probability of membership.  This is likely to result in a smoother decision curve.
-\begin{equation*}
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\lVert \bm{c} - \bm{\pi}^{\prime}\rVert_2
-\end{equation*}
+In the third case, rather than evaluating distance to $\bm{c}_i$, we can also 
+  evaluate distance to $\bm{\pi}_i$, the latent categorical probability of 
+  membership.  This is likely to result in a smoother decision curve.
+  \begin{equation*}
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+          \frac{k}{1 + k}\lVert \bm{c} - \bm{\pi}^{\prime}\rVert_2
+  \end{equation*}
 
-\[
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\lVert \text{E}[\bm{\pi}] - \bm{\pi}^{\prime}\rVert_2
-\]
+  \[
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+          \frac{k}{1 + k}\lVert \text{E}[\bm{\pi}] - \bm{\pi}^{\prime}\rVert_2
+  \]
 
-\[
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\lVert \text{E}[\bm{\rho}]_1 - \bm{\pi}^{\prime}\rVert_2
-\]
+  \[
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+          \frac{k}{1 + k}\lVert \text{E}[\bm{\rho}]_1 - \bm{\pi}^{\prime}\rVert_2
+  \]
+  
+  \begin{equation*}
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+        \frac{k}{1 + k}\text{E}\left[\lVert \bm{\pi} - \bm{\pi}^{\prime}\rVert_2\right]
+  \end{equation*}
 
-
-
-
-\begin{equation*}
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = g(\bm{y},\bm{y}^{\prime}) + \frac{k}{1 + k}\text{E}\left[\lVert \bm{\pi} - \bm{\pi}^{\prime}\rVert_2\right]
-\end{equation*}
-
-\[
+  \[
     \text{E}\lVert (R\bm{y},\bm{\rho}), (R^\prime\bm{Y}^\prime,\bm{\rho}^\prime)\rVert_2
-\]
+  \]
 
 
-And in the fourth case, we can project $\pi$ from $\mathbb{S}_1$ to $\mathbb{S}_{\infty}$, allowing use of
-    the previously developed kernel.
-\begin{equation*}
-    D\left[(\bm{y},\bm{\pi}), (\bm{y}^{\prime}, \bm{\pi}^{\prime})\right] = \text{E}\left[ g\left((\bm{y},\bm{\pi}_{\infty}), (\bm{y}^{\prime},\bm{\pi}_{\infty}^{\prime})\right)\right]
-\end{equation*}
-
-
+And in the fourth case, we can project $\pi$ from $\mathbb{S}_1$ to 
+  $\mathbb{S}_{\infty}$, allowing use of the previously developed kernel.
+  \begin{equation*}
+    D\left[(\bm{y},\bm{\pi}), (\bm{y}^{\prime}, \bm{\pi}^{\prime})\right] = 
+      \text{E}\left[ g\left((\bm{y},\bm{\pi}_{\infty}), 
+            (\bm{y}^{\prime},\bm{\pi}_{\infty}^{\prime})\right)\right]
+  \end{equation*}
 
 The addition of categorical data to the analysis may require some adju
 
