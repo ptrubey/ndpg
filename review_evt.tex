@@ -37,8 +37,6 @@ then $\mu$ describes the asymptotic distribution of $\bm{Z}$ under extreme regio
     independent from that of the radial component $r$. This property permits us to model 
     them separately.
 
-\makenote{rewrite} 
-
 \subsection{Modeling the angular component}
 As the radial component $R \in {\mathbb R}_+$ will follow a standard Pareto 
     distribution, the task becomes describing the distribution of the angular component 
@@ -50,7 +48,7 @@ As the radial component $R \in {\mathbb R}_+$ will follow a standard Pareto
     \]
     Then letting $R = \lVert \bm{S}\rVert_p$, we can let 
     $Y_d = \left(1 - \sum_{\ell = 1}^{d-1}Y_{\ell}^{p}\right)^{\frac{1}{p}}$ then $\bm{Y} = \frac{\bm{S}}{R}\Rightarrow \bm{S} = R\bm{Y}$, 
-    the determinant of the Jacobian of the transformation becomes
+    and the determinant of the Jacobian of the transformation becomes
     \[
         \lvert J \rvert = r^{d-1}\left[y_d^p + \sum_{\ell = 1}^{d-1}y_{\ell}^p\left(y_d^p\right)^{\frac{1}{p} - 1} \right].
     \]
@@ -59,13 +57,13 @@ As the radial component $R \in {\mathbb R}_+$ will follow a standard Pareto
     However, for a sufficiently large $p$, the space ${\mathbb S}_p^{d-1}$ will tend
     to approach $\mathbb{S}_{\infty}^{d-1}$, meaning a distribution in the latter can be 
     approximated by one in the former.  In~\cite{trubey:pg}, this projection is explored, and
-    a \emph{projected gamma} distribution is developed that projects independent gamma r.v.'s 
+    a \emph{projected gamma} distribution is developed that projects a vector of independent gamma r.v.'s 
     onto $\mathbb{S}_{p}^{d-1}$ for an arbitrary $p$.  Further, the projected gamma distribution is
     employed as the kernel distribution in a Dirichlet process mixture model.  For $\bm{y}_i\in \mathbb{S}_{p}^{d-1}$,
     \[
         \bm{y}_i \sim \mathcal{PG}_{p}(\bm{y}_i\mid\bm{\theta}_i),\hspace{0.5cm}\bm{\theta}_i\sim G,\hspace{0.5cm}G\sim \mathcal{DP}(\eta, G_0).
     \]
-    The Dirichlet process 
+    In this paper, we employ this DP mixture model as the basis of our analysis.
 
 
 
