@@ -31,41 +31,48 @@ One way around this issue would be the use of a non-parametric density estimatio
   routine.  We consider two such well-established routines: $k$-nearest neighbors, 
   or \emph{$k$NN}, and kernel density estimation, or \emph{KDE}.
 
-\subsection{Density estimation through $k$-Nearest Neighbors}
+\subsection{$k$-Nearest Neighbors Density estimation}
+\makenote{Needs citation for KNN}
 We establish a local posterior predictive density under the $k$NN estimator by 
-  assuming a locally uniform density within a ball centered on observation $i$,
-  with the radius calculated as the distance to the $k$th nearest neighbor to
-  observation $i$ in a sample from the posterior predictive distribution.  We
-  take draws from $\bm{X}\mid \bm{x}$, then calculate distance from $\bm{x}$ to 
-  $\bm{X}\mid \bm{x}$.
-
-When conducting this analysis on the hypercube, we assume a $d-1$--dimensional
-  ball, using as distance the negative definite kernel metric previously defined
-  to establish a proper scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  This
-  analysis can also be conducted using Euclidean distance:
-  \[
-    S  
-  \]
-
-
-
-
-
-  assuming a locally uniform density within a $d-1$ dimensional ball, centered 
-  on $\bm{V}_i$, with a radius specified by the negative definite kernel metric 
-  defined in \cite{trubey:pg}, to the $k$th nearest neighbor in a sample from 
-  the posterior predictive distribution.  The reciprocal of the volume of such 
-  a sphere, multiplied by $k$, the number of posterior predictive replicates 
-  inside the sphere, provides a rough estimate of local density around 
-  $\bm{V}_i$. Low values indicate low density. To make a score that interprets 
-  as larger indicating more anomalous, we take volume directly:
+  assuming a locally uniform density within a ball $\mathbb{B}$, centered on 
+  observation $i$, with radius $D_{k}^d(x_i)$ calculated as the distance to the 
+  $k$th nearest neighbor to observation $i$ in a sample from the posterior 
+  predictive distribution. The volume is then calculated as
+  \begin{equation*}
+    \input{./equations/vol_sphere}
+  \end{equation*}
+  where $D_k(\bm{x}_i)$ is the distance from $\bm{x}_i$ to the $k$th nearest 
+  replicate of $\bm{X}\mid\bm{x}$.  A density is established as
   \begin{equation}
-    \label{eqn:ad_knn}
-    S_i^{\text{kNN}} = \frac{N}{k}
-      \frac{\pi^{\frac{d-1}{2}}D_{k}^{d-1}(V_i)}{\Gamma\left(\frac{d-1}{2} - 1\right)}.
+    \label{eq:ad_knn}
+    f_{x}^{(k)}(x_i\mid X) \approx \frac{k}{N}\left(\text{Vol}(\mathbb{B}_d^k\right)^{-1}
   \end{equation}
+  where $N$ is the total number of replicates of $\bm{X}\mid\bm{x}$.  As mentioned,
+  we desire a score interpreted as higher is more likely anomalous, so we take
+  the score as the reciprocal of the density.
 
+When implenting this analysis on the hypercube, we lose one degree of freedom,
+  and as a stand-in for distance, we use the negative definite kernel metric 
+  previously explored in~\cite{trubey:pg} as a means of establishing a proper 
+  scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
+  \begin{equation*}
+    %\label{eq:ad_knn_h}
+    \input{./equations/ad_knn_h}.
+  \end{equation*}
+  We can also implement a $k$NN based method on the latent cartesian
+  representation, prior to projection onto the hypercube.  That is, take replicates
+  of $r_i\mid \bm{v},\bm{v}_i$.  The score then becomes
+  \begin{equation}
+    \input{./equations/ad_knn_e},
+  \end{equation}
+  where $D_k(R\bm{v}_i)$ signifies the euclidean distance to the $k$th nearest
+  replicate of $R\bm{V}\mid\bm{v}$.  In this latent representation, we still have
+  $d$ degrees of freedom. In our experience, the resulting ordering of
+  scores in $k$NN based methods was relatively robust to the choice of $k$, for 
+  values between 2 and 10.
 
+\subsection{Kernel Density Estimation}
+\makenote{needs citation for KDE}
 
 
 
@@ -84,72 +91,12 @@ Finally, the methods we have established thus far establish novelty scores in
   \]
 
 
-
-% We establish a local posterior predictive density under the $k$NN estimator by 
-%   assuming a locally uniform density within a $d-1$ dimensional ball, centered 
-%   on $\bm{V}_i$, with a radius specified by the negative definite kernel metric 
-%   defined in \cite{trubey:pg}, to the $k$th nearest neighbor in a sample from 
-%   the posterior predictive distribution.  The reciprocal of the volume of such 
-%   a sphere, multiplied by $k$, the number of posterior predictive replicates 
-%   inside the sphere, provides a rough estimate of local density around 
-%   $\bm{V}_i$. Low values indicate low density. To make a score that interprets 
-%   as larger indicates more anomalous, we take the reciprocal:
-%   \begin{equation}
-%     \label{eqn:ad_knn}
-%     S_{i,(k)}^{\text{kNN}} = \frac{N}{k}
-%       \frac{\pi^{\frac{d-1}{2}}D_{k}^{d-1}(V_i)}{\Gamma\left(\frac{d-1}{2} - 1\right)}
-%   \end{equation}
-%   This score can be used as specified to declare anomalies in the angular sense.
-%   We can also consider the magnitude, or radial component.  Recall that 
-%   $r_i \sim \text{Pareto}(1)$, then $P(R > r_i) = r_i^{-1}$.  A larger radial 
-%   component \emph{might} be thought of as more anomalous, so following similar
-%   logic, to establish a score, we take $r_i$ directly.  Multiplying the above 
-%   $k$NN score with this Pareto score provides a combined score:
-%   \begin{equation}
-%     \label{eqn:ad_knn_p}
-%     S_{i,(k)}^{\text{kNN-P}} = S_{i,(k)}^{\text{kNN}}\times r_i.
-%   \end{equation}
-
-% Combined scores can be further weighted, to prefer the angular component or 
-%   radial component score. Let $\kappa \in [-1,1]$.  Then
-%   \begin{equation}
-%     S_{i,(k),\kappa}^{\text{kNN-P}} = 
-%         \left(S_{i,(k)}^{\text{kNN}}\right)^{1 + \kappa}r_i^{1-\kappa}
-%   \end{equation}
-%   where $\kappa = 0$ indicates no preferential weighting.
-
-% \subsection{Posterior Predictive Density via Conditional Projected Gamma}
-
-% \makenote{spitballing.  ignore.}
-% Recall the projected Gamma density from~\cite{trubey:pg}.
-%   \[
-%     \text{\makenote{PG equation}}
-%   \]
-% Note that the Jacobian is dependent upon $y_d$, and if $p = \infty$, the 
-%   transformation becomes non-differentiable.  The Jacobian becomes dependent 
-%   upon $x_d = \max_ix_i$.  If we pre-condition on $x_d = \max_ix_i$, then the 
-%   determinant of the Jacobian approaches $x_d^{-1} = 1$.
-
-% \subsubsection{Contribution to posterior predictive loss}
-% Another way we can think of anomalies is as observations that are difficult to 
-%   fit---that is, difficult for a fitted model to predict.  We assume that the 
-%   greater the difficulty encountered in fitting a given observation, the more 
-%   anomalous it is.  The posterior predictive loss criterion in
-%   Equation~\ref{eq:ppl} provides one such metric.  The first term measures the 
-%   posterior predictive variance--a larger variance corresponds to less precision 
-%   in the prediction, or alternatively, a lower density in the predictive 
-%   distribution.  The second term measures squared bias--the squared distance 
-%   between the average predicted value, and the observation.  Both of these terms 
-%   provide a metric of how \emph{difficult} a particular observation is to fit.
-
 % \subsection{Kernel Density Estimation}
 
 % Gaussian kernel density estimation using kernel metric $g(\cdot,\cdot)$ defined 
 %   in \cite{trubey:pg}.
 %   \begin{equation}
-%     f(\bm{x}\mid \bm{X}) \approx 
-%       \frac{1}{N}\sum_{i = 1}^N
-%       e^{-\frac{1}{2}\left(\frac{g(\bm{x},\bm{X}_i^{\prime})}{h}\right)^2}
+%     
 %   \end{equation}
 
 % blah blah blah.
