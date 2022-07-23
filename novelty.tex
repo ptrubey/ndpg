@@ -1,0 +1,107 @@
+\section{Novelty Detection Methods}
+We can consider a novelty detection algorithm as an algorithm that assigns a
+  novelty score $S_i$ to observation $i$.  We interpret a larger $S_i$ 
+  as indicative that the observation is more likely to be anomalous.
+
+Building on the notion that anomalies occur in areas of low density, a simple
+  score might establish
+  \[
+      S_i = f_v(v_i\mid \bm{v})^{-1}.  
+  \]
+  That is, the reciprocal of the fitted density, $f_v\mid \bm{v}$ at the point $v_i$.
+  As previously established in~\cite{trubey:pg}, density estimation on the 
+  surface of ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem, so for 
+  purposes of establishing inference on the dependence structure of the data 
+  they projected from ${\mathbb S}_{\infty}^{d-1}$ onto ${\mathbb S}_p^{d-1}$ for 
+  some large but finite $p$.  This makes density estimation \emph{possible}, but 
+  for purposes of anomaly detection, the projection onto ${\mathbb S}_p^{d-1}$ is 
+  strongly dependent on \emph{which} dimension was used as a summary--that is, 
+  which dimension became a function of the others, hereafter referred to as the 
+  \emph{dependent} variable. In~\cite{trubey:pg}, 
+  $y_d = (1 - \sum_{\ell = 1}^{d-1}y_{\ell}^p)^{1-p}$ was the dependent variable.
+  This works well for establishing the projected Gamma density, and via 
+  proportionality, inference on the projected Gamma parameters was not affected
+  by the choice of the summary variable. However, when we look to establish 
+  density estimation routines for purposes of anomaly detection, where we do 
+  take into account the full calculated density, the choice of summary variable 
+  does affect the calculated density.  Moreover, density on $\mathbb{S}_p^{d-1}$
+  is only a proxy to density on $\mathbb{S}_{\infty}^{d-1}$, which is our goal.
+
+One way around this issue would be the use of a non-parametric density estimation
+  routine.  We consider two such well-established routines: $k$-nearest neighbors, 
+  or \emph{$k$NN}, and kernel density estimation, or \emph{KDE}.
+
+\subsection{$k$-Nearest Neighbors Density estimation}
+\makenote{Needs citation for KNN}
+We establish a local posterior predictive density under the $k$NN estimator by 
+  assuming a locally uniform density within a ball $\mathbb{B}$, centered on 
+  observation $i$, with radius $D_{k}^d(x_i)$ calculated as the distance to the 
+  $k$th nearest neighbor to observation $i$ in a sample from the posterior 
+  predictive distribution. The volume is then calculated as
+  \begin{equation*}
+    \input{./equations/vol_sphere}
+  \end{equation*}
+  where $D_k(\bm{x}_i)$ is the distance from $\bm{x}_i$ to the $k$th nearest 
+  replicate of $\bm{X}\mid\bm{x}$.  A density is established as
+  \begin{equation*}
+    %\label{eq:ad_knn}
+    f_{x}^{(k\text{NN})}(x_i\mid X) \approx 
+          \frac{k}{N}\left(\text{Vol}(\mathbb{B}_d^k\right)^{-1}
+  \end{equation*}
+  where $N$ is the total number of replicates of $\bm{X}\mid\bm{x}$.  As mentioned,
+  we desire a score interpreted as higher is more likely anomalous, so we take
+  the score as the reciprocal of the density.
+
+When implenting this analysis on the hypercube, we lose one degree of freedom,
+  and as a stand-in for distance, we use the negative definite kernel metric 
+  previously explored in~\cite{trubey:pg} as a means of establishing a proper 
+  scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
+  \begin{equation}
+    \label{eq:ad_knn_h}
+    \input{./equations/ad_knn_h}.
+  \end{equation}
+  We can also implement a $k$NN based method on the latent cartesian
+  representation, prior to projection onto the hypercube.  That is, take replicates
+  of $r_i\mid \bm{v},\bm{v}_i$.  The score then becomes
+  \begin{equation}
+    \label{eq:ad_knn_e}
+    \input{./equations/ad_knn_e},
+  \end{equation}
+  where $D_k(R\bm{v}_i)$ signifies the euclidean distance to the $k$th nearest
+  replicate of $R\bm{V}\mid\bm{v}$.  In this latent representation, we still have
+  $d$ degrees of freedom. In our experience, the resulting ordering of
+  scores in $k$NN based methods was relatively robust to the choice of $k$, for 
+  values between 2 and 10.
+
+\subsection{Kernel Density Estimation}
+\makenote{needs citation for KDE}
+
+Kernel density estimation
+
+If we assume a gaussian kernel, then the KDE density for a generic $\bm{x}$ can 
+  be approximated as
+  \begin{equation*}
+    \input{./equations/ad_kde},
+  \end{equation*}
+  where $\bm{X}_j$ is the $j$th replicate from $\bm{X}\mid\bm{x}$.  The bandwidth
+  parameter $h$ 
+
+\begin{equation*}
+  \input{./equations/ad_kde_h}
+\end{equation*}
+
+\begin{equation*}
+  \input{./equations/ad_kde_e}
+\end{equation*}
+
+\subsection{Incorporating radial information in novelty scores}
+Finally, the methods we have established thus far establish novelty scores in 
+  the \emph{angular} sense.  In the manner established in \cite{goix2017}, we 
+  combine the angular scores thus far developed with the radial values 
+  $r_i = \lVert Z \rVert_{\infty}$.  Recall that $r_i$ follow the standard 
+  Pareto distribution, and under that distribution, $P(R > r) = r^{-1}$.  Then
+  \[
+    S_i^{\prime} = r_iS_i
+  \]
+
+% EOF
