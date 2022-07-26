@@ -25,24 +25,18 @@ Let $C$ be a random categorical variable, with $K \geq 2$ categories.  We
     As has been established in~\cite{trubey:pg}, the Dirichlet distribution is a 
     special case of the projected gamma family, projected on the $\mathcal{L}_1$ 
     norm, and restricted such that the gamma distributions share the same rate
-    parameter. The more general $\mathcal{PG}_1$ 
-    
-    
-    
-    
-    similarly serves as a conjugate prior 
-    for the multinomial, with posterior inference identical.  We can then write a 
-    model for categorical data as
+    parameter. Presumably we could employ the more general $\text{PG}_1$ distribution
+    as the prior for $\pi$, but there is no closed form density for a 
+    multinomial-$\text{PG}_1$.  Further, in the context of a kernel distribution
+    for the dirichlet-process, there was no demonstrable performance advantage 
+    observed to using the more general PG versus the restricted PRG distribution.
+    Thus we employ $\text{PRG}_1$ as the conjugate prior for $\pi$. We can then 
+    write a model for categorical data as 
+    \input{./equations/model_categorical}
+    Then the latent $\pi\mid \bm{w},\alpha$ can be sampled from
     \begin{equation}
-        \label{model:cat}
-        \bm{w} \sim \int_{\theta}\int_{\pi}\text{Multinom}(\bm{w}\mid \pi)
-                              \mathcal{PG}_1(\pi\mid \theta)d\pi dG(\theta).
-    \end{equation}
-    When we consider $\theta = (\alpha,\beta)$, then the latent 
-    $\pi\mid \bm{w},\theta$ can be sampled from
-    \begin{equation}
-        \label{eqn:pifc}
-        \pi\mid \bm{w},\bm{\alpha},\bm{\beta} \sim \mathcal{PG}_1(\pi\mid\alpha + \bm{w}, \beta)
+        \label{eq:pi_fullcond}
+        \pi \mid \bm{w},\bm{\alpha} \sim \mathcal{PRG}_1(\pi\mid\alpha + \bm{w})
     \end{equation}
 
 \section{Mixed Models}
