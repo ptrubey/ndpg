@@ -5,6 +5,31 @@ Many applications for which novelty detection methods might be applied will
     its inability to handle binary or categorical data.  To ameliorate this 
     shortcoming, we propose the following.
 
+Let $C_{im}$ be a random categorical variable, with $K_m \geq 2$ categories.
+  We recode $C$ in one-hot encoding, corresponding to a multinomial random
+  variable with size 1.  To incorporate this information into our existing
+  projected gamma structure, we consider a Dirichlet-multinomial density,
+  where 
+  \begin{equation*}
+    \bm{w}_{im}\mid\bm{\alpha} 
+    \sim 
+    \int_{\pi_{im}} 
+    \text{Multinom}(\bm{w}_{im}\mid\pi_{im})
+    \text{Dir}(\pi\mid\bm{\alpha})\text{d}\pi_{im}.
+  \end{equation*}
+  Recall that the Dirichlet distribution is a special case of the projected gamma,
+  where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  As seen
+  in \cite{trubey:pg}, in the context of a dirichlet process mixture, there was
+  not a demonstrable performance advantage 
+  
+  
+  
+  Consider,
+  then, a \emph{concatenated} dirichlet-multinomial (CDM) as a product of
+  Dirichlet-multinomials. 
+
+
+\makenote{This is way too long.  rewrite.}
 Let $C$ be a random categorical variable, with $K \geq 2$ categories.  We 
     re-code $C$ into the random vector $\bm{W}$ with length $K$, taking the form
     \begin{equation*}
@@ -87,7 +112,8 @@ In the general projected gamma case, the integration for $\pi$ in
   in~\cite{trubey:pg} will still be appropriate.
 
 
-\section{Mixed Model Kernel Metrics}
+\subsection{Mixed Model Kernel Metrics}
+\makenote{This subsection is junk.}
 For strictly angular data, the kernel metric detailed in~\cite{trubey:pg} can 
   serve as a performant analogue for \emph{distance} measurement in these 
   anomaly detection metrics.  However, when we include categorical data to the 
@@ -157,5 +183,13 @@ And in the fourth case, we can project $\pi$ from $\mathbb{S}_1$ to
   \end{equation*}
 
 The addition of categorical data to the analysis may require some adju
+
+\subsection{}
+
+\begin{equation*}
+  S_i^{\text{lhkde}} = \text{E}
+\end{equation*}
+
+
 
 % EOF
