@@ -62,12 +62,32 @@ When implenting this analysis on the hypercube, we lose one degree of freedom,
 \subsection{Kernel Density Estimation}
 \makenote{needs citation for KDE}
 
-Kernel density estimation
-
 If we assume a gaussian kernel, then the KDE density for a generic $\bm{x}$ can 
-  be approximated as \input{./equations/ad_kde}, where $\bm{X}_j$ is the $j$th 
+  be approximated as \input{./equations/ad_kde} where $\bm{X}_j$ is the $j$th 
   replicate from $\bm{X}\mid\bm{x}$.  The bandwidth parameter $h$ serves to smooth
   the calculated density, with larger values creating a larger smoothing effect.
+  Bandwidth selection is a vast field of study, and its nuances lie outside the
+  scope of this work.  As the KDE can be expressed using a multivariate normal density,
+  the bandwidth can be expressed as a covariance matrix.  Instead, we restrict ourselves
+  to the univariate representation outlined above.
+
+We employ a univariate representation variation on Silverman's rule of thumb\makenote{find citation}
+    \[h = \left(\frac{4}{d+2}\right)^{\frac{1}{d+4}}n^{-\frac{1}{d+4}}\hat{\sigma}.\]
+    This then requires the estimation of $\hat{\sigma}$, which must be calculated from pairwise distances.
+
+\[ \text{E}\left\lVert \bm{X}_j - \bm{X}_k\rVert_2\right] = 2\text{Var}(\bm{X}) \]
+where $\bm{X}_j$ and $\bm{X}_k$ are both replicates drawn from $\bm{X}\mid\bm{x}$.  Thus,
+\[
+\hat{\sigma} = \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}\lVert \bm{X}_j - \bm{X}_k\rVert_2}
+\]
+
+
+
+
+
+  
+  
+  
 
 \input{./equations/ad_kde_h}
 
