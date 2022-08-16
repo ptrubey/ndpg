@@ -45,7 +45,7 @@ We establish a local posterior predictive density under the $k$NN estimator by
   as higher is more likely anomalous, so we take the score as the reciprocal of 
   the density.
 
-When implenting this analysis on the hypercube, we lose one degree of freedom,
+When implementing this analysis on the hypercube, we lose one degree of freedom,
   and as a stand-in for distance, we use the negative definite kernel metric 
   previously explored in~\cite{trubey:pg} as a means of establishing a proper 
   scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
@@ -62,7 +62,7 @@ When implenting this analysis on the hypercube, we lose one degree of freedom,
 \subsection{Kernel Density Estimation}
 \makenote{needs citation for KDE}
 
-If we assume a gaussian kernel, then the KDE density for a generic $\bm{x}$ can 
+If we assume a Gaussian kernel, then the KDE density for a generic $\bm{x}$ can 
   be approximated as \input{./equations/ad_kde} where $\bm{X}_j$ is the $j$th 
   replicate from $\bm{X}\mid\bm{x}$.  The bandwidth parameter $h$ serves to smooth
   the calculated density, with larger values creating a larger smoothing effect.
@@ -72,27 +72,31 @@ If we assume a gaussian kernel, then the KDE density for a generic $\bm{x}$ can
   to the univariate representation outlined above.
 
 We employ a univariate representation variation on Silverman's rule of thumb\makenote{find citation}
-    \[h = \left(\frac{4}{d+2}\right)^{\frac{1}{d+4}}n^{-\frac{1}{d+4}}\hat{\sigma}.\]
-    This then requires the estimation of $\hat{\sigma}$, which must be calculated from pairwise distances.
+  \begin{equation}
+    \label{eqn:silverman}
+    h = \left(\frac{4}{d+2}\right)^{\frac{1}{d+4}}n^{-\frac{1}{d+4}}\hat{\sigma}.
+  \end{equation}
+  This then requires the estimation of $\hat{\sigma}$, which must be calculated from pairwise 
+  distances. To develop a univariate bandwidth estimator, recall that for a random variable $X$, 
+  \[ \text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] = 2\text{Var}(X). \]
+  We develop our estimator for $\hat{\sigma}$ in a similar manner.  Let
+  \[
+    \hat{\sigma} = \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}\lVert \bm{X}_j - \bm{X}_k\rVert_2},
+  \]
+  where $\bm{X}_j$, $\bm{X}_k$ are both replicates of $\bm{X}\mid\bm{x}$. Then 
+  $\hat{\sigma}$ is plugged into Equation~\ref{eqn:silverman}.
+ 
+\begin{equation}
+    \label{eqn:ad_kde_h}
+    S_i^{\text{hKDE}} = \text{E}\left[\exp\left\lbrace -
+    \left(\frac{d(\bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\mid\bm{v}\right]
+\end{equation}
 
-\[ \text{E}\left\lVert \bm{X}_j - \bm{X}_k\rVert_2\right] = 2\text{Var}(\bm{X}) \]
-where $\bm{X}_j$ and $\bm{X}_k$ are both replicates drawn from $\bm{X}\mid\bm{x}$.  Thus,
-\[
-\hat{\sigma} = \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}\lVert \bm{X}_j - \bm{X}_k\rVert_2}
-\]
-
-
-
-
-
-  
-  
-  
-
-\input{./equations/ad_kde_h}
-
-\input{./equations/ad_kde_e}
-
+\begin{equation}
+    \label{eqn:ad_kde_e}
+    S_i^{\text{eKDE}} = \text{E}_{\bm{V}}\left[\exp\left\lbrace -\left(\lVert \text{E}(R_i\bm{v}_i) 
+    - R\bm{V}\rVert_2\right)^2 \mid \bm{v},\bm{v}_i \right\rbrace\right]
+\end{equation}
 
 \subsection{Incorporating radial information in novelty scores}
 Finally, the methods we have established thus far establish novelty scores in 

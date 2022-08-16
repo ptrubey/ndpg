@@ -113,9 +113,9 @@ In the general projected gamma case, the integration for $\pi$ in
 
 
 \subsection{Mixed Model Kernel Metrics}
-\makenote{This subsection is junk.}
+\makenote{trash}
 For strictly angular data, the kernel metric detailed in~\cite{trubey:pg} can 
-  serve as a performant analogue for \emph{distance} measurement in these 
+  serve as a performant approximation to geodesic distance. in these 
   anomaly detection metrics.  However, when we include categorical data to the 
   analysis, this may require some adjustment of the kernel metric.  We elaborate 
   on a few possibilities.
@@ -186,15 +186,68 @@ The addition of categorical data to the analysis may require some adju
 
 \begin{equation*}
   S_i^{\text{lekde}} = 
-  \text{E}\left[\exp\left\lbrace-\frac{1}{2}\left(\frac{\lVertR_i\bm{v}_i - R\bm{V}\rVert}{h}\right)^2\right]
+  \text{E}\left[\exp\left\lbrace-\frac{1}{2}\left(\frac{\lVert R_i\bm{v}_i - R\bm{V}\rVert}{h}\right)^2\right\rbrace\right]
 \end{equation*}
 
 \begin{equation*}
   S_i^{\text{lhkde}} = 
-  \text{E}\left[\exp\left\lbrace-\frac{1}{2}\left(\frac{d(bm{v}_i,\bm{V})}{h}\right)^2\right]
+  \text{E}\left[ \exp\left\lbrace-\frac{1}{2}\left(\frac{d(bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\right]
 \end{equation*}
 
 Much ink has been spilled discussing the selection of the bandwidth parameter $h$.
+
+\subsection{Mixed Model Anomaly Scores}
+Let $T_{\infty}(\cdot)$ be the projection function onto the unit hypersphere.  As before, let $\bm{\rho}$ be the latent categorical probability vectors, not normalized to $\mathbb{S}_1$  Then, translating the scores in Equations~(\ref{eqn:ad_kde_h},\ref{eqn:ad_kde_e}) to the mixed data domain, we arrive at
+\begin{equation}
+    \label{eqn:ad_kde_mhl}
+    S_i^{lhKDE} = \text{E}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{d(T_{\infty}(R_i\bm{v}_i,\rho_i), T_{\infty}(R\bm{V},\bm{\rho})}{h}
+    \right)^2
+    \right\rbrace 
+    \mid \bm{v},\bm{w},\bm{v}_i, \bm{w}_i\right]
+\end{equation}
+
+\begin{equation}
+    \label{eqn:ad_kde_mel}
+    S_i^{leKDE} = \text{E}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{\lVert(R_i\bm{v}_i,\bm{\rho}_i) - (R\bm{V},\bm{\rho})\rVert_2}{h}
+    \right)^2
+    \right\rbrace
+    \mid
+    \bm{v},\bm{w},\bm{v}_i,\bm{w}_i
+    \right]
+\end{equation}
+These scores involve a double 
+
+
+
+\begin{equation}
+    \label{eqn:ad_kde_mh}
+    S_i^{hKDE} = \text{E}_{\bm{V},\bm{\rho}}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{d(T_{\infty}(\text{E}(R_i\bm{v}_i,\bm{\rho}_i)), T_{\infty}(R\bm{V},\bm{\rho})}{h}
+    \right)^2
+    \right\rbrace 
+    \mid \bm{v},\bm{w},\bm{v}_i, \bm{w}_i\right]
+\end{equation}
+
+\begin{equation}
+    \label{eqn:ad_kde_me}
+    S_i^{eKDE} = \text{E}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{\lVert\text{E}(R_i\bm{v}_i,\bm{\rho}_i) - (R\bm{V},\bm{\rho})\rVert_2}{h}
+    \right)^2
+    \right\rbrace
+    \mid
+    \bm{v},\bm{w},\bm{v}_i,\bm{w}_i
+    \right]
+\end{equation}
 
 
 
