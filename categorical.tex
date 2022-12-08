@@ -2,14 +2,17 @@
 Many applications for which novelty detection methods might be applied will 
     feature both real and categorical data.  \makenote{rewrite} The most apparent 
     shortcoming of the projected Gamma model developed in~\cite{trubey:pg} is
-    its inability to handle binary or categorical data.  To ameliorate this 
-    shortcoming, we propose the following.
+    its inability to handle binary or categorical data.  In order to ameliorate this
+    shortcoming, and as an added bonus propose a new method for anomaly detection in
+    categorical data, we propose the following.
 
-Let $C_{im}$ be a random categorical variable, with $K_m \geq 2$ categories.
-  We recode $C$ in one-hot encoding, corresponding to a multinomial random
-  variable with size 1.  To incorporate this information into our existing
-  projected gamma structure, we consider a Dirichlet-multinomial density,
-  where 
+Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$ 
+    is a random categorical variable, with $K_{m} \geq 2$ categories. Regard $\bm{W}$ 
+    as $\bm{C}$, recoded in one-hot encoding.  That is, $\bm{W}$ is a binary vector of 
+    length $K = \sum_{m = 1}^M K_{m}$, $\sum_{k = 1}^K W_k = M$, and every $m$ subset 
+    of $\bm{W}$ sums to 1.  This corresponds to multinomial encoding for $\bm{C}_m$,
+    with size 1. We then consider a Dirichlet-multinomial density for $\bm{W}_m$,
+    established as
   \begin{equation*}
     \bm{w}_{im}\mid\bm{\alpha} 
     \sim 
@@ -18,15 +21,32 @@ Let $C_{im}$ be a random categorical variable, with $K_m \geq 2$ categories.
     \text{Dir}(\pi\mid\bm{\alpha})\text{d}\pi_{im}.
   \end{equation*}
   Recall that the Dirichlet distribution is a special case of the projected gamma,
-  where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  As seen
-  in \cite{trubey:pg}, in the context of a dirichlet process mixture, there was
-  not a demonstrable performance advantage 
+  where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  We investigated
+  the general $\mathcal{PG}_1$ to replace the Dirichlet, but a closed-form solution to 
+  the above integral was not available.  That said, we observe in 
+  \cite{trubey:pg}, that as a kernel function in a Dirichlet process mixture, there was
+  no demonstrable performance advantage to allowing the rate parameters to vary.
+ 
+  For simplicity of notation, consider, a \emph{concatenated} Dirichlet-multinomial 
+  ($\mathcal{CDM}$) as a product of Dirichlet-multinomial densities.  That is, 
+  $\mathcal{CDM}(\bm{w}\mid\bm{\alpha}) = \prod_{m = 1}^M\mathcal{DM}(\bm{w}_m\mid\bm{\alpha}_m)$.
+  Then we establish a Bayesian non-parametric categorical data model as
+  \begin{equation}
+    \begin{aligned}
+      \bm{W}_i &\mid \bm{\alpha}_i \sim \mathcal{CDM}\left(\bm{W}_i\mid\bm{\alpha}_i\right)\\
+      \bm{\alpha_i} &\sim G\\
+      G\sim &\mathcal{DP}\left(\eta, G_0\right)
+    \end{aligned}
+    ~
+    \begin{aligned}
+    G_0 &= \mathcal{LN}\left(\bm{\alpha}\mid\bm{\mu},\Sigma\right)\\
+    \mu &\sim \mathcal{N}\left(\bm{0},\bm{1}\right)\\
+    \Sigma &\sim \mathcal{IW}\left(\nu, \Psi\right)
+    \end{aligned}
+  \end{equation}
+   
   
   
-  
-  Consider,
-  then, a \emph{concatenated} dirichlet-multinomial (CDM) as a product of
-  Dirichlet-multinomials. 
 
 
 \makenote{This is way too long.  rewrite.}
