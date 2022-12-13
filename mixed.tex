@@ -1,0 +1,186 @@
+\section{Mixed Models}
+We make a strong assumption at this point, for establishment of the angular 
+  measure, that conditional on $\theta$, the distribution of the categorical 
+  variables is independent of that of the real variables.  That is, 
+  $Y \in {\mathbb S}_{p}^{d-1}$ is established independent of $\bm{W}$.  This is 
+  not unreasonable, as the generalized Pareto parameters estimated to transform 
+  $\bm{X}$ into $\bm{Z}$ are estimated marginally, and the transformation 
+  $\bm{Z}\to\bm{Y}$ is independent of $\bm{W}$.  Thus we can establish a 
+  \emph{mixed} model as
+  \begin{equation}
+    \label{model:mixed}
+    (\bm{y},\bm{w})\sim \int_{\theta}\mathcal{PG}_{p}(\bm{y}\mid\theta_1)
+      \prod_{m = 1}^M\int_{\pi_m}
+      \left[\text{Multinom}(\bm{w}_m\mid\pi_m)
+                \mathcal{PG}_1(\pi_m\mid\theta_{2m})d\pi_{m}\right]dG(\theta),
+  \end{equation}
+  where $m$ indexes over categorical variables in the data. By this assumption, 
+  the dependence structure (and associated inference) between $\bm{y}$ and 
+  $\bm{w}$ is transferred up to the distribution of $\theta$.
+  \begin{equation*}
+    \label{model:mixeddp}
+    \begin{aligned}
+    w_i\mid \pi_i &\sim \text{Multinom}(w_i\mid \pi_i)\\
+    y_i\mid\theta &\sim\mathcal{PG}_p(y_i\mid\theta^{(1)})\\
+    \pi_i\mid\theta &\sim \mathcal{PG}_1(\pi_i\mid\theta^{(2)})\\
+    \theta &\sim \text{DP}(\theta\mid\alpha, G_0).
+    \end{aligned}
+  \end{equation*}
+
+In the general projected gamma case, the integration for $\pi$ in 
+  Equation~\ref{model:cat} is not available in closed form.  Under a sample 
+  based inference approach, we can augment the data by sampling $\pi$ according 
+  to Eqn.~\ref{eq:pi_fullcond}, then calculate the likelihood of $\pi$ under the 
+  projected Gamma distribution.  That is, for a given sample iteration,
+  \begin{equation*}
+    \begin{aligned}
+    P(\delta_i = j\mid \ldots) \propto \begin{cases} 
+    n_j^{\neg i}\mathcal{PG}_p(y_i\mid\theta_j^{(1)})
+      \mathcal{PG}_1(\pi_i\mid\theta_j^{(2)}) \hspace{0.5cm}&\text{for }j = 1,\ldots,J,\\
+    \frac{\eta}{m}\mathcal{PG}_p(y_i\mid\theta_j^{(1)})
+      \mathcal{PG}_1(\pi_i\mid\theta_j^{(2)}) \hspace{0.5cm}&\text{for }j = J + 1,\ldots, J + m.\\
+    \end{cases}
+    \end{aligned}
+  \end{equation*}
+  As both are projected Gamma distributions, the hyper-prior structures mentioned 
+  in~\cite{trubey:pg} will still be appropriate.
+
+
+\subsection{Mixed Model Kernel Metrics}
+\makenote{trash}
+For strictly angular data, the kernel metric detailed in~\cite{trubey:pg} can 
+  serve as a performant approximation to geodesic distance. in these 
+  anomaly detection metrics.  However, when we include categorical data to the 
+  analysis, this may require some adjustment of the kernel metric.  We elaborate 
+  on a few possibilities.
+
+In the first case, we can treat the categorical variables as merely sets of 
+  additional faces.  Data then lie along the intersection between their 
+  \emph{angular} face, and their \emph{categorical} face.
+  \begin{equation}
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+        g\left((\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right)
+  \end{equation}
+  \makenote{This actually requires some additional work/thought.  We would have 
+  to transverse  $\sum_i(c_i - c_{i}^{\prime})^2$ faces at a minimum. I'm still 
+  trying to imagine how that works--as each point would lie on the intersection 
+  of some number of faces.}
+
+In the second case, we can regard categorical variables as canonically separate 
+  from the angular variables. A kernel metric in this case could be gathered as 
+  the linear combination of two kernels--the angular, and one relating to the 
+  categorical.  
+  \begin{equation*}
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+          \frac{k}{1 + k}\lVert \bm{c} - \bm{c}^{\prime}\rVert_2
+  \end{equation*}
+    
+In the third case, rather than evaluating distance to $\bm{c}_i$, we can also 
+  evaluate distance to $\bm{\pi}_i$, the latent categorical probability of 
+  membership.  This is likely to result in a smoother decision curve.
+  \begin{equation*}
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+          \frac{k}{1 + k}\lVert \bm{c} - \bm{\pi}^{\prime}\rVert_2
+  \end{equation*}
+
+  \[
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+          \frac{k}{1 + k}\lVert \text{E}[\bm{\pi}] - \bm{\pi}^{\prime}\rVert_2
+  \]
+
+  \[
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+          \frac{k}{1 + k}\lVert \text{E}[\bm{\rho}]_1 - \bm{\pi}^{\prime}\rVert_2
+  \]
+  
+  \begin{equation*}
+    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
+      g(\bm{y},\bm{y}^{\prime}) + 
+        \frac{k}{1 + k}\text{E}\left[\lVert \bm{\pi} - \bm{\pi}^{\prime}\rVert_2\right]
+  \end{equation*}
+
+  \[
+    \text{E}\lVert (R\bm{y},\bm{\rho}), (R^\prime\bm{Y}^\prime,\bm{\rho}^\prime)\rVert_2
+  \]
+
+
+And in the fourth case, we can project $\pi$ from $\mathbb{S}_1$ to 
+  $\mathbb{S}_{\infty}$, allowing use of the previously developed kernel.
+  \begin{equation*}
+    D\left[(\bm{y},\bm{\pi}), (\bm{y}^{\prime}, \bm{\pi}^{\prime})\right] = 
+      \text{E}\left[ g\left((\bm{y},\bm{\pi}_{\infty}), 
+            (\bm{y}^{\prime},\bm{\pi}_{\infty}^{\prime})\right)\right]
+  \end{equation*}
+
+The addition of categorical data to the analysis may require some adju
+
+\begin{equation*}
+  S_i^{\text{lekde}} = 
+  \text{E}\left[\exp\left\lbrace-\frac{1}{2}\left(\frac{\lVert R_i\bm{v}_i - R\bm{V}\rVert}{h}\right)^2\right\rbrace\right]
+\end{equation*}
+
+\begin{equation*}
+  S_i^{\text{lhkde}} = 
+  \text{E}\left[ \exp\left\lbrace-\frac{1}{2}\left(\frac{d(bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\right]
+\end{equation*}
+
+Much ink has been spilled discussing the selection of the bandwidth parameter $h$.
+
+\subsection{Mixed Model Anomaly Scores}
+Let $T_{\infty}(\cdot)$ be the projection function onto the unit hypersphere.  As before, let $\bm{\rho}$ be the latent categorical probability vectors, not normalized to $\mathbb{S}_1$  Then, translating the scores in Equations~(\ref{eqn:ad_kde_h},\ref{eqn:ad_kde_e}) to the mixed data domain, we arrive at
+\begin{equation}
+    \label{eqn:ad_kde_mhl}
+    S_i^{lhKDE} = \text{E}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{d(T_{\infty}(R_i\bm{v}_i,\rho_i), T_{\infty}(R\bm{V},\bm{\rho})}{h}
+    \right)^2
+    \right\rbrace 
+    \mid \bm{v},\bm{w},\bm{v}_i, \bm{w}_i\right]
+\end{equation}
+
+\begin{equation}
+    \label{eqn:ad_kde_mel}
+    S_i^{leKDE} = \text{E}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{\lVert(R_i\bm{v}_i,\bm{\rho}_i) - (R\bm{V},\bm{\rho})\rVert_2}{h}
+    \right)^2
+    \right\rbrace
+    \mid
+    \bm{v},\bm{w},\bm{v}_i,\bm{w}_i
+    \right]
+\end{equation}
+These scores involve a double 
+
+
+
+\begin{equation}
+    \label{eqn:ad_kde_mh}
+    S_i^{hKDE} = \text{E}_{\bm{V},\bm{\rho}}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{d(T_{\infty}(\text{E}(R_i\bm{v}_i,\bm{\rho}_i)), T_{\infty}(R\bm{V},\bm{\rho})}{h}
+    \right)^2
+    \right\rbrace 
+    \mid \bm{v},\bm{w},\bm{v}_i, \bm{w}_i\right]
+\end{equation}
+
+\begin{equation}
+    \label{eqn:ad_kde_me}
+    S_i^{eKDE} = \text{E}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{\lVert\text{E}(R_i\bm{v}_i,\bm{\rho}_i) - (R\bm{V},\bm{\rho})\rVert_2}{h}
+    \right)^2
+    \right\rbrace
+    \mid
+    \bm{v},\bm{w},\bm{v}_i,\bm{w}_i
+    \right]
+\end{equation}
+
+% EOF
