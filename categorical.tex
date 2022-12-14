@@ -13,24 +13,25 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
     of $\bm{W}$ sums to 1.  This corresponds to multinomial encoding for $\bm{C}_m$,
     with size 1. We then consider a Dirichlet-multinomial density for $\bm{W}_m$,
     established as
-  \begin{equation*}
-    \bm{w}_{im}\mid\bm{\alpha} 
+  \begin{equation}
+    \label{eqn:dirmultinom}
+    \bm{w}_{im}\mid\bm{\theta} 
     \sim 
     \int_{\pi_{im}} 
     \text{Multinom}(\bm{w}_{im}\mid\pi_{im})
-    \text{Dir}(\pi\mid\bm{\alpha})\text{d}\pi_{im}.
-  \end{equation*}
+    \text{Dir}(\pi\mid\bm{\theta})\text{d}\pi_{im}.
+  \end{equation}
   Recall that the Dirichlet distribution is a special case of the projected gamma,
   where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  We investigated
-  the general $\mathcal{PG}_1$ to replace the Dirichlet, but a closed-form solution to 
-  the above integral was not available.  That said, we observe in 
+  the general $\mathcal{PG}_1$ to replace the Dirichlet in Equation~\ref{eqn:dirmultinom}, 
+  but a closed-form solution to the integral was not available.  That said, we observe in 
   \cite{trubey:pg}, that as a kernel function in a Dirichlet process mixture, there was
   no demonstrable performance advantage to allowing the rate parameters to vary.
  
   For simplicity of notation, consider, a \emph{concatenated} Dirichlet-multinomial 
   ($\mathcal{CDM}$) as a product of Dirichlet-multinomial densities.  That is, 
   $\mathcal{CDM}(\bm{w}\mid\bm{\alpha}) = \prod_{m = 1}^M\mathcal{DM}(\bm{w}_m\mid\bm{\alpha}_m)$.
-  Then we establish a Bayesian non-parametric categorical data model as:
+  Then we can establish a Bayesian non-parametric categorical data model as:
   \begin{equation}
     \begin{aligned}
       \bm{W}_i \mid \bm{\alpha}_i &\sim \mathcal{CDM}\left(\bm{W}_i\mid\bm{\alpha}_i\right)\\
@@ -44,12 +45,14 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
     \Sigma &\sim \mathcal{IW}\left(\nu, \Psi\right).
     \end{aligned}
   \end{equation}
-  Note that there exists a strong negative covariance between categories within a categorical variable, so 
-  the prior parameter $\psi$ is a blocked matrix, with each $m$ block corresponding to a categorical variable,
-  and the off-diagonals within the $m$ block set to $-d_m^{-2}$ where $d_m$ is the number of categories in 
-  the $m$th categorical variable.
+  Note that there should exist a strong negative covariance between categories 
+  within a categorical variable.  To account for this within the prior, the 
+  parameter $\psi$ is a blocked matrix, with each $m$ block corresponding to a 
+  categorical variable.  For a diagonal value of $\psi_0$, the off-diagonals 
+  within the $m$ block set to $-\psi_0 d_m^{-2}$ where $d_m$ is the number of 
+  categories in the $m$th categorical variable.
 
-\subsection{Kernel Density Estimation for Categorical Data}
-A 
+\subsection{Anomaly Detection Methods for Categorical Data}
+To establish an anomaly detection algorithm 
 
 % EOF
