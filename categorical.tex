@@ -22,17 +22,19 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
     \text{Dir}(\pi\mid\bm{\theta})\text{d}\pi_{im}.
   \end{equation}
   Recall that the Dirichlet distribution is a special case of the projected gamma,
-  where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  We investigated
-  the general $\mathcal{PG}_1$ to replace the Dirichlet in Equation~\ref{eqn:dirmultinom}, 
-  but a closed-form solution to the integral was not available.  That said, we observe in 
-  \cite{trubey:pg}, that as a kernel function in a Dirichlet process mixture, there was
-  no demonstrable performance advantage to allowing the rate parameters to vary.
+  where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  We 
+  investigated the general $\mathcal{PG}_1$ to replace the Dirichlet in 
+  Equation~\ref{eqn:dirmultinom}, but a closed-form solution to the integral was 
+  not available.  That said, we observe in \cite{trubey:pg}, that as a kernel 
+  function in a Dirichlet process mixture, there was no demonstrable performance 
+  advantage to allowing the rate parameters to vary.
  
   For simplicity of notation, consider, a \emph{concatenated} Dirichlet-multinomial 
   ($\mathcal{CDM}$) as a product of Dirichlet-multinomial densities.  That is, 
   $\mathcal{CDM}(\bm{w}\mid\bm{\alpha}) = \prod_{m = 1}^M\mathcal{DM}(\bm{w}_m\mid\bm{\alpha}_m)$.
   Then we can establish a Bayesian non-parametric categorical data model as:
   \begin{equation}
+    \label{eqn:catdatamodel}
     \begin{aligned}
       \bm{W}_i \mid \bm{\alpha}_i &\sim \mathcal{CDM}\left(\bm{W}_i\mid\bm{\alpha}_i\right)\\
       \bm{\alpha_i} &\sim G\\
@@ -47,12 +49,19 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
   \end{equation}
   Note that there should exist a strong negative covariance between categories 
   within a categorical variable.  To account for this within the prior, the 
-  parameter $\psi$ is a blocked matrix, with each $m$ block corresponding to a 
-  categorical variable.  For a diagonal value of $\psi_0$, the off-diagonals 
-  within the $m$ block set to $-\psi_0 d_m^{-2}$ where $d_m$ is the number of 
-  categories in the $m$th categorical variable.
+  parameter $\psi$ is a blocked diagonal matrix, with each $m$ block 
+  corresponding to the $m$th categorical variable.  For a diagonal value of 
+  $\psi_0$, the off-diagonals within the $m$ block set to $-\psi_0 d_m^{-2}$ 
+  where $d_m$ is the number of categories in the $m$th categorical variable.
 
 \subsection{Anomaly Detection Methods for Categorical Data}
-To establish an anomaly detection algorithm 
+To establish an anomaly detection algorithm using the data model described in 
+  Equation~\ref{eqn:catdatamodel}, we establish a similar logic as described in
+  Section~\ref{sec:novelty}.  
+
+
+
+
+
 
 % EOF
