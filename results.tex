@@ -7,8 +7,35 @@
     \input{./tables/ad_sim_results}
 \end{table}
 
+% \begin{table}[ht]
+%     \centering
+%     \caption{Area under the \emph{ROC} curve for various anomaly detection schemes, on example data\label{tab:real}}
+%     \input{./tables/ad_mixed_performance}
+% \end{table}
+
+
 \begin{table}[ht]
     \centering
-    \caption{Area under the \emph{ROC} curve for various anomaly detection schemes, on example data\label{tab:real}}
-    \input{./tables/ad_mixed_performance}
+    \caption{Area under the \emph{ROC} curve for various anomaly detection schemes,
+        on \emph{strictly categorical} datasets.\label{tab:perfcat}}
+    \input{./tables/ad_cat_performance}
 \end{table}
+
+
+\begin{table}[ht]
+    \centering
+    \caption{Area under the \emph{ROC} curve for various anomaly detection schemes, 
+        on \emph{mixed} data where the real component has undergone the \emph{threshold}
+        standard Pareto transformation.\label{tab:perfreal}}
+    \input{./tables/ad_real_performance}
+\end{table}
+
+\begin{table}[ht]
+    \centering
+    \caption{Area under the \emph{ROC} curve for various anomaly detection schemes,
+        on \emph{mixed} data where the real component has undergone the \emph{rank}
+        standard Pareto transformation.\label{tab:perfrank}}
+    \input{./tables/ad_rank_performance}
+\end{table}
+
+% EOF
