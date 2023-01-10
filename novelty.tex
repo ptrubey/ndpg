@@ -1,44 +1,59 @@
 \section{Novelty Detection Methods\label{sec:novelty}}
-We can consider a novelty detection algorithm as an algorithm that assigns a
-  novelty score $S_i$ to observation $i$.  We interpret a larger $S_i$ 
+We can consider a novelty detection algorithm as a function that assigns a
+  novelty score $S_i$ to observation $i$.  We interpret a larger $S_i$
   as indicative that the observation is more likely to be anomalous.
 
 Building on the notion that anomalies occur in areas of low density, a simple
   score might establish
   \[
-      S_i = f_v(v_i\mid \bm{v})^{-1}.  
+      S_i = f_{\bm{v}}(\bm{v}_i\mid \bm{V})^{-1}.  
   \]
-  That is, the reciprocal of the fitted density, $f_v\mid \bm{v}$ at the point $v_i$.
+  That is, the reciprocal of the fitted density, $f_{\bm{v}}\mid \bm{V}$ at the 
+  point $\bm{v}_i$.
   As previously established in~\cite{trubey:pg}, density estimation on the 
   surface of ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem, so for 
   purposes of establishing inference on the dependence structure of the data 
-  they projected from ${\mathbb S}_{\infty}^{d-1}$ onto ${\mathbb S}_p^{d-1}$ for 
+  projected from ${\mathbb S}_{\infty}^{d-1}$ onto ${\mathbb S}_p^{d-1}$ for 
   some large but finite $p$.  This makes density estimation \emph{possible}, but 
   for purposes of anomaly detection, the projection onto ${\mathbb S}_p^{d-1}$ is 
   strongly dependent on \emph{which} dimension was used as a summary--that is, 
   which dimension became a function of the others, hereafter referred to as the 
   \emph{dependent} variable. In~\cite{trubey:pg}, 
   $y_d = (1 - \sum_{\ell = 1}^{d-1}y_{\ell}^p)^{1-p}$ was the dependent variable.
-  This works well for establishing the projected Gamma density, and via 
-  proportionality, inference on the projected Gamma parameters was not affected
+  This works for establishing the projected Gamma density, and via 
+  proportionality, inference on the parameters of the PG distribution is not affected
   by the choice of the summary variable. However, when we look to establish 
   density estimation routines for purposes of anomaly detection, where we do 
   take into account the full calculated density, the choice of summary variable 
   does affect the calculated density.  Moreover, density on $\mathbb{S}_p^{d-1}$
   is only a proxy to density on $\mathbb{S}_{\infty}^{d-1}$, which is our goal.
 
+\makenote{A reviewer might ask about $p=1$, and using the direct density 
+  calculated thereof.  We should add that fitted gamma densities are inherently 
+  unstable and the spiking behavior near axes results in \emph{extremely} 
+  non-normal behavior.  True density metrics based on projected gamma (at any $p$) 
+  are not going to behave properly.}
+
 One way around this issue would be the use of a non-parametric density estimation
-  routine.  We consider two such well-established routines: $k$-nearest neighbors, 
-  or \emph{$k$NN}, and kernel density estimation, or \emph{KDE}.
+  routine on a sample from the fitted posterior predictive distribution.  We 
+  consider two such well-established methods: 
+  $k$-nearest neighbors, or \emph{$k$NN}, 
+  and kernel density estimation, or \emph{KDE}.
 
 \subsection{$k$-Nearest Neighbors Density estimation}
 \makenote{Needs citation for KNN}
 We establish a local posterior predictive density under the $k$NN estimator by 
-  assuming a locally uniform density within a ball $\mathbb{B}$, centered on 
-  observation $i$, with radius $D_{k}^d(x_i)$ calculated as the distance to the 
-  $k$th nearest neighbor to observation $i$ in a sample from the posterior 
-  predictive distribution. The volume is then calculated as
-  \input{./equations/vol_sphere} where $D_k(\bm{x}_i)$ is the distance from 
+  assuming a locally uniform density within a $d$ dimensional ball $\mathbb{B}$, 
+  centered on observation $i$, with radius $D_{k}^d(x_i)$ calculated as the 
+  distance to the $k$th nearest neighbor to observation $i$ in a sample from the 
+  posterior predictive distribution. The volume of the ball is calculated as
+  \begin{equation}
+    \label{eq:vol_sphere}
+    \text{Vol}(\mathbb{B}_d^k) = 
+      \frac{2\pi^{\frac{n}{2}}}{d}
+      \frac{\pi^{\frac{d}{2}}D_{k}(\bm{x}_i)^d}{\Gamma\left(\frac{d}{2} + 1\right)}
+  \end{equation}
+   where $D_k(\bm{x}_i)$ is the distance from 
   $\bm{x}_i$ to the $k$th nearest replicate of $\bm{X}\mid\bm{x}$.  A density is
   established as \input{./equations/ad_knn} where $N$ is the total number of 
   replicates of $\bm{X}\mid\bm{x}$.  As mentioned, we desire a score interpreted
@@ -49,7 +64,11 @@ When implementing this analysis on the hypercube, we lose one degree of freedom,
   and as a stand-in for distance, we use the negative definite kernel metric 
   previously explored in~\cite{trubey:pg} as a means of establishing a proper 
   scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
-  \input{./equations/ad_knn_h}
+  \begin{equation}
+    \label{eq:ad_knn_h}
+    S_i^{hKNN} = \frac{2N}{(d-1)k}\frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{\Gamma\left(\frac{d-1}{2} - 1\right)}
+  \end{equation}
+  
   We can also implement a $k$NN based method on the latent cartesian
   representation, prior to projection onto the hypercube.  That is, take replicates
   of $r_i\mid \bm{v},\bm{v}_i$.  The score then becomes \input{./equations/ad_knn_e},
@@ -63,39 +82,43 @@ When implementing this analysis on the hypercube, we lose one degree of freedom,
 \makenote{needs citation for KDE}
 
 If we assume a Gaussian kernel, then the KDE density for a generic $\bm{x}$ can 
-  be approximated as \input{./equations/ad_kde} where $\bm{X}_j$ is the $j$th 
-  replicate from $\bm{X}\mid\bm{x}$.  The bandwidth parameter $h$ serves to smooth
+  be approximated as 
+  \begin{equation}
+    \label{eq:ad_kde}
+    f_{\bm{x}}^{(\text{KDE})}(\bm{x}_i) \propto 
+    \frac{1}{N}\sum_{j = 1}^{N}\exp
+    \left\lbrace-\frac{1}{2}\left(\frac{D(\bm{x}_i,\bm{X}_j)}{h}\right)^2\right\rbrace
+  \end{equation}
+  where $\bm{X}_j$ is the $j$th 
+  replicate from $\bm{X}\mid\bm{x}$.  The \emph{bandwidth} parameter $h$ serves to smooth
   the calculated density, with larger values creating a larger smoothing effect.
   Bandwidth selection is a vast field of study, and its nuances lie outside the
-  scope of this work.  As the KDE can be expressed using a multivariate normal density,
-  the bandwidth can be expressed as a covariance matrix.  Instead, we restrict ourselves
-  to the univariate representation outlined above.
+  scope of this work.  As in general KDE can be expressed using a multivariate normal density,
+  the bandwidth can be expressed as a covariance matrix.  In such a case, the log-score
+  is effectively the negative squared Mahalanobis distance.  For our purpose, as 
+  distance on $\mathbb{S}_{\infty}^{d-1}$ is less straightforward, we must restrict 
+  ourselves to the univariate representation outlined above.
 
-We employ a univariate representation variation on Silverman's rule of thumb\makenote{find citation}
+To develop a bandwidth parameter, we employ a univariate variation on Silverman's 
+  rule of thumb\makenote{find citation}
   \begin{equation}
     \label{eqn:silverman}
     h = \left(\frac{4}{d+2}\right)^{\frac{1}{d+4}}n^{-\frac{1}{d+4}}\hat{\sigma}.
   \end{equation}
-  This then requires the estimation of $\hat{\sigma}$, which must be calculated from pairwise 
-  distances. To develop a univariate bandwidth estimator, recall that for a random variable $X$, 
+  This then requires the estimation of $\hat{\sigma}$, which must we calculate from 
+  pairwise distances. Recall that for a random variable $X$, 
   \[ \text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] = 2\text{Var}(X). \]
   We develop our estimator for $\hat{\sigma}$ in a similar manner.  Let
   \[
     \hat{\sigma} = \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}\lVert \bm{X}_j - \bm{X}_k\rVert_2},
   \]
   where $\bm{X}_j$, $\bm{X}_k$ are both replicates of $\bm{X}\mid\bm{x}$. Then 
-  $\hat{\sigma}$ is plugged into Equation~\ref{eqn:silverman}.
+  $\hat{\sigma}$ is employed in Equation~\ref{eqn:silverman} to produce $h$.
  
 \begin{equation}
     \label{eqn:ad_kde_h}
     S_i^{\text{hKDE}} = \text{E}\left[\exp\left\lbrace -
     \left(\frac{d(\bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\mid\bm{v}\right]
-\end{equation}
-
-\begin{equation}
-    \label{eqn:ad_kde_e}
-    S_i^{\text{eKDE}} = \text{E}_{\bm{V}}\left[\exp\left\lbrace -\left(\lVert \text{E}(R_i\bm{v}_i) 
-    - R\bm{V}\rVert_2\right)^2 \mid \bm{v},\bm{v}_i \right\rbrace\right]
 \end{equation}
 
 \subsection{Incorporating radial information in novelty scores}
@@ -107,4 +130,5 @@ Finally, the methods we have established thus far establish novelty scores in
   \[
     S_i^{\prime} = r_iS_i
   \]
-% EOF
+
+  % EOF

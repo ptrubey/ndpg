@@ -1,6 +1,5 @@
-\section{Review of Novelty Detection Regimes}
+\subsection{Review of Novelty Detection Regimes}
 
-\subsection{Existing Methods}
 The complete field of anomaly detection is wide.  However, most methods can be 
     roughly grouped into three core ideas: statistical model approaches, 
     non-statistical model approaches, and clustering methods. Core to the 
@@ -75,20 +74,4 @@ Density based clustering methods will use pairwise distances to establish some
     distance to that decision boundary on the anomalous side is regarded as 
     more anomalous.
 
-\subsection{Current trends of extreme value theory in novelty detection}
-The intersection of extreme value theory and anomaly detection is a current topic
-    of research.  Some methods employ EVT on densities estimated through other
-    means, such as \cite{clifton2011} using a Gaussian Mixture model, and \cite{gu2021}
-    using a Gaussian process, then both employ EVT on the estimated densities to
-    establish a decision threshold.  In this manner, they avoid setting the threshold heuristically.
-
-\cite{goix2017} employs a theoretical argument from EVT to establish a threshold
-    such that it partitions the space $[1,\infty)^d$ into $\alpha$-cones, where 
-    $\alpha$ indicates which dimensions exceed the threshold.  It then submits 
-    real data to the standard Pareto transformation,
-    $T(x) = \frac{1}{1 - \hat{F}(x)}$, and bins the data according to which 
-    $\alpha$-cone it falls in.  Data coming from $\alpha$-cones with fewer 
-    observations are considered more likely to be anomalous, so the anomaly score
-    is a function of observed cone density.
- 
  % EOF
