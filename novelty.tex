@@ -68,13 +68,7 @@ When implementing this analysis on the hypercube, we lose one degree of freedom,
     \label{eq:ad_knn_h}
     S_i^{hKNN} = \frac{2N}{(d-1)k}\frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{\Gamma\left(\frac{d-1}{2} - 1\right)}
   \end{equation}
-  
-  We can also implement a $k$NN based method on the latent cartesian
-  representation, prior to projection onto the hypercube.  That is, take replicates
-  of $r_i\mid \bm{v},\bm{v}_i$.  The score then becomes \input{./equations/ad_knn_e},
-  where $D_k(R\bm{v}_i)$ signifies the euclidean distance to the $k$th nearest
-  replicate of $R\bm{V}\mid\bm{v}$.  In this latent representation, we still have
-  $d$ degrees of freedom. In our experience, the resulting ordering of
+  In our experience, the resulting ordering of
   scores in $k$NN based methods was relatively robust to the choice of $k$, for 
   values between 2 and 10.
 
