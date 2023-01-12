@@ -26,7 +26,7 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
   investigated the general $\mathcal{PG}_1$ to replace the Dirichlet in 
   Equation~\ref{eqn:dirmultinom}, but a closed-form solution to the integral was 
   not available.  That said, we observe in \cite{trubey:pg}, that as a kernel 
-  function in a Dirichlet process mixture, there was no demonstrable performance 
+  density in a Dirichlet process mixture, there was no demonstrable performance 
   advantage to allowing the rate parameters to vary.
  
   For simplicity of notation, consider, a \emph{concatenated} Dirichlet-multinomial 
@@ -58,9 +58,18 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
 
 \subsection{Anomaly Detection Methods for Categorical Data}
 To establish an anomaly detection algorithm using the data model described in 
-  Equation~\ref{eqn:modelcat}, we establish a similar logic as described in
-  Section~\ref{sec:novelty}.
+  Equation~\ref{eqn:modelcat}, we establish a method using logic similar to that
+  described in Section~\ref{sec:novelty}.   
 
+  \paragraph{expectation of projection onto unit sphere, hKNN}
+
+  \paragraph{expectation of projection onto unit sphere, hKDE}
+
+  \paragraph{Latent projection onto unit sphere, LHKDE}
+
+  \paragraph{Latent Manhattan Distance, LSKDE}
+  
+  
   \makenote{Make the equations for categorical data \emph{here}.   The completed
     forms in the mixed data section will reference these forms.}
 

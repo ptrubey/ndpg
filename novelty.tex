@@ -10,7 +10,7 @@ Building on the notion that anomalies occur in areas of low density, a simple
   \]
   That is, the reciprocal of the fitted density, $f_{\bm{v}}\mid \bm{V}$ at the 
   point $\bm{v}_i$.
-  As previously established in~\cite{trubey:pg}, density estimation on the 
+  As previously established in Section~\ref{sec:evt}, density estimation on the 
   surface of ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem, so for 
   purposes of establishing inference on the dependence structure of the data 
   projected from ${\mathbb S}_{\infty}^{d-1}$ onto ${\mathbb S}_p^{d-1}$ for 
@@ -32,7 +32,7 @@ Building on the notion that anomalies occur in areas of low density, a simple
   calculated thereof.  We should add that fitted gamma densities are inherently 
   unstable and the spiking behavior near axes results in \emph{extremely} 
   non-normal behavior.  True density metrics based on projected gamma (at any $p$) 
-  are not going to behave properly.}
+  are not going to behave properly and are undesireable.}
 
 One way around this issue would be the use of a non-parametric density estimation
   routine on a sample from the fitted posterior predictive distribution.  We 
@@ -53,12 +53,15 @@ We establish a local posterior predictive density under the $k$NN estimator by
       \frac{2\pi^{\frac{n}{2}}}{d}
       \frac{\pi^{\frac{d}{2}}D_{k}(\bm{x}_i)^d}{\Gamma\left(\frac{d}{2} + 1\right)}
   \end{equation}
-   where $D_k(\bm{x}_i)$ is the distance from 
-  $\bm{x}_i$ to the $k$th nearest replicate of $\bm{X}\mid\bm{x}$.  A density is
-  established as \input{./equations/ad_knn} where $N$ is the total number of 
-  replicates of $\bm{X}\mid\bm{x}$.  As mentioned, we desire a score interpreted
-  as higher is more likely anomalous, so we take the score as the reciprocal of 
-  the density.
+  where $D_k(\bm{x}_i)$ is the distance from $\bm{x}_i$ to the $k$th nearest 
+  replicate of $\bm{X}\mid\bm{x}$.  A density is established as 
+  \begin{equation}
+    \label{eq:ad_knn}
+    f_{x}^{(k\text{NN})}(x_i\mid X) \approx \frac{k}{N}\left(\text{Vol}(\mathbb{B}_d^k\right)^{-1}
+    \end{equation}
+  where $N$ is the total number of replicates of $\bm{X}\mid\bm{x}$.  As 
+  mentioned, we desire a score interpreted as higher is more likely anomalous, 
+  so we take the score as the reciprocal of the density.
 
 When implementing this analysis on the hypercube, we lose one degree of freedom,
   and as a stand-in for distance, we use the negative definite kernel metric 
@@ -66,10 +69,19 @@ When implementing this analysis on the hypercube, we lose one degree of freedom,
   scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
   \begin{equation}
     \label{eq:ad_knn_h}
-    S_i^{hKNN} = \frac{2N}{(d-1)k}\frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{\Gamma\left(\frac{d-1}{2} - 1\right)}
+    S_i^{hKNN} = \frac{2N}{(d-1)k}
+    \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{\Gamma\left(\frac{d-1}{2} - 1\right)}
   \end{equation}
-  In our experience, the resulting ordering of
-  scores in $k$NN based methods was relatively robust to the choice of $k$, for 
+  This is of course an approximation to the true posterior predictive density at
+  observation $i$.  In addition to the noise induced by using random samples
+  from the posterior predictive, there is some bias induced in the calculated volume
+  if $D_k(\bm{v}_i)^{d-1}$ is greater than the distance from $\bm{v}_i$ to 
+  unity ($\bm{1}_d$), or from $\bm{v}_i$ to some axis.  In practice,
+  this induced bias seems to have relatively small effect. 
+  \makenote{worth looking into what proportion of observations experience this 
+  bias, and what performance outcome is}.
+  In our experience, using a large posterior predictive sample, the resulting 
+  ordering of scores in $k$NN based methods was robust to the choice of $k$, for 
   values between 2 and 10.
 
 \subsection{Kernel Density Estimation}

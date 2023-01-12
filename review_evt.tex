@@ -1,9 +1,16 @@
-\section{Review of Extreme Value Theory}
+\section{Review of Extreme Value Theory\label{sec:evt}}
+In this paper we make use of extreme value theory to to transform data to 
+    the positive orthant $\mathbb{R}_+^d$, and separate the data into an angular
+    component and magnitude, or radial component.  That transformation requires
+    some justification.
+
+\makenote{rewrite.  this relates to univariate EVT, but halfway through we switch to multivariate with no explanation of how or why.}
 If there exists a limiting distribution on the maximum of a sample, then that limiting 
-    distribution will exist within the generalized extreme value family.  In that case, 
-    then observations that exceed a sufficiently large threshold will can be modelled using
-    a generalized Pareto distribution. Such an effort is called \emph{peak over threshold} 
-    modelling, and typically involves first establishing a sufficiently large threshold, 
+    distribution will exist within the generalized extreme value family.\cite{weibull1951}
+    If that condition is satisfied, observations that exceed a sufficiently large 
+    threshold will can be modelled using a generalized Pareto distribution. Such 
+    an effort is called \emph{peak over threshold} modelling, and typically 
+    involves first establishing a sufficiently large threshold, 
     and fitting a generalized Pareto distribution to the excesses.  This action is performed
     marginally, then using the fitted parameters we transform the data to a common marginal 
     distribution so we can further analyze the dependence structure of the data.  Following 
@@ -47,7 +54,8 @@ As the radial component $R \in {\mathbb R}_+$ will follow a standard Pareto
         \lVert \bm{S} \rVert_p = \left(\sum_{\ell = 1}^d S_{\ell}^p\right)^{\frac{1}{p}}.
     \]
     Then letting $R = \lVert \bm{S}\rVert_p$, we can let 
-    $Y_d = \left(1 - \sum_{\ell = 1}^{d-1}Y_{\ell}^{p}\right)^{\frac{1}{p}}$ then $\bm{Y} = \frac{\bm{S}}{R}\Rightarrow \bm{S} = R\bm{Y}$, 
+    $Y_d = \left(1 - \sum_{\ell = 1}^{d-1}Y_{\ell}^{p}\right)^{\frac{1}{p}}$ 
+    then $\bm{Y} = \frac{\bm{S}}{R}\Rightarrow \bm{S} = R\bm{Y}$, 
     and the determinant of the Jacobian of the transformation becomes
     \[
         \lvert J \rvert = r^{d-1}\left[y_d^p + \sum_{\ell = 1}^{d-1}y_{\ell}^p\left(y_d^p\right)^{\frac{1}{p} - 1} \right].
