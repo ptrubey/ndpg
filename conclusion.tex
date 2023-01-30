@@ -1,0 +1,39 @@
+\section{Conclusion}
+In this paper, we established a method of \emph{scoring} observations as anomalous based
+    on their posterior-predictive angular density, using the result from multivariate extreme value
+    theory that---assuming the existence of a limiting behavior---given observations are in excess of 
+    a high threshold, then their angular distribution on $\mathbb{S}_{\infty}^{d-1}$ and 
+    radial distribution on $\mathbb{R}_+$ are independent. A Bayesian non-parametric model 
+    is established on the angular data projected onto $\mathbb{S}_p^{d-1}$, and as a 
+    true density on $\mathbb{S}_{\infty}^{d-1}$ is not available, 
+    anomaly scores are declared using a non-parametric estimator to that angular density 
+    built on a sample from the posterior predictive distribution of the fitted model.  The
+    non-parametric estimators we used were $k$-nearest neighbors, and kernel density estimation.
+
+We then expanded the model to handle categorical data, recognizing that in the real world data
+    does not always fit our assumption of the existence of a limiting behavior.  We did this
+    by establishing a Bayesian non-parametric categorical data model, then tying it in with the
+    previously declared \emph{angular} model, rendering a \emph{mixed} model possible.  
+    We explored various methods of establishing an anomaly score based on the categorical data,
+    analogous to the scores established for the angular data.
+    For the scores, rather than establishing them based on the categorical data explicitly, we
+    established them based on their latent class probability vector, as calculated by the model
+    conditional on the observation. Samples of these latent probability vectors were either 
+    averaged then projected onto $\mathbb{S}_{\infty}^{d-1}$ as in the case of \emph{hKNN} and 
+    \emph{hKDE}, or directly projected onto same as in the case of \emph{lhKDE}, or projected onto
+    $\prod_{m = 1}^M\mathbb{S}_1^{d_{W_m}-1}$ as in the case of \emph{lsKDE}.  There, pairwise 
+    estimates of distance were calculated to a sample from the posterior predictive distribution, 
+    and used to calculate the posterior predictive density for observation $i$. We applied the 
+    categorical scores to four datasets, three of which were transformed to be categorical
+    from mixed data.  In this analysis, we observed that \emph{lsKDE} performed reliably well.
+
+We incorporated the categorical data model with the real data model to create a mixed-data model, 
+    and adjusted the categorical scores to the mixed-data regime.  We subjected six datasets
+    to our peaks-over-threshold analysis and observed that \emph{lmkde} performed reliably well,
+    better than canonical methods most of the time, but was itself outperformed in some cases
+    by other methods that project the latent probability vector along with the angular vector 
+    into a single unified space.
+
+We observed that the data thresholding process may not always be applicable, so we 
+    
+%EOFhttps://www.overleaf.com/project/61aa7ebcfc1c07f984e2abf8

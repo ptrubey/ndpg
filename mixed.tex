@@ -1,186 +1,120 @@
 \section{Mixed Models}
 We make a strong assumption at this point, for establishment of the angular 
-  measure, that conditional on $\theta$, the distribution of the categorical 
-  variables is independent of that of the real variables.  That is, 
-  $Y \in {\mathbb S}_{p}^{d-1}$ is established independent of $\bm{W}$.  This is 
-  not unreasonable, as the generalized Pareto parameters estimated to transform 
-  $\bm{X}$ into $\bm{Z}$ are estimated marginally, and the transformation 
+  measure, that conditional on $\bm{\alpha}$, the distribution of the categorical 
+  variables is independent of that of the angular variables.  That is, conditional
+  on $\bm{\alpha}$, $\bm{Y} \in {\mathbb S}_{p}^{d-1}$ is independent of $\bm{W}$.  
+  This is not unreasonable, as the generalized Pareto parameters estimated to transform 
+  $\bm{X}$ into $\bm{Z}$ are estimated marginally, and the projection from
   $\bm{Z}\to\bm{Y}$ is independent of $\bm{W}$.  Thus we can establish a 
   \emph{mixed} model as
   \begin{equation}
     \label{model:mixed}
-    (\bm{y},\bm{w})\sim \int_{\theta}\mathcal{PG}_{p}(\bm{y}\mid\theta_1)
-      \prod_{m = 1}^M\int_{\pi_m}
-      \left[\text{Multinom}(\bm{w}_m\mid\pi_m)
-                \mathcal{PG}_1(\pi_m\mid\theta_{2m})d\pi_{m}\right]dG(\theta),
+    (\bm{y},\bm{w})\sim \int_{\bm{\alpha}}\mathcal{PRG}_{p}(\bm{y}\mid\bm{\alpha}_{\bm{y}})
+    \;\mathcal{CDM}(\bm{w}\mid\bm{\alpha}_{\bm{w}})\;dG(\bm{\alpha})
   \end{equation}
-  where $m$ indexes over categorical variables in the data. By this assumption, 
-  the dependence structure (and associated inference) between $\bm{y}$ and 
-  $\bm{w}$ is transferred up to the distribution of $\theta$.
-  \begin{equation*}
-    \label{model:mixeddp}
-    \begin{aligned}
-    w_i\mid \pi_i &\sim \text{Multinom}(w_i\mid \pi_i)\\
-    y_i\mid\theta &\sim\mathcal{PG}_p(y_i\mid\theta^{(1)})\\
-    \pi_i\mid\theta &\sim \mathcal{PG}_1(\pi_i\mid\theta^{(2)})\\
-    \theta &\sim \text{DP}(\theta\mid\alpha, G_0).
-    \end{aligned}
-  \end{equation*}
+  with the distribution of $\bm{\alpha}$ as expanded in Equation~\ref{eqn:modelcat}.
+    By this conditional independence assumption, the dependence structure 
+    (and associated inference) between  $\bm{y}$ and $\bm{w}$ is transferred up 
+    to the distribution of $\bm{\alpha}$.  Note for the projected gamma distribution, 
+    we are restricting the rate parameters $\beta_{\ell} := 1$.  Also note that for the 
+    mixed model, the hyperparameter for the covariance matrix $\Sigma_{\bm{\alpha}}$
+    is a blocked diagonal matrix, with the block corresponding to the angular component
+    being a diagonal matrix.
 
-In the general projected gamma case, the integration for $\pi$ in 
-  Equation~\ref{model:cat} is not available in closed form.  Under a sample 
-  based inference approach, we can augment the data by sampling $\pi$ according 
-  to Eqn.~\ref{eq:pi_fullcond}, then calculate the likelihood of $\pi$ under the 
-  projected Gamma distribution.  That is, for a given sample iteration,
-  \begin{equation*}
-    \begin{aligned}
-    P(\delta_i = j\mid \ldots) \propto \begin{cases} 
-    n_j^{\neg i}\mathcal{PG}_p(y_i\mid\theta_j^{(1)})
-      \mathcal{PG}_1(\pi_i\mid\theta_j^{(2)}) \hspace{0.5cm}&\text{for }j = 1,\ldots,J,\\
-    \frac{\eta}{m}\mathcal{PG}_p(y_i\mid\theta_j^{(1)})
-      \mathcal{PG}_1(\pi_i\mid\theta_j^{(2)}) \hspace{0.5cm}&\text{for }j = J + 1,\ldots, J + m.\\
-    \end{cases}
-    \end{aligned}
-  \end{equation*}
-  As both are projected Gamma distributions, the hyper-prior structures mentioned 
-  in~\cite{trubey:pg} will still be appropriate.
+\subsection{Mixed Model Anomaly Scores\label{sec:mixedscores}}
+Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  
+Let $\bm{\alpha}_{\bm{y}}$ be the component of the $\bm{\alpha}$ vector that corresponds 
+to the angular component $\bm{y}$, and $\bm{\alpha}_{\bm{w}}$ the component that 
+corresponds to the categorical component $\bm{w}$.
+Then, for the mixed model, let $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\rho}_{i\bm{w}})$, and $\bm{\nu} = T_{\infty}(\bm{\rho})$
+The \emph{hKNN} score can be adapted to the mixed model by re-projecting the angular data and the latent categorical component into the same sphere. This requires moving $\bm{y}_i$ back to $\mathbb{R}_+^{d_{\bm{y}}}$,
+by multiplying by the radial component generated according to
+\[
+    R_i\mid\bm{\alpha} \sim \mathcal{G}\left(R_i\given\sum_{\ell = 1}^{d_{\bm{y}}}\alpha_{\ell}, 1\right).
+\]
+Then $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\rho}_{i\bm{w}})$ is the latent projection of both the real component and categorical component into the same sphere.  Also, let $\bm{\nu} = T_{\infty}(\bm{\rho})$ be
+the generic $\bm{\nu}$ not specifically dependent on observation $i$.  The score is then calculated as
+\[
+S_i^{hKNN} = \frac{r_i^2 N\pi^{\frac{d-1}{2}}}{k\Gamma\left(\frac{d-1}{2} + 1\right)}
+\expect{D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}\given\bm{y},\bm{w}}.
+\]
+Note again that we are computing the two expectations separately.  The \emph{hKDE} score works in
+the same manner, this using kernel density estimation rather than $k$-nearest neighbors density estimation
+on $\mathbb{S}_{\infty}^{d-1}$;
+\[
+S_i^{hKDE} = r_i^2 \expect{\exp\left\lbrace -\frac{1}{2}
+    \left(
+    \frac{d\left(T_{\infty}\left(\expect{\bm{\nu}_i}\right), \bm{\nu})\right)}{h}
+    \right)^2
+    \right\rbrace \given \bm{y},\bm{w}
+    }.
+\]
+The \emph{lhKDE} score \makenote{rewrite sentence}
+\[
+S_i^{lhKDE} = r_i^2 \expect{\exp\left\lbrace-\frac{1}{2}\left(
+    \frac{d\left(\bm{\nu}_i, \bm{\nu}\right)}{h}\right)^2\right\rbrace\given \bm{y},\bm{w},\bm{y}_i,\bm{w}_i}
+\]
+The \emph{lmKDE} score serves as a comparison to the above three scores, which seek to unify all data 
+onto a single sphere and calculate a consistent distance metric.  Instead, \emph{lmKDE} evaluates 
+distances between angular data in its own space, and latent posterior class probabilities in its 
+own space, with the appropriate distance metric for each.  In effect, this combines \emph{hKDE} from
+the angular component and \emph{lsKDE} from the categorical component.
+\[
+S_i^{lmKDE} = r_i^2 \expect{
+\exp
+\left\lbrace 
+-\frac{1}{2}
+\left(
+\frac{d\left(\bm{v}_i, \bm{V}_i\right)}{h_{\bm{V}}}
+\right)^2
+-\frac{1}{2}
+\left(
+\frac{\lVert\bm{\pi}_i - \bm{\pi}\rVert_1}{h_{\bm{W}}}
+\right)^2
+\right\rbrace
+\given \bm{y},\bm{w},\bm{y}_i,\bm{w}_i}
+\]
+This choice to evaluate each component within its own space presents some loss of 
+    information as to the dependence structure between $\bm{y}$ and $\bm{w}$ within 
+    the score.  We will see to what extent that loss of information is damning.
 
+\subsection{Rank transformation and relaxing the assumption of independence\label{subsec:rank}}
+A valid critique of the model presented thus far is that in order to justify modelling
+    the radial component of $\bm{Z}$ independent its angular component---the fundamental
+    result of the multivariate extreme value theory presented---it is necessary to subset
+    data (and thus ability to score anomalies) strictly to those observations $\bm{X}$ 
+    which exceeded a large multivariate threshold in at least one dimension.  For some 
+    applications, this represents a very powerful data reduction with little loss of 
+    information pertaining to anomalies, as anomalies tend to be in the tails (see, for
+    example, \makenote{Insert table relating to anomaly prevalence in tails}).  For other
+    applications, this data reduction represents a significant loss of information about 
+    anomalies of anomalies being in the tails is not borne out.  For this second group, 
+    one available avenue is to relax the assumption of independence between the angular 
+    and radial components.
 
-\subsection{Mixed Model Kernel Metrics}
-\makenote{trash}
-For strictly angular data, the kernel metric detailed in~\cite{trubey:pg} can 
-  serve as a performant approximation to geodesic distance. in these 
-  anomaly detection metrics.  However, when we include categorical data to the 
-  analysis, this may require some adjustment of the kernel metric.  We elaborate 
-  on a few possibilities.
-
-In the first case, we can treat the categorical variables as merely sets of 
-  additional faces.  Data then lie along the intersection between their 
-  \emph{angular} face, and their \emph{categorical} face.
-  \begin{equation}
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
-        g\left((\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right)
-  \end{equation}
-  \makenote{This actually requires some additional work/thought.  We would have 
-  to transverse  $\sum_i(c_i - c_{i}^{\prime})^2$ faces at a minimum. I'm still 
-  trying to imagine how that works--as each point would lie on the intersection 
-  of some number of faces.}
-
-In the second case, we can regard categorical variables as canonically separate 
-  from the angular variables. A kernel metric in this case could be gathered as 
-  the linear combination of two kernels--the angular, and one relating to the 
-  categorical.  
-  \begin{equation*}
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
-      g(\bm{y},\bm{y}^{\prime}) + 
-          \frac{k}{1 + k}\lVert \bm{c} - \bm{c}^{\prime}\rVert_2
-  \end{equation*}
+Let $z_{i\ell} = \frac{1}{1 - \hat{F}(x_{i\ell})}$ be the \emph{rank-transformation} to
+    the standard Pareto scale.  The lower range of this transformation is bounded at 1.
+    For data transformed in this manner, let $r_i = \lVert \bm{Z}_i\rVert_{\infty}$ be the
+    radial component, $\bm{v}_i = \bm{z}_i/r_i$ the angular component of $\bm{z}_i$,
+    and $\bm{y}_i$ its projection onto $\mathbb{S}_p^{d-1}$.
     
-In the third case, rather than evaluating distance to $\bm{c}_i$, we can also 
-  evaluate distance to $\bm{\pi}_i$, the latent categorical probability of 
-  membership.  This is likely to result in a smoother decision curve.
-  \begin{equation*}
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
-      g(\bm{y},\bm{y}^{\prime}) + 
-          \frac{k}{1 + k}\lVert \bm{c} - \bm{\pi}^{\prime}\rVert_2
-  \end{equation*}
-
-  \[
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
-      g(\bm{y},\bm{y}^{\prime}) + 
-          \frac{k}{1 + k}\lVert \text{E}[\bm{\pi}] - \bm{\pi}^{\prime}\rVert_2
-  \]
-
-  \[
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
-      g(\bm{y},\bm{y}^{\prime}) + 
-          \frac{k}{1 + k}\lVert \text{E}[\bm{\rho}]_1 - \bm{\pi}^{\prime}\rVert_2
-  \]
-  
-  \begin{equation*}
-    D\left[(\bm{y},\bm{c}), (\bm{y}^{\prime}, \bm{c}^{\prime})\right] = 
-      g(\bm{y},\bm{y}^{\prime}) + 
-        \frac{k}{1 + k}\text{E}\left[\lVert \bm{\pi} - \bm{\pi}^{\prime}\rVert_2\right]
-  \end{equation*}
-
-  \[
-    \text{E}\lVert (R\bm{y},\bm{\rho}), (R^\prime\bm{Y}^\prime,\bm{\rho}^\prime)\rVert_2
-  \]
-
-
-And in the fourth case, we can project $\pi$ from $\mathbb{S}_1$ to 
-  $\mathbb{S}_{\infty}$, allowing use of the previously developed kernel.
-  \begin{equation*}
-    D\left[(\bm{y},\bm{\pi}), (\bm{y}^{\prime}, \bm{\pi}^{\prime})\right] = 
-      \text{E}\left[ g\left((\bm{y},\bm{\pi}_{\infty}), 
-            (\bm{y}^{\prime},\bm{\pi}_{\infty}^{\prime})\right)\right]
-  \end{equation*}
-
-The addition of categorical data to the analysis may require some adju
-
-\begin{equation*}
-  S_i^{\text{lekde}} = 
-  \text{E}\left[\exp\left\lbrace-\frac{1}{2}\left(\frac{\lVert R_i\bm{v}_i - R\bm{V}\rVert}{h}\right)^2\right\rbrace\right]
-\end{equation*}
-
-\begin{equation*}
-  S_i^{\text{lhkde}} = 
-  \text{E}\left[ \exp\left\lbrace-\frac{1}{2}\left(\frac{d(bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\right]
-\end{equation*}
-
-Much ink has been spilled discussing the selection of the bandwidth parameter $h$.
-
-\subsection{Mixed Model Anomaly Scores}
-Let $T_{\infty}(\cdot)$ be the projection function onto the unit hypersphere.  As before, let $\bm{\rho}$ be the latent categorical probability vectors, not normalized to $\mathbb{S}_1$  Then, translating the scores in Equations~(\ref{eqn:ad_kde_h},\ref{eqn:ad_kde_e}) to the mixed data domain, we arrive at
-\begin{equation}
-    \label{eqn:ad_kde_mhl}
-    S_i^{lhKDE} = \text{E}\left[
-    \exp\left\lbrace
-    -\frac{1}{2}\left(
-    \frac{d(T_{\infty}(R_i\bm{v}_i,\rho_i), T_{\infty}(R\bm{V},\bm{\rho})}{h}
-    \right)^2
-    \right\rbrace 
-    \mid \bm{v},\bm{w},\bm{v}_i, \bm{w}_i\right]
-\end{equation}
-
-\begin{equation}
-    \label{eqn:ad_kde_mel}
-    S_i^{leKDE} = \text{E}\left[
-    \exp\left\lbrace
-    -\frac{1}{2}\left(
-    \frac{\lVert(R_i\bm{v}_i,\bm{\rho}_i) - (R\bm{V},\bm{\rho})\rVert_2}{h}
-    \right)^2
-    \right\rbrace
-    \mid
-    \bm{v},\bm{w},\bm{v}_i,\bm{w}_i
-    \right]
-\end{equation}
-These scores involve a double 
-
-
-
-\begin{equation}
-    \label{eqn:ad_kde_mh}
-    S_i^{hKDE} = \text{E}_{\bm{V},\bm{\rho}}\left[
-    \exp\left\lbrace
-    -\frac{1}{2}\left(
-    \frac{d(T_{\infty}(\text{E}(R_i\bm{v}_i,\bm{\rho}_i)), T_{\infty}(R\bm{V},\bm{\rho})}{h}
-    \right)^2
-    \right\rbrace 
-    \mid \bm{v},\bm{w},\bm{v}_i, \bm{w}_i\right]
-\end{equation}
-
-\begin{equation}
-    \label{eqn:ad_kde_me}
-    S_i^{eKDE} = \text{E}\left[
-    \exp\left\lbrace
-    -\frac{1}{2}\left(
-    \frac{\lVert\text{E}(R_i\bm{v}_i,\bm{\rho}_i) - (R\bm{V},\bm{\rho})\rVert_2}{h}
-    \right)^2
-    \right\rbrace
-    \mid
-    \bm{v},\bm{w},\bm{v}_i,\bm{w}_i
-    \right]
-\end{equation}
+Because under the rank transformation the data is no longer subject to thresholding, 
+    we can no longer make the assumption that angles are independent of radius.  Instead,
+    we can include the radius within the model.  As the radius is on the range $[1,\infty)$, 
+    a logical choice of kernel for modeling it is the Pareto density, with shape parameter 
+    $\alpha_r$.  
+    \begin{equation}
+        \label{model:rank}
+        (\bm{y}_i,\bm{w}_i,r_i) \sim \int_{\bm{\alpha}}
+            \mathcal{PRG}(\bm{y}_i\mid\bm{\alpha}_{\bm{y}})\;
+            \mathcal{CDM}(\bm{w}_i\mid\bm{\alpha}_{\bm{w}})\;
+            \mathcal{P}(r_i\mid\alpha_r)\;
+            \text{d}G(\bm{\alpha})
+    \end{equation}
+    As $\alpha_r > 0$, a logical centering distribution for it would be the log-normal distribution.
+    So this choice of modelling fits in very well with the expansion we have previously explored
+    in Equation~\ref{eqn:modelcat}, effectively adding one dimension to the mean vector and
+    covariance matrix.  The scores developed previously in Section~\ref{sec:mixedscores} 
+    remain applicable.
 
 % EOF

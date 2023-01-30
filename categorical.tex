@@ -1,4 +1,4 @@
-\section{Binary and Categorical Data}
+\section{Binary and Categorical Data\label{sec:categorical}}
 Many applications for which novelty detection methods might be applied will 
     feature both real and categorical data.  The \makenote{rewrite} The most apparent 
     shortcoming of the projected Gamma model developed in~\cite{trubey:pg} is
@@ -15,11 +15,11 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
     established as
   \begin{equation}
     \label{eqn:dirmultinom}
-    \bm{w}_{im}\mid\bm{\theta} 
+    \bm{w}_{im}\mid\bm{\alpha} 
     \sim 
     \int_{\pi_{im}} 
     \text{Multinom}(\bm{w}_{im}\mid\pi_{im})
-    \text{Dir}(\pi\mid\bm{\theta})\text{d}\pi_{im}.
+    \text{Dir}(\pi\mid\bm{\alpha})\text{d}\pi_{im}.
   \end{equation}
   Recall that the Dirichlet distribution is a special case of the projected gamma,
   where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  We 
@@ -36,7 +36,7 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
   \begin{equation}
     \label{eqn:modelcat}
     \begin{aligned}
-      \bm{W}_i \mid \bm{\alpha}_i &\sim \mathcal{CDM}\left(\bm{W}_i\mid\bm{\alpha}_i\right)\\
+      \bm{w}_i \mid \bm{\alpha}_i &\sim \mathcal{CDM}\left(\bm{w}_i\mid\bm{\alpha}_i\right)\\
       \bm{\alpha_i} &\sim G\\
       G &\sim \mathcal{DP}\left(\eta, G_0\right)\\
     \end{aligned}
@@ -56,26 +56,104 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
   This value corresponds to the covariance of a categorical variable where all 
   category probabilities are equal.
 
-\subsection{Anomaly Detection Methods for Categorical Data}
+\subsection{Anomaly Detection Methods for Categorical Data\label{subsec:catscores}}
 To establish an anomaly detection algorithm using the data model described in 
   Equation~\ref{eqn:modelcat}, we establish a method using logic similar to that
-  described in Section~\ref{sec:novelty}.   
+  described in Section~\ref{sec:novelty}.  We desire a transformation that can be
+  projected onto the unit sphere $\mathbb{S}_{\infty}^{d-1}$.  To that end, rather
+  than using $\bm{w}_i$ directly, we use data augmentation to generate the latent 
+  $\bm{\rho}_i$, the unnormalized posterior class probabilities for observation $i$, 
+  sampled given $\bm{w}_i$.  Compared to establishing distances based on $\bm{w}_i$, 
+  this affords us a distinct advantage: distance metrics between transformations of
+  $\bm{\rho}\mid\bm{w}_i$ and $\bm{\rho}$ from the posterior predictive 
+  distribution are straightforward, whereas the distance between $\bm{w}_i$ and $\bm{W}$ 
+  is less so \cite{Alamuri2014}. We develop four methods: applications of the KNN and 
+  KDE metrics previously established.  Hereafter, let $\bm{\nu} = T_{\infty}\left(\bm{\rho}\right)$, 
+  the projection of the latent $\bm{\rho}$---the random vector of unnormalized class 
+  probabilities---onto $\mathbb{S}_{\infty}^{d-1}$.  Let $\bm{\pi}_{m} = T_{1}(\bm{\rho}_m)$,
+  the projection of the $m$th component of $\rho$, corresponding to the $m$th categorical 
+  variable, onto the unit simplex. Thus $\bm{\pi}$ is the normalized probability vector.
+  This notation, that $\bm{\nu}$ and $\bm{\pi}$ are projections of the latent $\bm{\rho}$ vector, also applies
+  to the observational unit $i$.  That is $\bm{\nu}_i = T_{\infty}(\bm{\rho}_i)$.
+  Making an abuse of notation for simplicity of presentation, 
+  let $\expect{\bm{\nu}_i} = T_{\infty}(\expect{\bm{\rho}_i})$.\makenote{this is literally wrong, but the expectation otherwise wouldn't necessarily fall on $\mathbb{S}_{\infty}^{d-1}$, so...}
+  Note, categorical data has no radius so the adaptation of the angular scores to
+  the categorical space omits the radial component.
 
-  \paragraph{expectation of projection onto unit sphere, hKNN}
+The hypercube KNN \emph{(hKNN)} metric applied to the latent projected $\mathcal{S}_{\infty}$ space
+  uses the negative definite kernel metric previously established to estimate distance
+  between $\expect{\bm{\nu}_i}$ and $\bm{\nu}$.  The score takes the form:
+\begin{equation}
+   \label{score:cat_hknn}
+   \begin{aligned}
+   S_i^{hKNN} &= \text{E}\left[\frac{N}{k}
+        \frac{\pi^{\frac{d-1}{2}}D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}}{\Gamma\left(\frac{d-1}{2} + 1\right)}
+   \given\bm{w}\right]\\
+   &= \frac{N\pi^{\frac{d-1}{2}}}{k\Gamma\left(\frac{d-1}{2} + 1\right)}\text{E}\left[D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}\given \bm{w}\right],
+   \end{aligned}
+\end{equation}
+where $D_{k}\left[T_{\infty}(\text{E}\bm{\nu}_i)\right]$ measures the distance 
+  from the  $\expect{\bm{\nu}_i}$ to the $k$th 
+  nearest replicate from a sample from the posterior predictive distribution for $\bm{\nu}$.  
+  This projection places all the class probabilities within the same sphere and subject to the 
+  same distance measure.  Note here we are first taking the expectation of $\bm{\nu}_i$, then 
+  the expectation of the kernel metric taken to the $d-1$ power.
 
-  \paragraph{expectation of projection onto unit sphere, hKDE}
+The \emph{hKDE} score applied to the categorical space operates in much the same way.  
+    We compute $\expect{\bm{\nu}_i}$, and employ the same kernel metric to compute 
+    distance from a sample from the posterior predictive distribution.  
+    From there, however, we employ kernel density estimation 
+    \makenote{include either citation or callback} 
+    to compute local density for observation $i$.  The score is then
+\begin{equation}
+    \label{score:cat_hkde}
+    S_i^{hKDE} = \text{E}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{
+    d\left[\expect{\bm{\nu}_i}, \bm{\nu}\right]}{h}
+    \right)^2
+    \right\rbrace 
+    \given \bm{w}\right]
+\end{equation}
+This differs from the previous score only in the method of density estimation used.  
+    We use the same routine for calculating $h$ previously established.  An exploration 
+    of manually tuning $h$ was performed, but the score orders produced did not consistently 
+    outperform this variant of the rule of thumb estimator.
 
-  \paragraph{Latent projection onto unit sphere, LHKDE}
+In the \emph{hKDE} metric, we computed two integrals separately: first 
+    $\expect{\bm{v}_{\bm{w}_i}}$, then the kernel score.  In the latent hypercube 
+    KDE \emph{(lhKDE)}, we compute those integrals simultaneously.
+  \begin{equation}
+    \label{score:cat_lhkde}
+    S_i^{lhKDE} = \text{E}\left[
+    \exp\left\lbrace
+    -\frac{1}{2}\left(
+    \frac{d(\bm{\nu}_i, \bm{\nu})}{h}
+    \right)^2
+    \right\rbrace 
+    \mid \bm{w}, \bm{w}_i
+    \right]
+  \end{equation}
+\makenote{experimenting with notation $\bm{\upsilon}, \bm{v}, \bm{\nu}, \dot{\bm{v}}$}
+Computing this on a sample of size $S$ is necessarily more expensive than \emph{hKDE}, 
+    as it requires averaging $S^2$ samples.  However, first computing 
+    $\expect{\bm{v}_{\bm{w}_i}}$ arbitrarily removes a significant degree of 
+    uncertainty around the distribution of $\bm{v}_{\bm{w}_i}$, which may be relevant.
 
-  \paragraph{Latent Manhattan Distance, LSKDE}
-  
-  
-  \makenote{Make the equations for categorical data \emph{here}.   The completed
-    forms in the mixed data section will reference these forms.}
-
-
-
-
+If, instead of projecting the unnormalized probability vectors onto a unified 
+    hypersphere, we normalize them, or project each $m$-component onto its 
+    own simplex, and using Manhattan distance, we arrive at the latent simplex KDE \emph{(lsKDE)}.
+\begin{equation}
+    \label{score:cat_lskde}
+    S_i^{lsKDE} = \text{E}\left[\exp\left\lbrace
+        -\frac{1}{2}\left(
+        \frac{\lVert \bm{\pi}_i - \bm{\pi}\rVert_1}{h}
+        \right)^2
+        \right\rbrace
+        \mid \bm{w},\bm{w}_i
+        \right]
+\end{equation}
 
 
 % EOF

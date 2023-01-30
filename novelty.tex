@@ -35,22 +35,26 @@ Building on the notion that anomalies occur in areas of low density, a simple
   are not going to behave properly and are undesireable.}
 
 One way around this issue would be the use of a non-parametric density estimation
-  routine on a sample from the fitted posterior predictive distribution.  We 
-  consider two such well-established methods: 
+  routine on a sample from the fitted posterior predictive distribution.  
+  We consider two such well-established methods: 
   $k$-nearest neighbors, or \emph{$k$NN}, 
   and kernel density estimation, or \emph{KDE}.
+  These estimators of local density will act on the angular component of the observation,
+  $\bm{v}_i$.  We also have available the radial component $r_i$, and under the
+  assumptions of multivariate EVT, $f(\bm{v},r) = f_{\bm{v}}(\bm{v})\;f_{r}(r)$.  As such,
+  we multiply the angular scores by $r_i^{-2}$, the density of the standard pareto
+  distribution at $r$.
 
 \subsection{$k$-Nearest Neighbors Density estimation}
 \makenote{Needs citation for KNN}
-We establish a local posterior predictive density under the $k$NN estimator by 
+The local posterior predictive density under the $k$NN estimator is established by 
   assuming a locally uniform density within a $d$ dimensional ball $\mathbb{B}$, 
   centered on observation $i$, with radius $D_{k}^d(x_i)$ calculated as the 
   distance to the $k$th nearest neighbor to observation $i$ in a sample from the 
   posterior predictive distribution. The volume of the ball is calculated as
   \begin{equation}
     \label{eq:vol_sphere}
-    \text{Vol}(\mathbb{B}_d^k) = 
-      \frac{2\pi^{\frac{n}{2}}}{d}
+    \text{Vol}(\mathbb{B}_d^k) =
       \frac{\pi^{\frac{d}{2}}D_{k}(\bm{x}_i)^d}{\Gamma\left(\frac{d}{2} + 1\right)}
   \end{equation}
   where $D_k(\bm{x}_i)$ is the distance from $\bm{x}_i$ to the $k$th nearest 
@@ -69,7 +73,7 @@ When implementing this analysis on the hypercube, we lose one degree of freedom,
   scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
   \begin{equation}
     \label{eq:ad_knn_h}
-    S_i^{hKNN} = \frac{2N}{(d-1)k}
+    S_i^{hKNN} = \frac{r_i^{2}N}{k}
     \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{\Gamma\left(\frac{d-1}{2} - 1\right)}
   \end{equation}
   This is of course an approximation to the true posterior predictive density at
@@ -123,18 +127,8 @@ To develop a bandwidth parameter, we employ a univariate variation on Silverman'
  
 \begin{equation}
     \label{eqn:ad_kde_h}
-    S_i^{\text{hKDE}} = \text{E}\left[\exp\left\lbrace -
+    S_i^{\text{hKDE}} = r_i^{2}\text{E}\left[\exp\left\lbrace -
     \left(\frac{d(\bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\mid\bm{v}\right]
 \end{equation}
 
-\subsection{Incorporating radial information in novelty scores}
-Finally, the methods we have established thus far establish novelty scores in 
-  the \emph{angular} sense.  In the manner established in \cite{goix2017}, we 
-  combine the angular scores thus far developed with the radial values 
-  $r_i = \lVert Z \rVert_{\infty}$.  Recall that $r_i$ follow the standard 
-  Pareto distribution, and under that distribution, $P(R > r) = r^{-1}$.  Then
-  \[
-    S_i^{\prime} = r_iS_i
-  \]
-
-  % EOF
+% EOF
