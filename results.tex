@@ -9,13 +9,15 @@ We tested our scores against several labelled datasets.  These included some str
 \begin{table}[ht]
     \centering
     \caption{Characteristics of datasets used in analysis\label{tab:data}}
-    \makenote{Here lies a table of characteristics of datasets used in analysis.  
-    Imagine first column dataset name, second column number of obsv. original, third 
-    threshold; 4th prevalence of anomalies/above threshold, fourth number of obsv. 
-    after thresholding (include whether subsampling was used), 5th number of obsv. 
-    included in rank (include whether subsampling was used); 6th number of obsv. 
-    included in categorical (include whether subsampling was used).  that's too 
-    many columns.  need to work on this.}
+    \bigskip
+    \input {./tables/data_summary}
+    % \makenote{Here lies a table of characteristics of datasets used in analysis.  
+    % Imagine first column dataset name, second column number of obsv. original, third 
+    % threshold; 4th prevalence of anomalies/above threshold, fourth number of obsv. 
+    % after thresholding (include whether subsampling was used), 5th number of obsv. 
+    % included in rank (include whether subsampling was used); 6th number of obsv. 
+    % included in categorical (include whether subsampling was used).  that's too 
+    % many columns.  need to work on this.}
 \end{table}
 
 We compared the four developed scores against three canonical novelty detection algorithms,
@@ -37,7 +39,7 @@ The categorical transformation of \emph{cover}, \emph{pima}, and \emph{yeast}
         on \emph{strictly categorical} datasets.  Reported here is arithmetic mean of 
         out-of-sample performance for 5-fold cross-validation.  Values closer to 1 are preferred.\label{tab:perfcat}}
     \bigskip
-    \input{./tables/ad_cat_performance}
+    \input{./tables/ad_cat_performance_update}
 \end{table}
 The dataset \emph{solarflare} was also unique in our analysis, being the only truly 
     categorical dataset used.  Our algorithm \emph{lsKDE} very slightly trailed the
@@ -82,7 +84,7 @@ We subjected six datasets to multivariate thresholding, only keeping observation
         standard Pareto transformation.   Reported here is arithmetic mean of 
         out-of-sample performance for 5-fold cross-validation.  Values closer to 1 are preferred.\label{tab:perfreal}}
     \bigskip
-    \input{./tables/ad_real_performance}
+    \input{./tables/ad_real_performance_update}
 \end{table}
 
 As to the poor performance of every method on \emph{pima} and \emph{yeast}, these reported
@@ -107,7 +109,7 @@ We subjected the same six datasets used in the peak-over-threshold model to rank
         standard Pareto transformation. Reported here is arithmetic mean of 
         out-of-sample performance for 5-fold cross-validation.  Values closer to 1 are preferred.\label{tab:perfrank}}
     \bigskip
-    \input{./tables/ad_rank_performance}
+    \input{./tables/ad_rank_performance_update}
 \end{table}
 
 Here \emph{lmKDE} performs better than each of the canonical methods in four of six
