@@ -1,4 +1,29 @@
 \section{Novelty Detection Methods\label{sec:novelty}}
+As previously stated, a novelty detection algorithm produces an anomaly score which
+    provides a ranked ordering of which observations are likely to be anomalous.
+    Building on the notion that anomalies occur in areas of low density, a simple
+    score might establish for observation $x_i$, \[S_i = f_{x}(x\mid\mathcal{D})^{-1}\]
+    where $\mathcal{D}$ is the observed data.  That is, the inverse of the posterior
+    predictive density at observation $x_i$.  
+    
+    
+    
+    
+    
+    As applied to angular data, this presents
+    us something of a problem:  
+
+
+
+
+\add{\bf This whole section needs to rewritten. First we have to connect to 
+the previous section. As a result of what the methods presented in the previous
+section we have a sample from the angular density that characterizes the 
+extreme behavior of our observations. We have samples, but we have no way to
+evaluate it. At this point you provide information about estimated of the 
+density, and then you have to mention that a measure of distance on 
+${\mathbb S}_{\infty}^{d-1}$, and you refer to the previous paper.}
+
 We can consider a novelty detection algorithm as a function that assigns a
   novelty score $S_i$ to observation $i$.  We interpret a larger $S_i$
   as indicative that the observation is more likely to be anomalous.
@@ -6,10 +31,10 @@ We can consider a novelty detection algorithm as a function that assigns a
 Building on the notion that anomalies occur in areas of low density, a simple
   score might establish
   \[
-      S_i = f_{\bm{v}}(\bm{v}_i\mid \bm{V})^{-1}.  
-  \]
-  That is, the reciprocal of the fitted density, $f_{\bm{v}}\mid \bm{V}$ at the 
-  point $\bm{v}_i$.
+      S_i = f_{\bm{x}}(\bm{x}_i\mid \mathcal{D})^{-1}.  
+  \]  
+  where $\mathcal{D}$ denotes all observed data.  That is, the reciprocal of the 
+  fitted posterior predictive density, $f_{\bm{x}}\mid \mathcal{D}$ at $\bm{x}_i$.
   As previously established in Section~\ref{sec:evt}, density estimation on the 
   surface of ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem, so for 
   purposes of establishing inference on the dependence structure of the data 
@@ -46,8 +71,8 @@ One way around this issue would be the use of a non-parametric density estimatio
   distribution at $r$.
 
 \subsection{$k$-Nearest Neighbors Density estimation}
-\makenote{Needs citation for KNN}
-The local posterior predictive density under the $k$NN estimator is established by 
+We establish a local posterior predictive density under the $k$-Nearest Neighbor 
+    estimator \citep{mack1979} by
   assuming a locally uniform density within a $d$ dimensional ball $\mathbb{B}$, 
   centered on observation $i$, with radius $D_{k}^d(x_i)$ calculated as the 
   distance to the $k$th nearest neighbor to observation $i$ in a sample from the 

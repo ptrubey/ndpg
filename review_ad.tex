@@ -1,37 +1,41 @@
-\subsection{Review of Novelty Detection Regimes}
+%\subsection{Review of Novelty Detection Regimes}
 
 The complete field of anomaly detection is vast.  However, most methods can be 
     roughly grouped into three core ideas: statistical model approaches, 
     non-statistical model approaches, and clustering methods. Core to the 
-    development of a method lies a basic question, \emph{what is an anomaly?}  
-    The answer to this question depends on application and what we hope to
-    learn.  For instance, in a regression setting, observations that produce 
-    large outliers, or exhert outsized influence on parameter estimates, might 
-    be considered anomalous.  In a classification setting, common to most 
+    development of a method lies a basic the question of what is an anomaly.  
+    The answer to this question depends on what we hope to
+    learn in a specific application.  For instance, in a regression setting, 
+    observations that produce large outliers, or exert outsized influence on parameter 
+    estimates, might be considered anomalous.  Common to most 
     methods of anomaly detection is the belief that anomalous data is in some 
-    manner \emph{different} than \emph{normal} data. This belief is extrapolated
-    into the assumption that data belonging to regions of relative data sparsity
-    are more likely to be anomalous.  Methods in this field work in some fashion
-     to identify these regions of relative data sparsity.
+    manner different than the rest of the data. This belief implies that data 
+    belonging to regions of relative data sparsity are more likely to be 
+    anomalous, and thus, the goal is to identify the regions of relative 
+    data sparsity. It is common in most approaches not to assume the existence of 
+    labels in the training dataset, meaning anomaly detection is an unsupervised learning
+    problem.  Instead we seek anomaly \emph{scores}, which rank observations in terms of
+    probability of being anomalous.  The decision threshold---the score value above which
+    observations would be declared anomalous---is then set heuristically.
+    
+    \add{\bf We need references in this paragraph}
 
-\paragraph{Statistical Models} for anomaly detection attempt to model the 
-    distribution of data, with the goal that the model can be to estimate the 
-    data density around an observation. The assumption made is that observations
-    in regions of low estimated density are more likely to be anomalous.  This 
-    can include non-parametric density estimation routines such as the 
-    $k$-Nearest Neighbors, or \emph{$k$-NN}~\citep{kramer2013}; kernel density 
-    estimation routines such as the Parzen-Rosenblatt windowing 
-    method~\citep{parzen1962,rosenblatt1956}.  This can also include parametric 
-    density estimation routines, such as Gaussian mixture 
-    models~\citep{mcnicholas2010}.
+{\bf Statistical Models} for anomaly detection attempt to model the distribution of data, 
+    with the goal of estimating the data density around an observation. The core assumption 
+    is that observations in regions of low estimated density are more likely to be anomalous.  
+    Common methods include non-parametric density estimation based on $k$-Nearest Neighbors, 
+    or \emph{$k$-NN}~\citep{kramer2013}; kernel density estimation approaches such as the 
+    Parzen-Rosenblatt windowing method~\citep{parzen1962,rosenblatt1956}; and semi-parametric
+    density estimation methods, such as Gaussian mixture models~\citep{mcnicholas2010}.
+    Local Outlier Factor~\cite{breunig2000} is an example of an anomaly score using a
+    non-parametric density estimator.
 
-\paragraph{Clustering Methods} tend to sort data into groups \emph{near} 
-    each-other.  These rely on \emph{distance} metrics and tend to make no 
-    assumptions regarding the underlying distribution of the data.  We can 
-    further sub-divide this sub-field into density-based, centroid-based, and 
-    linkage-based clustering methods.  For all of these methods, we can regard 
-    observations with less association to their identified cluster as being more
-    anomalous.
+{\bf Clustering Methods} group data into clusters of similar observations.
+    The grouping tends to rely on distance metrics and generally makes no assumptions 
+    regarding the underlying distribution of the data.  We can further sub-divide this 
+    sub-field into types of clustering methods: linkage-based, centroid-based, and density-based. 
+    These methods as applied to the field of anomaly detection assume that anomalous observations
+    tend to stand apart from non-anomalous data.\add{\bf We need references here as well.}
 
 Linkage-based clustering methods group data based on pairwise distance 
     point-to-point, or between elements of clusters.  \cite{ackerman2010} offers
@@ -43,35 +47,112 @@ Linkage-based clustering methods group data based on pairwise distance
     between clusters under whatever metric of distance is used, along with 
     minimizing distance within clusters.  An observation's anomaly score might 
     be a function of distance to its nearest neighbor within its assigned 
-    cluster, or distance to its assigned cluster's centroid.
+    cluster.
 
-Centroid based clustering methods instead generate $k$ cluster centroids 
-    according to some metric, then an observation's \emph{anomaly} score is a 
-    function of the distance from that observation to the nearest cluster 
-    centroid.  The algorithm used to find the cluster centroids is also 
-    variable, changing what metric is optimized in finding the location of the
-    centroids.  The very popular \emph{$k$-Means} \citep{hartigan1979} is an 
-    example of this type of method.  Under $k$-Means, cluster assignment is 
-    decided by minimizing within-cluster distance, which for a given $k$ 
-    simultaneously maximizes between-cluster distance.
-
-Density based clustering methods will use pairwise distances to establish some 
-    measure of local density, then establish local modes as clusters.
-    \emph{DBSCAN}~\citep{ester1996} follows this, by forming neighborhoods of 
-    observations and establishing labels based on the neighborhood.
-
-\paragraph{Non-Statistical Models} beyond clustering are generally adaptations 
-    of general classification methods here applied to unsupervised learning.  
+Centroid based clustering methods instead generate cluster centroids 
+    according to some metric.  The algorithm used to find the cluster centroids 
+    depends on a chosen metric.  The very popular $k$-Means~\citep{hartigan1979} is
+    an example of this approach. Under $k$-Means, cluster assignment is determined 
+    by minimizing within-cluster distance among $k$ clusters, which simultaneously 
+    maximizes between-cluster distance. For each observation, and anomaly score may be
+    obtained as a function of its distance to the nearest cluster centroid.  
+    
+Density based clustering methods use pairwise distances between observations to 
+    establish a measure of local density, then establish local modes as clusters.
+    \emph{DBSCAN}~\citep{ester1996} follows this approach, forming neighborhoods 
+    of observations and assigning labels based on the neighborhood. 
+    
+{\bf Non-Statistical Models} beyond clustering are generally adaptations 
+    of general classification methods, applied to unsupervised learning.  
     The Isolation Forest~\citep{liu2000}, adapted from random 
     forests~\citep{breiman2001}, uses decision trees to isolate observations.
     Those observations that are more easily isolable are regarded as more 
-    anomalous.  One-class SVM~\citep{chang2011} is a variant of the support 
-    vector machine classification system optimized towards anomaly detection, 
-    where in a similar manner to the support vector machine using support 
-    vectors to describe a decision boundary in kernel space separating classes 
-    of data, the one-class SVM uses support vectors to describe a decision 
-    boundary in said kernel space around \emph{normal} behavior. A higher 
-    distance to that decision boundary on the anomalous side is regarded as 
-    more anomalous.
+    anomalous.  One-class Support Vector Machines~\citep{chang2011} is a variant
+    of the support vector machine classification system, optimized for 
+    anomaly detection.  One-class SVM uses support vectors to describe a decision 
+    boundary in kernel space around normal behavior. A higher distance to 
+    that decision boundary on the anomalous side is regarded as more anomalous.
+    
+The intersection of extreme value theory and anomaly detection is a current 
+    topic of research.  Some methods employ univariate EVT on estimated densities
+    calculated via other means, such as \cite{clifton2011} using a Gaussian Mixture model, 
+    and \cite{gu2021} using a Gaussian process.  Both then employ EVT on the 
+    estimated densities to establish a decision threshold theoretically, thereby avoiding
+    the process of determining the threshold heuristically.
+
+The application of multivariate extreme value theory to anomaly detection is based on the 
+    assumption that extreme observations are more likely to be anomalous, as argued
+    in \cite{goix2017}. In fact, extreme observations exist at the border between 
+    anomalous and non-anomalous regions, and it is often the case that the 
+    probability an individual observation being anomalous is higher for data in the 
+    tails of the distribution. This relative abundance of anomalies among extremes might 
+    cause a naive classifier, that does not take into account the dependence structure 
+    of extremes, to classify all extremes as anomalous. Yet, extreme observations 
+    that cluster into a homogenous group should not be considered anomalous.
+    \cite{goix2017} offers one example of considering the dependence structure of extremes;
+    subjecting the data to the standard Pareto transformation 
+        $T(x) = \frac{1}{1 - \hat{F}(x)}\;\in\;[1,\infty)$, 
+    and partitioning the space $[1,\infty)^d$ into $\alpha$-cones---where $\alpha$ indicates
+    which dimensions are in excess of a threshold---and bins data according to which 
+    $\alpha$-cone it falls into.  $\alpha$-cones with few observations are 
+    analogous to lower-density regions, so observations falling into these cones
+    are considered more likely to be anomalous.
+
+A central result of multivariate EVT is that, conditional on an observation being 
+    extreme, its radial component---or magnitude---is independent of its angular component.
+    In this paper, We fit a Bayesian non-parametric mixture of projected gammas to the angular 
+    component, and use samples from its posterior predictive distribution to compute an estimate
+    of the density of the angular component.   Direct estimation of density via a fitted model
+    is difficult, owing to the bounded nature of the angular distribution.  Instead, we employ
+    non-parametric density estimators including $k$-nearest neighbors and kernel density
+    estimation to produce estimates of angular density.  Further, to expand the applicability
+    of this algorithm, we produce an extension of the BNP projected gamma model to include 
+    categorical data.   Standing alone, this component represents a highly flexible density 
+    model for categorical data, and it efficiently pairs with the projected gamma model for 
+    angular data.  We develop several anomaly scoring metrics applicable to the angular data,
+    categorical data, and \emph{mixed} data regimes.  The major contributions of this paper are
+    thus three-fold: we establish a flexible distribution on categorical data that efficiently
+    captures the dependence structure between categories in multiple variables, as well as anomaly
+    scores in this regime.  We establish an anomaly detection algorithm for extreme data that 
+    accounts for the dependence structure between extremes, approaching density estimation in a 
+    continuous space rather than discrete binning in a partition of the space.  Finally, we provide
+    a means of linking scores developed in these two regimes.
+    
+    % employs a theoretical argument from EVT to establish a threshold
+    % such that it partitions the space $[1,\infty)^d$ into $\alpha$-cones, where 
+    % $\alpha$ indicates which dimensions exceed the threshold.  It then submits 
+    % real data to the standard Pareto transformation,
+    % $T(x) = \frac{1}{1 - \hat{F}(x)}$, and bins the data according to which 
+    % $\alpha$-cone it falls in.  $\alpha$-cones with few observations are 
+    % analogous to lower-density regions, so observations falling into these cones
+    % are considered more likely to be anomalous.
+    
+    
+    
+    
+    % For this reason, in this paper we develop approaches that account for the 
+    % dependence structure of the tails of the distribution.
+
+
+
+
+  % \add{\bf We need a paragraph where we summarize what we are proposing, emphasizing the 
+  % challenges of the problem, and how we solved them, to argue why this is a valuable contribution.}
+   
+% \add{\bf Here we need a roadmap to the paper. }
+
+From here on, the paper proceeds as follows: Section~\ref{sec:evt} provides a brief review of 
+    multivariate EVT, explaining the separation of the radial and angular components of the
+    extreme data, as well as an introduction of the angular data model.  Section~\ref{sec:novelty} 
+    introduces our anomaly scores for angular data, describing the density estimation methods 
+    employed, as well as how radial information is incorporated.  Section~\ref{sec:categorical} 
+    introduces our flexible categorical data model, along with anomaly scores based on it. 
+    Section~\ref{sec:mixedscores} provides a link between the two regimes; anomaly scores that 
+    include information from both categorical and angular data.  Section~\ref{subsec:rank} employs 
+    the same rank transformation used in \cite{goix2017} to apply the angular data model to data 
+    not already assumed to be in excess of a threshold, widening the applicability of our metrics.
+    Section~\ref{sec:results} provides the resulting performance of our anomaly scores as applied 
+    to seven reference anomaly detection datasets, as well as comparing to three canonical anomaly 
+    scoring methods.  Finally, Section~\ref{sec:conclusion} concludes.
 
  % EOF

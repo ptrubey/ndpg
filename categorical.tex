@@ -1,10 +1,10 @@
 \section{Binary and Categorical Data\label{sec:categorical}}
-Many applications for which novelty detection methods might be applied will 
-    feature both real and categorical data.  The \makenote{rewrite} The most apparent 
-    shortcoming of the projected Gamma model developed in~\cite{trubey:pg} is
-    its inability to handle binary or categorical data.  In order to ameliorate this
-    shortcoming, and as an added bonus propose a new method for anomaly detection in
-    categorical data, we propose the following.
+In the previous sections we have used extreme value theory to obtain samples
+    from the tail distribution of a given sample of observations. Unfortunately 
+    those results can only be applied to continuous random variables.
+    Many applications novelty detection problems feature both real and categorical 
+    data, so here we consider an extension of the projected gamma mixture model to 
+    handle categorical observations. 
 
 Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$ 
     is a random categorical variable, with $K_{m} \geq 2$ categories. Regard $\bm{W}$ 
@@ -12,33 +12,41 @@ Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$
     length $K = \sum_{m = 1}^M K_{m}$, $\sum_{k = 1}^K W_k = M$, and every $m$ subset 
     of $\bm{W}$ sums to 1.  This corresponds to multinomial encoding for $\bm{C}_m$,
     with size 1. We then consider a Dirichlet-multinomial density for $\bm{W}_m$,
-    established as
-  \begin{equation}
-    \label{eqn:dirmultinom}
-    \bm{w}_{im}\mid\bm{\alpha} 
-    \sim 
-    \int_{\pi_{im}} 
-    \text{Multinom}(\bm{w}_{im}\mid\pi_{im})
-    \text{Dir}(\pi\mid\bm{\alpha})\text{d}\pi_{im}.
-  \end{equation}
-  Recall that the Dirichlet distribution is a special case of the projected gamma,
-  where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  We 
-  investigated the general $\mathcal{PG}_1$ to replace the Dirichlet in 
-  Equation~\ref{eqn:dirmultinom}, but a closed-form solution to the integral was 
-  not available.  That said, we observe in \cite{trubey:pg}, that as a kernel 
-  density in a Dirichlet process mixture, there was no demonstrable performance 
-  advantage to allowing the rate parameters to vary.
+    established as \add{\bf This paragraph needs more clarity. In particular, the 
+    notation needs to be consisten: Bold face for vectors; Capital letters for random
+    variables. Thus a random vector is bold face capitalized. Then there is the story of
+    the Dirichlet-multinomial that needs more explanation. We say that $C_m$ (or is it 
+    $\bm{C}_m$?) is multinomial. Then we say that, to deal with overdispersion, we consider
+    a Dirichlet-Multinomial, as a generalization of the beta-binomial. Then you write,
+    explicitly, how the $PG_1$ is brought in. Finally, you bring the Pitman Yor mixture
+    and comment that we have proposed a very flexible model for categorical data.}
+    \begin{equation}
+        \label{eqn:dirmultinom}
+        \bm{w}_{im}\mid\bm{\alpha} 
+        \sim 
+        \int_{\pi_{im}} 
+        \text{Multinom}(\bm{w}_{im}\mid\pi_{im})\;
+        \mathcal{PG}_1(\pi\mid\bm{\alpha},\bm{1})\;\text{d}\pi_{im}.
+    \end{equation}
+    Recall that the Dirichlet distribution is a special case of the projected gamma,
+    where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  We 
+    investigated the general $\mathcal{PG}_1$ to replace the Dirichlet in 
+    Equation~\ref{eqn:dirmultinom}, but a closed-form solution to the integral was 
+    not available.  That said, we observe in \cite{trubey:pg}, that as a kernel 
+    density in a Dirichlet process class mixture, there was no demonstrable performance 
+    advantage to allowing the rate parameters to vary.
  
   For simplicity of notation, consider, a \emph{concatenated} Dirichlet-multinomial 
-  ($\mathcal{CDM}$) as a product of Dirichlet-multinomial densities.  That is, 
-  $\mathcal{CDM}(\bm{w}\mid\bm{\alpha}) = \prod_{m = 1}^M\mathcal{DM}(\bm{w}_m\mid\bm{\alpha}_m)$.
-  Then we can establish a Bayesian non-parametric categorical data model as:
+    ($\mathcal{CDM}$) as a product of Dirichlet-multinomial densities.  That is, 
+    $\mathcal{CDM}(\bm{w}\mid\bm{\alpha}) = 
+        \prod_{m = 1}^M\mathcal{DM}(\bm{w}_m\mid\bm{\alpha}_m)$.
+    Then we can establish a Bayesian non-parametric categorical data model as:
   \begin{equation}
     \label{eqn:modelcat}
     \begin{aligned}
       \bm{w}_i \mid \bm{\alpha}_i &\sim \mathcal{CDM}\left(\bm{w}_i\mid\bm{\alpha}_i\right)\\
       \bm{\alpha_i} &\sim G\\
-      G &\sim \mathcal{DP}\left(\eta, G_0\right)\\
+      G &\sim \mathcal{PY}\left(d, \eta, G_0\right)\\
     \end{aligned}
     ~\hspace{1cm}
     \begin{aligned}
@@ -73,21 +81,26 @@ To establish an anomaly detection algorithm using the data model described in
   probabilities---onto $\mathbb{S}_{\infty}^{d-1}$.  Let $\bm{\pi}_{m} = T_{1}(\bm{\rho}_m)$,
   the projection of the $m$th component of $\rho$, corresponding to the $m$th categorical 
   variable, onto the unit simplex. Thus $\bm{\pi}$ is the normalized probability vector.
-  This notation, that $\bm{\nu}$ and $\bm{\pi}$ are projections of the latent $\bm{\rho}$ vector, also applies
+  This notation, that $\bm{\nu}$ and $\bm{\pi}$ are projections of the latent $\bm{\rho}$
+  vector, also applies
   to the observational unit $i$.  That is $\bm{\nu}_i = T_{\infty}(\bm{\rho}_i)$.
   Making an abuse of notation for simplicity of presentation, 
-  let $\expect{\bm{\nu}_i} = T_{\infty}(\expect{\bm{\rho}_i})$.\makenote{this is literally wrong, but the expectation otherwise wouldn't necessarily fall on $\mathbb{S}_{\infty}^{d-1}$, so...}
+  let $\tilde{\text{E}}\left[\bm{\nu}_i\right] = T_{\infty}(\expect{\bm{\nu}_i})$, the 
+  projection of the expectation of $\bm{\nu}_i$ back onto $\mathbb{S}_{\infty}^{d-1}$.  
+  This is equivalent the spherical mean \cite{mardia1999}, which takes the arithmetic 
+  mean of observations in Cartesian coordinates, then projects back onto the sphere.
   Note, categorical data has no radius so the adaptation of the angular scores to
   the categorical space omits the radial component.
 
-The hypercube KNN \emph{(hKNN)} metric applied to the latent projected $\mathcal{S}_{\infty}$ space
+The hypercube KNN \emph{(hKNN)} metric applied to the latent projected 
+    $\mathcal{S}_{\infty}$ space
   uses the negative definite kernel metric previously established to estimate distance
   between $\expect{\bm{\nu}_i}$ and $\bm{\nu}$.  The score takes the form:
 \begin{equation}
    \label{score:cat_hknn}
    \begin{aligned}
    S_i^{hKNN} &= \text{E}\left[\frac{N}{k}
-        \frac{\pi^{\frac{d-1}{2}}D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}}{\Gamma\left(\frac{d-1}{2} + 1\right)}
+        \frac{\pi^{\frac{d-1}{2}}D_{k}\left(\tilde{\text{E}}\left[\bm{\nu}_i\right]\right)^{d-1}}{\Gamma\left(\frac{d-1}{2} + 1\right)}
    \given\bm{w}\right]\\
    &= \frac{N\pi^{\frac{d-1}{2}}}{k\Gamma\left(\frac{d-1}{2} + 1\right)}\text{E}\left[D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}\given \bm{w}\right],
    \end{aligned}
@@ -135,7 +148,6 @@ In the \emph{hKDE} metric, we computed two integrals separately: first
     \mid \bm{w}, \bm{w}_i
     \right]
   \end{equation}
-\makenote{experimenting with notation $\bm{\upsilon}, \bm{v}, \bm{\nu}, \dot{\bm{v}}$}
 Computing this on a sample of size $S$ is necessarily more expensive than \emph{hKDE}, 
     as it requires averaging $S^2$ samples.  However, first computing 
     $\expect{\bm{v}_{\bm{w}_i}}$ arbitrarily removes a significant degree of 

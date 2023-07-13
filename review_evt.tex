@@ -1,77 +1,164 @@
-\section{Review of Extreme Value Theory\label{sec:evt}}
-In this paper we make use of extreme value theory to to transform data to 
-    the positive orthant $\mathbb{R}_+^d$, and separate the data into an angular
-    component and magnitude, or radial component.  That transformation requires
-    some justification.
+    \section{Review of Extreme Value Theory\label{sec:evt}}
 
-\makenote{rewrite.  this relates to univariate EVT, but halfway through we switch to multivariate with no explanation of how or why.}
-If there exists a limiting distribution on the maximum of a sample, then that limiting 
-    distribution will exist within the generalized extreme value family.\cite{weibull1951}
-    If that condition is satisfied, observations that exceed a sufficiently large 
-    threshold will can be modelled using a generalized Pareto distribution. Such 
-    an effort is called \emph{peak over threshold} modelling, and typically 
-    involves first establishing a sufficiently large threshold, 
-    and fitting a generalized Pareto distribution to the excesses.  This action is performed
-    marginally, then using the fitted parameters we transform the data to a common marginal 
-    distribution so we can further analyze the dependence structure of the data.  Following 
-    the generative form of the multivariate Pareto established in~\cite{ferreira2014},
-    let the threshold for dimension $\ell$ be $b_{\ell}$.  Then using the generalized Pareto 
-    distribution, we fit the scale parameter $a_{\ell}$, and extremal index $\chi_{e\ell}$ 
-    to the excesses.  
-    Using these fitted distribution parameters, we standardize the data using
-    \[
-        Z_{\ell} = \left(1 + \chi_{\ell}\frac{X_{\ell} - b_{\ell}}{a_{\ell}}\right)_{+}^{-\frac{1}{\chi_{\ell}}}.
-    \]
-    Then $\lVert \bm{Z}\rVert_{\infty}\mid\lVert \bm{Z}\rVert_{\infty} \geq 1$, will follow
-    a standard Pareto distribution, and $\bm{Z}\mid \lVert \bm{Z}\rVert_{\infty} \geq 1$ 
-    will follow a multivariate standard Pareto distribution.
+The use of methods based on extreme value theory to perform anomaly detection
+    has the advantage of focusing on the tail of the distribution, which is where
+    anomalous observations are more likely to be found. In the univariate case,
+    asymptotic results provide a unique parametric limiting extreme family. Software 
+    to infer the parameters of such family is widely available  \cite[see, 
+    for example,][]{coles2001}. A popular approach to study univariate 
+    extremes, is to consider the observations  that exceed a threshold, and 
+    calculate the excess values, then use them for inference on the parameters of 
+    the generalized Pareto distribution that correspond to the theoretical limit. 
+    This is known as  the peaks over threshold approach (PoT), and will be central 
+    to the methods in this paper. In the multivariate case the theory for PoT is well 
+    developed \citep[see, for example][]{dehaan2006}, and it indicates the existence 
+    of a limiting  distribution  that has no parametric representation. This presents
+    a challenge for inference. Furthermore, the difficulty of using a  PoT approach 
+    is compounded by the fact  that there is no unique definition of an  
+    exceedance of a multivariate threshold, as there is an obvious dependence on the norm 
+    used to measure the vectors sizes.
 
-\subsection{Separation of radial and angular components}
-Assuming the existence of a limiting measure $\mu$ such that
-\[
-    \lim_{n\to\infty} n\text{Pr}\left[\frac{1}{n}\bm{Z} \not< \bm{z}\right] = \mu\left([\bm{0},\bm{z}]^c\right),
-\]
-then $\mu$ describes the asymptotic distribution of $\bm{Z}$ under extreme regions, and is 
-    referred to as the \emph{exponent measure}.  Under such a condition, $\mu$ features 
-    the homogeneity property $\mu(tA) = \frac{1}{t}\mu(A)$.  Now, define 
-    $R = \lVert \bm{Z}\rVert_{\infty}$, and $\bm{V} = \frac{\bm{Z}}{\lVert Z\rVert_{\infty}}$
-    such that $\bm{Z} = R\bm{V}$.  Then by the homogeneity property, $\mu$ can be factorized as
-    \[
-        \mu\left(\{\bm{Z} : \bm{V} \in A, R > r\}\right) = r^{-1}\Phi(A),    
-    \]
-    where $\Phi$ denotes the \emph{angular} or \emph{spectral} measure.  By this, we see 
-    that in extreme regions, the distribution of the angular component of $\bm{Z}$ is 
-    independent from that of the radial component $r$. This property permits us to model 
-    them separately.
+The multivariate PoT model considered in this paper has been developed in \cite{trubey:pg},
+    and it is based on a representation of the limiting distribution proposed in \cite{RoSeWa2018a}.
+    Let $\bm{W} = (W_1, \ldots ,W_d)$ be a $d$-dimensional random vector with
+    cumulative distribution $F$. Assume 
+    that there exist sequences of vectors $\bm{a}_n$ and $\bm{b}_n$,
+    and a $d$-variate distribution $G$ such that 
+    $\lim_{n\rightarrow\infty} F^n(\bm{a}_n \bm{w} + \bm{b}_n) = 
+    G(\bm{w})$. $G$ is a $d$-variate generalized extreme value 
+    distribution. Then
+    \begin{equation*}
+        \begin{aligned}
+            \lim\limits_{n\rightarrow\infty} &\prob{\bm{a}^{-1}_n (\bm{W} - \bm{b}_n) 
+                \leq \bm{w} \mid \bm{W} \not\leq \bm{b}_n)}  
+                = \frac{\log G(\bm{w} \wedge \bm{0}) 
+                - \log G(\bm{w}) }{\log G(\bm{0})} = H(\bm{w}).
+        \end{aligned}
+    \end{equation*}
+    where $H$ is the multivariate Pareto distribution. \cite{RoSeWa2018a}
+    provides a number of stochastic representations for $H$. In particular
+    Remark 1 justifies the representation given in \cite{ferreira2014},
+    consisting of taking $\bm{W}$, in the limit, as $\bm{W} = R\bm{V}$ 
+    where $R$ and $\bm{V}$ are independent. $R = ||\bm{W}||_\infty$ is 
+    distributed as a standard Pareto  random variable, and
+    $\bm{V} = \bm{W}/||\bm{W}||_\infty$ is a random vector in  
+    $\mathbb{S}_{\infty}^{d-1}$, the positive orthant of the 
+    unit  sphere in infinite norm, with distribution $\Phi$. 
+    $R$ and $\bm{V}$ are referred, respectively, as the {\em radial} 
+    and {\em angular}  components of $H$. The angular measure controls 
+    the dependence  structure of $\bm{W}$  in the tails. In view of 
+    this, to obtain a  PoT model we seek a flexible model for the 
+    distribution of $\bm{V} \in {\mathbb S}_{\infty}^{d-1}$. Our approach
+    consists of a two-step analysis. We first standardize and subsample using
+    a multivariate threshold. Then we estimate the angular measure.
 
-\subsection{Modeling the angular component}
-As the radial component $R \in {\mathbb R}_+$ will follow a standard Pareto 
-    distribution, the task becomes describing the distribution of the angular component 
-    $\bm{V}\in {\mathbb S}_{\infty}^{d-1}$.  A distribution in this space can be
-    approximated by projecting a distribution in $\mathbb{R}_+^d$ onto $\mathbb{S}_{p}^{d-1}$.
-    Recall the $\mathcal{L}_p$ norm is 
-    \[
-        \lVert \bm{S} \rVert_p = \left(\sum_{\ell = 1}^d S_{\ell}^p\right)^{\frac{1}{p}}.
-    \]
-    Then letting $R = \lVert \bm{S}\rVert_p$, we can let 
-    $Y_d = \left(1 - \sum_{\ell = 1}^{d-1}Y_{\ell}^{p}\right)^{\frac{1}{p}}$ 
-    then $\bm{Y} = \frac{\bm{S}}{R}\Rightarrow \bm{S} = R\bm{Y}$, 
-    and the determinant of the Jacobian of the transformation becomes
-    \[
-        \lvert J \rvert = r^{d-1}\left[y_d^p + \sum_{\ell = 1}^{d-1}y_{\ell}^p\left(y_d^p\right)^{\frac{1}{p} - 1} \right].
-    \]
-    Note that the transformation is not differentiable at $p = \infty$, so we can not use this 
-    transformation to directly model on ${\mathbb S}_{\infty}^{d-1}$.
-    However, for a sufficiently large $p$, the space ${\mathbb S}_p^{d-1}$ will tend
-    to approach $\mathbb{S}_{\infty}^{d-1}$, meaning a distribution in the latter can be 
-    approximated by one in the former.  In~\cite{trubey:pg}, this projection is explored, and
-    a \emph{projected gamma} distribution is developed that projects a vector of independent gamma r.v.'s 
-    onto $\mathbb{S}_{p}^{d-1}$ for an arbitrary $p$.  Further, the projected gamma distribution is
-    employed as the kernel distribution in a Dirichlet process mixture model.  For $\bm{y}_i\in \mathbb{S}_{p}^{d-1}$,
-    \[
-        \bm{y}_i \sim \mathcal{PG}_{p}(\bm{y}_i\mid\bm{\theta}_i),\hspace{0.5cm}\bm{\theta}_i\sim G,\hspace{0.5cm}G\sim \mathcal{DP}(\eta, G_0).
-    \]
-    In this paper, we employ this DP mixture model as the basis of our analysis.
+Starting with a collection of observations 
+    $\bm{w}_i \in {\mathbb R}^d, i = 1, \ldots, n$, we perform thresholding 
+    for each marginal. We use as threshold 
+    $b_{t,l} = \hat{F}^{-1}_{\ell}(1 - 1/t)$, where $\hat{F}_\ell$ is the 
+    empirical distribucion function for the $\ell$th component. $t$ is 
+    chosen to obtain a large empricial quantile, like 85 or 90\%. Thresholded 
+    values are assumed to follow a generalized univariate Pareto distribution, 
+    and are used to estimate the corresponding scale and shape parameters 
+    $a_\ell$ and $\xi_\ell$. We then obtain the standardization
+    \begin{equation}
+        \label{eqn:standardization}
+        z_{i\ell} = \left(1 + \xi_{\ell}\frac{w_{i\ell} -
+            b_{\ell}}{a_{\ell}}\right)_{+}^{1/\xi_{\ell}}
+    \end{equation}
+    where $(\cdot)_+$ indicates the positive parts function. Let 
+    $r_i = ||\bm{z}_i||_\infty$ and let $\bm{v}_i = \bm{z}_i/r_i$. Due to the 
+    thresholding, $i$ ranges from 1 to $m\leq n$, and $r_i>1$.  That is, all 
+    vectors have at least one very large component.
 
+Recall that the radial component $R \in {\mathbb R}_+$ follows a standard 
+    Pareto distribution, we focus on describing the distribution of the angular 
+    component $\bm{V}\in {\mathbb S}_{\infty}^{d-1}$. For this purpose we use the 
+    samples  $\bm{v}_i ,\; i=1, \ldots ,m$. A suitable distribution for $\bm{V}$ 
+    can be approximated by projecting a distribution in $\mathbb{R}_+^d$ onto 
+    $\mathbb{S}_{p}^{d-1}$. Recall that the $\mathcal{L}_p$ norm is 
+    $\lVert \bm{s} \rVert_p = (\sum_{\ell = 1}^d \rvert s\lvert_{\ell}^p)^{1/p}$. For 
+    $\bm{x} \in\mathbb{R}_+^d$, we define the transformation 
+    \[T_p(\bm{x}) = (\lVert\bm{x}\rVert_p, x_1/\lVert\bm{x}\rVert_p, \ldots, 
+    x_{d-1}/\lVert\bm{x}\rVert_p)=: (r,\bm{y})\], where
+    $\bm{y} = (y_1, \ldots , y_{d-1}) \in \mathbb{S}_{p}^{d-1}$, $r>0$, and 
+    $y_d = \left(1 - \sum_{\ell = 1}^{d-1}y_\ell^p\right)^{\frac{1}{p}}$.
+    Thus, a distribution on $\bm{X}$ induces a distribution on $\mathbb{S}_{p}^{d-1}$. 
+    In particular, assume that $\bm{X}$ has independent components, each of 
+    them distributed as $\mathcal{G}a(\alpha_{\ell}, \beta_{\ell})$, then it can 
+    be seen that the density of $\bm{y}$ is
+    \begin{equation}
+        \label{eqn:projgamma}
+        f(\bm{ y}\mid\bm{ \alpha},\bm{ \beta}) =
+            \prod_{\ell = 1}^d\left[
+                \frac{\beta_{\ell}^{\alpha_{\ell}}}{\Gamma(\alpha_{\ell})}
+                y_{\ell}^{\alpha_{\ell} - 1}
+                \right]
+            \left[y_d +
+                {\textstyle \sum}_{\ell = 1}^{d-1}y_{\ell}^py_d^{1 - p}
+                \right]
+            \frac{\Gamma({\textstyle\sum}_{\ell = 1}^d\alpha_{\ell})}{
+                    \left({\textstyle\sum}_{\ell = 1}^d
+                \beta_{\ell}y_{\ell}\right)^{{\scriptstyle\sum_{\ell = 1}^d \alpha_{\ell}}}
+                },
+  \end{equation}
+    \citep[see,][for details]{trubey:pg}. This distribution is a generalization to $\mathbb{S}_{p}^{d-1}$
+    of the projected gamma distribution defined for $p=2$ in \cite{nunez2019}. We will denote its
+    density as  $\mathcal{PG}_p(\bm{y}|\bm{\alpha},\bm{\beta})$.
+%  Then letting $R = \lVert \bm{S}\rVert_p$, we can let 
+%    $Y_d = \left(1 - \sum_{\ell = 1}^{d-1}Y_{\ell}^{p}\right)^{\frac{1}{p}}$ 
+%    then $\bm{Y} = \frac{\bm{S}}{R}\Rightarrow \bm{S} = R\bm{Y}$, 
+%    and the determinant of the Jacobian of the transformation becomes
+%    \[
+%        \lvert J \rvert = r^{d-1}\left[y_d^p + \sum_{\ell = 1}^{d-1}y_{\ell}^p\left(y_d^p\right)^{\frac{1}{p} - 1} \right].
+%    \o]
 
+Note that $T$ is not differentiable at $p = \infty$, so we can not use it to directly 
+    model on ${\mathbb S}_{\infty}^{d-1}$. However, for a sufficiently large $p$, 
+    the space ${\mathbb S}_p^{d-1}$ will tend to approach $\mathbb{S}_{\infty}^{d-1}$
+    This approximation is leveraged in~\cite{trubey:pg} to obtain samples of a 
+    distribution on ${\mathbb S}_{\infty}^{d-1}$. To obtain a flexible model for $\Phi$ we
+    use the projected gamma density as the kernel of a random measure mixture
+    model, based on the Pitman Yor ($\mathcal{PY}$) process introduced in~\cite{perman1992}.
+    Pitman Yor processes have the advantage over the more commonly used Dirichlet 
+    processes \citep{Ferguson74} of including a discount parameter along with the 
+    concentration parameter, for greater control over the formation of 
+    new clusters.  A hierarchical formulation of the model for observations 
+    $\bm{y}_i\in \mathbb{S}_{p}^{d-1}i, i=1, \ldots,m$, is
+    \begin{equation}
+        \label{eqn:modelsphere}
+        \begin{aligned}
+        \bm{y}_i \mid \bm{\alpha}_i &\sim \mathcal{PG}_p
+                \left(\bm{y}_i\mid\bm{\alpha}_i, \bm{1}\right)\\
+        \bm{\alpha_i} &\sim G\\
+        G &\sim \mathcal{PY}\left(d, \eta, G_0\right)\\
+        \end{aligned}
+        ~\hspace{1cm}
+        \begin{aligned}
+        G_0 &= \mathcal{LN}\left(\bm{\alpha}\mid\bm{\mu},\Sigma\right)\\
+        \mu &\sim \mathcal{N}\left(\bm{0},\bm{1}\right)\\
+        \Sigma &\sim \mathcal{IW}\left(\nu, \Psi\right).
+        \end{aligned}
+    \end{equation}
+    Here $\mathcal{LN}$ denotes a log-normal, $\mathcal{N}$ a normal, and 
+    $\mathcal{IW}$ an inverse Wishart. Details of the implementation of this model 
+    using and adaptive MCMC approach are provided in the supplementary material.  
+    As a kernel density, it was observed in \cite{trubey:pg} that the unrestricted 
+    form of the $\mathcal{PG}_p$
+    with both shape and rate parameters offered no improvement in model fidelity than
+    the restricted form, where the rate parameters are fixed at 1.  For a more parsimonious
+    model, and for compatibility with the categorical regime, in this paper we choose to use
+    the restricted form.
+    \makenote{mention dimensions}
+    
+The approach proposed in this section produces a sample of the angular measure of
+    the distribution of the tails of the sample. The methods has a number of 
+    advantages for anomaly detection: It focuses on the tails, which is where we 
+    are more likely to find anomalous behavior;  It accounts for asymptotic 
+    dependence between the different components of the observation vector; It 
+    reduces the computational burden, by thinning the sample using thresholding; 
+    It decouples the radial component to the angular component, thanks to 
+    independence. Samples of the radial component can easily be obtained from a 
+    standard Pareto.
 
+% EOF
