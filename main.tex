@@ -30,6 +30,9 @@
 \newcommand{\expect}[1]{\text{E}\left[#1\right]}
 \newcommand{\given}{\,\middle\vert\,}
 
+\newcommand{\add}[1]{\textcolor{blue}{#1}}
+\newcommand{\delete}[1]{\textcolor{red}{\st{#1}}}
+
 \title{Novelty Detection in Extremes}
 \author{Peter Trubey and Bruno Sans\'o\\
 Department of Statistics, University of California Santa Cruz\\
@@ -42,6 +45,7 @@ Department of Statistics, University of California Santa Cruz\\
 \thispagestyle{empty}
 \begin{abstract}
   ~%\input{abstract}
+  \add{\bf{We need and abstract!}}
 \end{abstract}
 
 
@@ -58,8 +62,8 @@ Department of Statistics, University of California Santa Cruz\\
 % - Multivariate distributions; projection onto S_{\infty}^{d-1}
 % - Work in previous paper
 
-\input{./state_of_art}
-% current state of EVT in AD
+% \input{./state_of_art}
+% current state of EVT in AD : moved to review_ad
 
 \input{./novelty}
 % Discussion of anomaly scores
