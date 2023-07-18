@@ -17,7 +17,7 @@ Anomaly detection, describes a field of methods for identifying observations as
     into homogenous groups, but anomalous data are heterogenous in their differences.
     \makenote{I'm paraphrasing something I've seen, but don't remember exactly.  Need to find citation}.
 
-    Equivalent names for this field include \emph{outlier} detection---observations lying outside the
+Equivalent names for this field include \emph{outlier} detection---observations lying outside the
     distribution of non-anomalous data, and \emph{novelty} detection---\makenote{rewrite; observations
     for which the distribution is functionally different than that of the observed data}.  Some authors will
     distinguish the last by the assumption of a \emph{clean} training data set containing no anomalies.  Such
@@ -25,9 +25,10 @@ Anomaly detection, describes a field of methods for identifying observations as
     hence they are novelties.
 
 The applicability of extreme value theory to anomaly detection is predicated on the assumption that
-  extreme observations are more likely to be anomalous.  A discussion on this point is provided by \cite{goix2017},
-  stating that extreme observations exist at the border between anomalous and non-anomalous regions.  Indeed,
-  for most datasets in our testing, the probability an individual observation is anomalous is higher
+    extreme observations are more likely to be anomalous.  A discussion on this point is provided by
+    \cite{goix2017}, stating that extreme observations exist at the border between anomalous and 
+    non-anomalous regions.  Indeed, for most datasets in our testing, the probability an individual 
+    observation is anomalous is higher
   for data in the tails of the distribution. This relative abundance of anomalies among extremes might 
   cause a naive classifier that does not take into account the dependence structure of extremes to 
   classify all extremes as anomalous.  If we follow the assumption that anomalies stand alone, then extreme
