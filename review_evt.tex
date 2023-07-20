@@ -83,8 +83,10 @@ Recall that the radial component $R \in {\mathbb R}_+$ follows a standard
     $\mathcal{L}_p$ norm is 
     $\lVert \bm{s} \rVert_p = (\sum_{\ell = 1}^d \rvert s\lvert_{\ell}^p)^{1/p}$. 
     For $\bm{x} \in\mathbb{R}_+^d$, we define the transformation 
-    \[T_p(\bm{x}) = (\lVert\bm{x}\rVert_p, x_1/\lVert\bm{x}\rVert_p, \ldots, 
-    x_{d-1}/\lVert\bm{x}\rVert_p)=: (r,\bm{y})\], where
+    \[
+        T_p(\bm{x}) = (\lVert\bm{x}\rVert_p, x_1/\lVert\bm{x}\rVert_p, \ldots, 
+        x_{d-1}/\lVert\bm{x}\rVert_p)=: (r,\bm{y})
+    \], where
     $\bm{y} = (y_1, \ldots , y_{d-1}) \in \mathbb{S}_{p}^{d-1}$, $r>0$, and 
     $y_d = \left(1 - \sum_{\ell = 1}^{d-1}y_\ell^p\right)^{\frac{1}{p}}$.
     Thus, a distribution on $\bm{X}$ induces a distribution on 
@@ -112,14 +114,6 @@ Recall that the radial component $R \in {\mathbb R}_+$ follows a standard
     to $\mathbb{S}_{p}^{d-1}$ of the projected gamma distribution defined for 
     $p=2$ in \cite{nunez2019}. We will denote its density as 
     $\mathcal{PG}_p(\bm{y}|\bm{\alpha},\bm{\beta})$.
-%  Then letting $R = \lVert \bm{S}\rVert_p$, we can let 
-%    $Y_d = \left(1 - \sum_{\ell = 1}^{d-1}Y_{\ell}^{p}\right)^{\frac{1}{p}}$ 
-%    then $\bm{Y} = \frac{\bm{S}}{R}\Rightarrow \bm{S} = R\bm{Y}$, 
-%    and the determinant of the Jacobian of the transformation becomes
-%    \[
-%        \lvert J \rvert = r^{d-1}\left[y_d^p + 
-%    \sum_{\ell = 1}^{d-1}y_{\ell}^p\left(y_d^p\right)^{\frac{1}{p} - 1} \right].
-%    \o]
 
 Note that $T$ is not differentiable at $p = \infty$, so we can not use it to 
     directly model on ${\mathbb S}_{\infty}^{d-1}$. However, for a sufficiently 
@@ -131,7 +125,7 @@ Note that $T$ is not differentiable at $p = \infty$, so we can not use it to
     based on the Pitman Yor ($\mathcal{PY}$) process introduced 
     in~\cite{perman1992}. Pitman Yor processes have the advantage over the more 
     commonly used Dirichlet processes \citep{Ferguson74} of including a 
-    discount parameter along with the concentration parameter, for greater 
+    discount parameter along with the concentration parameter, allowing greater 
     control over the formation of new clusters.  A hierarchical formulation of 
     the model for observations 
     $\bm{y}_i\in \mathbb{S}_{p}^{d-1}i, i=1, \ldots,m$, is
