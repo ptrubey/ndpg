@@ -1,59 +1,66 @@
 \subsection{Mixed Models}
-We make a strong assumption at this point, for establishment of the angular 
-  measure, that conditional on $\bm{\alpha}$, the distribution of the categorical 
-  variables is independent of that of the angular variables.  That is, conditional
-  on $\bm{\alpha}$, $\bm{Y} \in {\mathbb S}_{p}^{d-1}$ is independent of $\bm{W}$.  
-  This is not unreasonable, as the generalized Pareto parameters estimated to transform 
-  $\bm{X}$ into $\bm{Z}$ are estimated marginally, and the projection from
-  $\bm{Z}\to\bm{Y}$ is independent of $\bm{W}$.  Thus we can establish a 
-  \emph{mixed} model as
-  \begin{equation}
-    \label{model:mixed}
-    (\bm{y},\bm{w})\sim \int_{\bm{\alpha}}\mathcal{PRG}_{p}(\bm{y}\mid\bm{\alpha}_{\bm{y}})
-    \;\mathcal{CDM}(\bm{w}\mid\bm{\alpha}_{\bm{w}})\;dG(\bm{\alpha})
-  \end{equation}
-  with the distribution of $\bm{\alpha}$ as expanded in Equation~\ref{eqn:modelcat}.
-    By this conditional independence assumption, the dependence structure 
-    (and associated inference) between  $\bm{y}$ and $\bm{w}$ is transferred up 
-    to the distribution of $\bm{\alpha}$.  Note for the projected gamma distribution, 
-    we are restricting the rate parameters $\beta_{\ell} := 1$.  Also note that for the 
-    mixed model, the hyperparameter for the covariance matrix $\Sigma_{\bm{\alpha}}$
-    is a blocked diagonal matrix, with the block corresponding to the angular component
-    being a diagonal matrix.
+We make a strong assumption at this point, for establishment of the angular
+    measure, that conditional on $\bm{\alpha}$, the distribution of the 
+    categorical variables is independent of that of the angular variables.  
+    That is, conditional on $\bm{\alpha}$, $\bm{Y} \in {\mathbb S}_{p}^{d-1}$ 
+    is independent of $\bm{W}$.  This is not unreasonable, as the generalized 
+    Pareto parameters estimated to transform $\bm{X}$ into $\bm{Z}$ are 
+    estimated marginally, and the projection from $\bm{Z}\to\bm{Y}$ is 
+    independent of $\bm{W}$.  Thus we can establish a \emph{mixed} model as
+    \begin{equation}
+        \label{model:mixed}
+        (\bm{y},\bm{w})\sim \int_{\bm{\alpha}}\mathcal{PRG}_{p}
+            (\bm{y}\mid\bm{\alpha}_{\bm{y}})
+        \;\mathcal{CDM}(\bm{w}\mid\bm{\alpha}_{\bm{w}})\;dG(\bm{\alpha})
+    \end{equation}
+  with the distribution of $\bm{\alpha}$ as expanded in 
+    Equation~\ref{eqn:modelcat}. By this conditional independence assumption, 
+    the dependence structure (and associated inference) between  $\bm{Y}$ and 
+    $\bm{W}$ is transferred up to the distribution of $\bm{\alpha}$.  Note for 
+    the projected gamma distribution, we are restricting the rate parameters 
+    $\beta_{\ell} := 1$.  Also note that for the mixed model, the hyperparameter 
+    for the covariance matrix $\Sigma_{\bm{\alpha}}$ is a blocked diagonal 
+    matrix, with the block corresponding to the angular component being a 
+    diagonal matrix.
 
 \subsection{Mixed Model Anomaly Scores\label{sec:mixedscores}}
-Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  
-    Let $\bm{\alpha}_{\bm{y}}$ be the component of the $\bm{\alpha}$ vector that corresponds 
-    to the angular component $\bm{y}$, and $\bm{\alpha}_{\bm{w}}$ the component that 
-    corresponds to the categorical component $\bm{w}$.
-    Then, for the mixed model, let $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\rho}_{i\bm{w}})$,
-    and $\bm{\nu} = T_{\infty}(\bm{\rho})$
-    The \emph{hKNN} score can be adapted to the mixed model by re-projecting the angular 
-    data and the latent categorical component into the same sphere. This requires moving
-    $\bm{y}_i$ back to $\mathbb{R}_+^{d_{\bm{y}}}$, by multiplying by the radial component
+Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  Let 
+    $\bm{\alpha}_{\bm{y}}$ be the component of the $\bm{\alpha}$ vector that 
+    corresponds  to the angular component $\bm{y}$, and $\bm{\alpha}_{\bm{w}}$ 
+    the component that corresponds to the categorical component $\bm{w}$.
+    Then, for the mixed model, let 
+    $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\rho}_{i\bm{w}})$, and 
+    $\bm{\nu} = T_{\infty}(\bm{\rho})$.  The \emph{hKNN} score can be adapted 
+    to the mixed model by re-projecting the angular data and the latent 
+    categorical component into the same sphere. This requires moving $\bm{y}_i$ 
+    back to $\mathbb{R}_+^{d_{\bm{y}}}$, by multiplying by the radial component
     generated according to
     \[
         R_i\mid\bm{\alpha} \sim \mathcal{G}
         \left(R_i\given\sum_{\ell = 1}^{d_{\bm{y}}}\alpha_{\ell}, 1\right).
     \]
-    Then $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\rho}_{i\bm{w}})$ is the latent 
-    projection of both the real component and categorical component into the same sphere.  
-    Also, let $\bm{\nu} = T_{\infty}(\bm{\rho})$ be the generic $\bm{\nu}$ not specifically
-    dependent on observation $i$.  The score is then calculated as
+    Then $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\rho}_{i\bm{w}})$ is the 
+    latent projection of both the real component and categorical component into 
+    the same sphere.  Also, let $\bm{\nu} = T_{\infty}(\bm{\rho})$ be the 
+    generic $\bm{\nu}$ not specifically dependent on observation $i$.  The 
+    score is then calculated as
     \[
-    S_i^{hKNN} = \frac{r_i^2 N\pi^{\frac{d-1}{2}}}{k\Gamma\left(\frac{d-1}{2} + 1\right)}
-    \expect{D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}\given\bm{y},\bm{w}}.
+        S_i^{hKNN} = \frac{r_i^2 N\pi^{\frac{d-1}{2}}}{
+                k\Gamma\left(\frac{d-1}{2} + 1\right)}
+        \expect{D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}\given\bm{y},\bm{w}}.
     \]
-    Note again that we are computing the two expectations separately.  The \emph{hKDE} 
-    score works in the same manner, this using kernel density estimation rather than 
-    $k$-nearest neighbors density estimation on $\mathbb{S}_{\infty}^{d-1}$;
+    Note again that we are computing the two expectations separately.  The 
+    \emph{hKDE} score works in the same manner, this using kernel density 
+    estimation rather than $k$-nearest neighbors density estimation on 
+    $\mathbb{S}_{\infty}^{d-1}$;
     \[
-    S_i^{hKDE} = r_i^2 \expect{\exp\left\lbrace -\frac{1}{2}
-        \left(
-        \frac{d\left(T_{\infty}\left(\expect{\bm{\nu}_i}\right), \bm{\nu})\right)}{h}
-        \right)^2
-        \right\rbrace \given \bm{y},\bm{w}
-        }.
+        S_i^{hKDE} = r_i^2 \expect{\exp\left\lbrace -\frac{1}{2}
+            \left(
+            \frac{d\left(T_{\infty}
+                \left(\expect{\bm{\nu}_i}\right), \bm{\nu})\right)}{h}
+            \right)^2
+            \right\rbrace \given \bm{y},\bm{w}
+            }.
     \]
     The \emph{lhKDE} score \makenote{rewrite sentence}
     \[
@@ -61,11 +68,12 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.
         \frac{d\left(\bm{\nu}_i, \bm{\nu}\right)}{h}\right)^2\right\rbrace
         \given \bm{y},\bm{w},\bm{y}_i,\bm{w}_i}
     \]
-    The \emph{lmKDE} score serves as a comparison to the above three scores, which seek 
-    to unify all data onto a single sphere and calculate a consistent distance metric.  
-    Instead, \emph{lmKDE} evaluates distances between angular data in its own space, and 
-    latent posterior class probabilities in its own space, with the appropriate distance 
-    metric for each.  In effect, this combines \emph{hKDE} from
+    The \emph{lmKDE} score serves as a comparison to the above three scores, 
+    which seek to unify all data onto a single sphere and calculate a 
+    consistent distance metric.  Instead, \emph{lmKDE} evaluates distances 
+    between angular data in its own space, and latent posterior class 
+    probabilities in its own space, with the appropriate distance metric for 
+    each.  In effect, this combines \emph{hKDE} from
     the angular component and \emph{lsKDE} from the categorical component.
     \[
     S_i^{lmKDE} = r_i^2 \expect{
@@ -82,35 +90,38 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.
         \right\rbrace
         \given \bm{y},\bm{w},\bm{y}_i,\bm{w}_i}
     \]
-    This choice to evaluate each component within its own space presents some loss of 
-    information as to the dependence structure between $\bm{y}$ and $\bm{w}$ within 
-    the score.  We will see to what extent that loss of information is damning.
+    This choice to evaluate each component within its own space presents some 
+    loss of information as to the dependence structure between $\bm{y}$ and 
+    $\bm{w}$ within the score.  We will see to what extent that loss of 
+    information is damning.
 
 \subsection{Relaxing the assumption of independence\label{subsec:rank}}
-A valid critique of the model presented thus far is that in order to justify modelling
-    the radial component of $\bm{Z}$ independent its angular component---the fundamental
-    result of the multivariate extreme value theory presented---it is necessary to subset
-    data (and thus ability to score anomalies) strictly to those observations $\bm{X}$ 
-    which exceeded a large multivariate threshold in at least one dimension.  For some 
-    applications, this represents a very powerful data reduction with little loss of 
-    information pertaining to anomalies, as anomalies tend to be in the tails (see, for
-    example, \makenote{Insert table relating to anomaly prevalence in tails}).  For other
-    applications, this data reduction represents a significant loss of information about 
-    anomalies of anomalies being in the tails is not borne out.  For this second group, 
-    one available avenue is to relax the assumption of independence between the angular 
-    and radial components.
+A valid critique of the model presented thus far is that in order to justify 
+    modelling the radial component of $\bm{Z}$ independent its angular 
+    component---the fundamental result of the multivariate extreme value theory 
+    presented---it is necessary to subset data (and thus ability to score 
+    anomalies) strictly to those observations $\bm{X}$ which exceeded a large 
+    multivariate threshold in at least one dimension.  For some applications, 
+    this represents a very powerful data reduction with little loss of 
+    information pertaining to anomalies, as anomalies tend to be in the tails 
+    (see, for  example, \makenote{Insert table relating to anomaly prevalence 
+    in tails}).  For other applications, this data reduction represents a 
+    significant loss of information about anomalies of anomalies being in the 
+    tails is not borne out.  For this second group, one available avenue is to 
+    relax the assumption of independence between the angular and radial 
+    components.
 
-Let $z_{i\ell} = \frac{1}{1 - \hat{F}(x_{i\ell})}$ be the \emph{rank-transformation} to
-    the standard Pareto scale.  The lower range of this transformation is bounded at 1.
-    For data transformed in this manner, let $r_i = \lVert \bm{Z}_i\rVert_{\infty}$ be the
-    radial component, $\bm{v}_i = \bm{z}_i/r_i$ the angular component of $\bm{z}_i$,
-    and $\bm{y}_i$ its projection onto $\mathbb{S}_p^{d-1}$.
-    
-Because under the rank transformation the data is no longer subject to thresholding, 
-    we can no longer make the assumption that angles are independent of radius.  Instead,
-    we can include the radius within the model.  As the radius is on the range $[1,\infty)$, 
-    a logical choice of kernel for modeling it is the Pareto density, with shape parameter 
-    $\alpha_r$.  
+Let $z_{i\ell} = \frac{1}{1 - \hat{F}(x_{i\ell})}$ be the 
+    \emph{rank-transformation} to the standard Pareto scale.  The lower range 
+    of this transformation is bounded at 1. For data transformed in this manner, 
+    let $r_i = \lVert \bm{Z}_i\rVert_{\infty}$ be the radial component, 
+    $\bm{v}_i = \bm{z}_i/r_i$ the angular component of $\bm{z}_i$, and 
+    $\bm{y}_i$ its projection onto $\mathbb{S}_p^{d-1}$.  Because under the 
+    rank transformation the data is no longer subject to thresholding, we can 
+    no longer make the assumption that angles are independent of radius.  
+    Instead, we can include the radius within the model.  As the radius is on 
+    the range $[1,\infty)$, a logical choice of kernel for modeling it is the 
+    Pareto density, with shape parameter $\alpha_r$.  
     \begin{equation}
         \label{model:rank}
         (\bm{y}_i,\bm{w}_i,r_i) \sim \int_{\bm{\alpha}}
@@ -119,10 +130,11 @@ Because under the rank transformation the data is no longer subject to threshold
             \mathcal{P}(r_i\mid\alpha_r)\;
             \text{d}G(\bm{\alpha})
     \end{equation}
-    As $\alpha_r > 0$, a logical centering distribution for it would be the log-normal distribution.
-    So this choice of modelling fits in very well with the expansion we have previously explored
-    in Equation~\ref{eqn:modelcat}, effectively adding one dimension to the mean vector and
-    covariance matrix.  The scores developed previously in Section~\ref{sec:mixedscores} 
-    remain applicable.
+    As $\alpha_r > 0$, a logical centering distribution for it would be the 
+    log-normal distribution.  So this choice of modelling fits in very well 
+    with the expansion we have previously explored in 
+    Equation~\ref{eqn:modelcat}, effectively adding one dimension to the mean 
+    vector and covariance matrix.  The scores developed previously in 
+    Section~\ref{sec:mixedscores} remain applicable.
 
 % EOF

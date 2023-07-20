@@ -1,10 +1,11 @@
 \section{Novelty Detection Methods\label{sec:novelty}}
-As previously stated, a novelty detection algorithm produces an anomaly score which
-    provides a ranked ordering of which observations are likely to be anomalous.
-    Building on the notion that anomalies occur in areas of low density, a simple
-    score might establish for observation $x_i$, \[S_i = f_{x}(x\mid\mathcal{D})^{-1}\]
-    where $\mathcal{D}$ is the observed data.  That is, the inverse of the posterior
-    predictive density at observation $x_i$.  
+As previously stated, a novelty detection algorithm produces an anomaly score 
+    which provides a ranked ordering of which observations are likely to be 
+    anomalous. Building on the notion that anomalies occur in areas of low 
+    density, a simple score might establish for observation $x_i$, 
+    \[S_i = f_{x}(x\mid\mathcal{D})^{-1}\]
+    where $\mathcal{D}$ is the observed data.  That is, the inverse of the 
+    posterior predictive density at observation $x_i$.  
     
     
     
@@ -17,41 +18,44 @@ As previously stated, a novelty detection algorithm produces an anomaly score wh
 
 
 \add{\bf This whole section needs to rewritten. First we have to connect to 
-the previous section. As a result of what the methods presented in the previous
-section we have a sample from the angular density that characterizes the 
-extreme behavior of our observations. We have samples, but we have no way to
-evaluate it. At this point you provide information about estimated of the 
-density, and then you have to mention that a measure of distance on 
-${\mathbb S}_{\infty}^{d-1}$, and you refer to the previous paper.}
+    the previous section. As a result of what the methods presented in the 
+    previous section we have a sample from the angular density that 
+    characterizes the extreme behavior of our observations. We have samples, 
+    but we have no way to evaluate it. At this point you provide information 
+    about estimated of the density, and then you have to mention that a 
+    measure of distance on ${\mathbb S}_{\infty}^{d-1}$, and you refer to the 
+    previous paper.}
 
 We can consider a novelty detection algorithm as a function that assigns a
-  novelty score $S_i$ to observation $i$.  We interpret a larger $S_i$
-  as indicative that the observation is more likely to be anomalous.
+    novelty score $S_i$ to observation $i$.  We interpret a larger $S_i$
+    as indicative that the observation is more likely to be anomalous.
 
 Building on the notion that anomalies occur in areas of low density, a simple
-  score might establish
-  \[
-      S_i = f_{\bm{x}}(\bm{x}_i\mid \mathcal{D})^{-1}.  
-  \]  
-  where $\mathcal{D}$ denotes all observed data.  That is, the reciprocal of the 
-  fitted posterior predictive density, $f_{\bm{x}}\mid \mathcal{D}$ at $\bm{x}_i$.
-  As previously established in Section~\ref{sec:evt}, density estimation on the 
-  surface of ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem, so for 
-  purposes of establishing inference on the dependence structure of the data 
-  projected from ${\mathbb S}_{\infty}^{d-1}$ onto ${\mathbb S}_p^{d-1}$ for 
-  some large but finite $p$.  This makes density estimation \emph{possible}, but 
-  for purposes of anomaly detection, the projection onto ${\mathbb S}_p^{d-1}$ is 
-  strongly dependent on \emph{which} dimension was used as a summary--that is, 
-  which dimension became a function of the others, hereafter referred to as the 
-  \emph{dependent} variable. In~\cite{trubey:pg}, 
-  $y_d = (1 - \sum_{\ell = 1}^{d-1}y_{\ell}^p)^{1-p}$ was the dependent variable.
-  This works for establishing the projected Gamma density, and via 
-  proportionality, inference on the parameters of the PG distribution is not affected
-  by the choice of the summary variable. However, when we look to establish 
-  density estimation routines for purposes of anomaly detection, where we do 
-  take into account the full calculated density, the choice of summary variable 
-  does affect the calculated density.  Moreover, density on $\mathbb{S}_p^{d-1}$
-  is only a proxy to density on $\mathbb{S}_{\infty}^{d-1}$, which is our goal.
+    score might establish
+    \[
+        S_i = f_{\bm{x}}(\bm{x}_i\mid \mathcal{D})^{-1}.  
+    \]  
+    where $\mathcal{D}$ denotes all observed data.  That is, the reciprocal of 
+    the fitted posterior predictive density, $f_{\bm{x}}\mid \mathcal{D}$ at 
+    $\bm{x}_i$.  As previously established in Section~\ref{sec:evt}, density 
+    estimation on the surface of ${\mathbb S}_{\infty}^{d-1}$ is not an easy 
+    problem, so for purposes of establishing inference on the dependence 
+    structure of the data projected from ${\mathbb S}_{\infty}^{d-1}$ onto 
+    ${\mathbb S}_p^{d-1}$ for some large but finite $p$.  This makes density 
+    estimation \emph{possible}, but for purposes of anomaly detection, the 
+    projection onto ${\mathbb S}_p^{d-1}$ is strongly dependent on \emph{which} 
+    dimension was used as a summary--that is, which dimension became a function 
+    of the others, hereafter referred to as the \emph{dependent} variable. 
+    In~\cite{trubey:pg}, $y_d = (1 - \sum_{\ell = 1}^{d-1}y_{\ell}^p)^{1-p}$ 
+    was the dependent variable.  This works for establishing the projected Gamma 
+    density, and via proportionality, inference on the parameters of the PG 
+    distribution is not affected by the choice of the summary variable. However, 
+    when we look to establish density estimation routines for purposes of 
+    anomaly detection, where we do take into account the full calculated 
+    density, the 
+    choice of summary variable does affect the calculated density.  Moreover, 
+    density on $\mathbb{S}_p^{d-1}$ is only a proxy to density on 
+    $\mathbb{S}_{\infty}^{d-1}$, which is our goal.
 
 \makenote{A reviewer might ask about $p=1$, and using the direct density 
   calculated thereof.  We should add that fitted gamma densities are inherently 
@@ -59,52 +63,56 @@ Building on the notion that anomalies occur in areas of low density, a simple
   non-normal behavior.  True density metrics based on projected gamma (at any $p$) 
   are not going to behave properly and are undesireable.}
 
-One way around this issue would be the use of a non-parametric density estimation
-  routine on a sample from the fitted posterior predictive distribution.  
-  We consider two such well-established methods: 
-  $k$-nearest neighbors, or \emph{$k$NN}, 
-  and kernel density estimation, or \emph{KDE}.
-  These estimators of local density will act on the angular component of the observation,
-  $\bm{v}_i$.  We also have available the radial component $r_i$, and under the
-  assumptions of multivariate EVT, $f(\bm{v},r) = f_{\bm{v}}(\bm{v})\;f_{r}(r)$.  As such,
-  we multiply the angular scores by $r_i^{-2}$, the density of the standard pareto
-  distribution at $r$.
+One way around this issue would be the use of a non-parametric density 
+  estimation routine on a sample from the fitted posterior predictive 
+  distribution.  We consider two such well-established methods: $k$-nearest 
+  neighbors, or \emph{$k$NN}, and kernel density estimation, or \emph{KDE}.
+  These estimators of local density will act on the angular component of the 
+  observation, $\bm{v}_i$.  We also have available the radial component $r_i$, 
+  and under the assumptions of multivariate EVT, 
+  $f(\bm{v},r) = f_{\bm{v}}(\bm{v})\;f_{r}(r)$.  As such, we multiply the 
+  angular scores by $r_i^{-2}$, the density of the standard pareto distribution 
+  at $r$.
 
 \subsection{$k$-Nearest Neighbors Density estimation}
 We establish a local posterior predictive density under the $k$-Nearest Neighbor 
-    estimator \citep{mack1979} by
-  assuming a locally uniform density within a $d$ dimensional ball $\mathbb{B}$, 
-  centered on observation $i$, with radius $D_{k}^d(x_i)$ calculated as the 
-  distance to the $k$th nearest neighbor to observation $i$ in a sample from the 
-  posterior predictive distribution. The volume of the ball is calculated as
-  \begin{equation}
-    \label{eq:vol_sphere}
-    \text{Vol}(\mathbb{B}_d^k) =
-      \frac{\pi^{\frac{d}{2}}D_{k}(\bm{x}_i)^d}{\Gamma\left(\frac{d}{2} + 1\right)}
-  \end{equation}
-  where $D_k(\bm{x}_i)$ is the distance from $\bm{x}_i$ to the $k$th nearest 
-  replicate of $\bm{X}\mid\bm{x}$.  A density is established as 
-  \begin{equation}
-    \label{eq:ad_knn}
-    f_{x}^{(k\text{NN})}(x_i\mid X) \approx \frac{k}{N}\left(\text{Vol}(\mathbb{B}_d^k\right)^{-1}
+    estimator \citep{mack1979} by assuming a locally uniform density within a 
+    $d$--dimensional ball $\mathbb{B}$, centered on observation $i$, with 
+    radius $D_{k}^d(x_i)$ calculated as the distance to the $k$th nearest 
+    neighbor to observation $i$ in a sample from the posterior predictive 
+    distribution. The volume of the ball is calculated as
+    \begin{equation}
+        \label{eq:vol_sphere}
+        \text{Vol}(\mathbb{B}_d^k) =
+        \frac{\pi^{\frac{d}{2}}D_{k}(\bm{x}_i)^d}{
+            \Gamma\left(\frac{d}{2} + 1\right)}
     \end{equation}
-  where $N$ is the total number of replicates of $\bm{X}\mid\bm{x}$.  As 
-  mentioned, we desire a score interpreted as higher is more likely anomalous, 
-  so we take the score as the reciprocal of the density.
+    where $D_k(\bm{x}_i)$ is the distance from $\bm{x}_i$ to the $k$th nearest 
+    replicate of $\bm{X}\mid\bm{x}$.  A density is established as 
+    \begin{equation}
+        \label{eq:ad_knn}
+        f_{x}^{(k\text{NN})}(x_i\mid X) \approx 
+            \frac{k}{N}\left(\text{Vol}(\mathbb{B}_d^k\right)^{-1}
+    \end{equation}
+    where $N$ is the total number of replicates of $\bm{X}\mid\bm{x}$.  As 
+    mentioned, we desire a score interpreted as higher is more likely anomalous, 
+    so we take the score as the reciprocal of the density.
 
 When implementing this analysis on the hypercube, we lose one degree of freedom,
-  and as a stand-in for distance, we use the negative definite kernel metric 
-  previously explored in~\cite{trubey:pg} as a means of establishing a proper 
-  scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
-  \begin{equation}
-    \label{eq:ad_knn_h}
-    S_i^{hKNN} = \frac{r_i^{2}N}{k}
-    \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{\Gamma\left(\frac{d-1}{2} - 1\right)}
+    and as a stand-in for distance, we use the negative definite kernel metric 
+    previously explored in~\cite{trubey:pg} as a means of establishing a proper 
+    scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
+    \begin{equation}
+        \label{eq:ad_knn_h}
+        S_i^{hKNN} = \frac{r_i^{2}N}{k}
+        \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
+          \Gamma\left(\frac{d-1}{2} - 1\right)}
   \end{equation}
-  This is of course an approximation to the true posterior predictive density at
-  observation $i$.  In addition to the noise induced by using random samples
-  from the posterior predictive, there is some bias induced in the calculated volume
-  if $D_k(\bm{v}_i)^{d-1}$ is greater than the distance from $\bm{v}_i$ to 
+    This is of course an approximation to the true posterior predictive density 
+    at observation $i$.  In addition to the noise induced by using random 
+    samples from the posterior predictive, there is some bias induced in the 
+    calculated volume
+    if $D_k(\bm{v}_i)^{d-1}$ is greater than the distance from $\bm{v}_i$ to 
   unity ($\bm{1}_d$), or from $\bm{v}_i$ to some axis.  In practice,
   this induced bias seems to have relatively small effect. 
   \makenote{worth looking into what proportion of observations experience this 
@@ -117,38 +125,45 @@ When implementing this analysis on the hypercube, we lose one degree of freedom,
 \makenote{needs citation for KDE}
 
 If we assume a Gaussian kernel, then the KDE density for a generic $\bm{x}$ can 
-  be approximated as 
-  \begin{equation}
-    \label{eq:ad_kde}
-    f_{\bm{x}}^{(\text{KDE})}(\bm{x}_i) \propto 
-    \frac{1}{N}\sum_{j = 1}^{N}\exp
-    \left\lbrace-\frac{1}{2}\left(\frac{D(\bm{x}_i,\bm{X}_j)}{h}\right)^2\right\rbrace
-  \end{equation}
-  where $\bm{X}_j$ is the $j$th 
-  replicate from $\bm{X}\mid\bm{x}$.  The \emph{bandwidth} parameter $h$ serves to smooth
-  the calculated density, with larger values creating a larger smoothing effect.
-  Bandwidth selection is a vast field of study, and its nuances lie outside the
-  scope of this work.  As in general KDE can be expressed using a multivariate normal density,
-  the bandwidth can be expressed as a covariance matrix.  In such a case, the log-score
-  is effectively the negative squared Mahalanobis distance.  For our purpose, as 
-  distance on $\mathbb{S}_{\infty}^{d-1}$ is less straightforward, we must restrict 
-  ourselves to the univariate representation outlined above.
+    be approximated as 
+    \begin{equation}
+        \label{eq:ad_kde}
+        f_{\bm{x}}^{(\text{KDE})}(\bm{x}_i) \propto 
+        \frac{1}{N}\sum_{j = 1}^{N}\exp
+        \left\lbrace-\frac{1}{2}\left(
+        \frac{D(\bm{x}_i,\bm{X}_j)}{h}\right)^2\right\rbrace
+    \end{equation}
+    where $\bm{X}_j$ is the $j$th 
+    replicate from $\bm{X}\mid\bm{x}$.  The \emph{bandwidth} parameter $h$ 
+    serves to smooth the calculated density, with larger values creating a 
+    larger smoothing effect.  Bandwidth selection is a vast field of study, and 
+    its nuances lie outside the scope of this work.  As in general KDE can be 
+    expressed using a multivariate normal density, the bandwidth can be 
+    expressed as a covariance matrix.  In such a case, the log-score is 
+    effectively the negative squared Mahalanobis distance.  For our purpose, as 
+    distance on $\mathbb{S}_{\infty}^{d-1}$ is less straightforward, we must 
+    restrict ourselves to the univariate representation outlined above.
 
-To develop a bandwidth parameter, we employ a univariate variation on Silverman's 
-  rule of thumb\makenote{find citation}
-  \begin{equation}
-    \label{eqn:silverman}
-    h = \left(\frac{4}{d+2}\right)^{\frac{1}{d+4}}n^{-\frac{1}{d+4}}\hat{\sigma}.
-  \end{equation}
-  This then requires the estimation of $\hat{\sigma}$, which must we calculate from 
-  pairwise distances. Recall that for a random variable $X$, 
-  \[ \text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] = 2\text{Var}(X). \]
-  We develop our estimator for $\hat{\sigma}$ in a similar manner.  Let
-  \[
-    \hat{\sigma} = \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}\lVert \bm{X}_j - \bm{X}_k\rVert_2},
-  \]
-  where $\bm{X}_j$, $\bm{X}_k$ are both replicates of $\bm{X}\mid\bm{x}$. Then 
-  $\hat{\sigma}$ is employed in Equation~\ref{eqn:silverman} to produce $h$.
+To develop a bandwidth parameter, we employ a univariate variation on 
+    Silverman's rule of thumb\makenote{find citation}
+    \begin{equation}
+        \label{eqn:silverman}
+        h = \left(\frac{4}{d+2}\right)^{
+            \frac{1}{d+4}}n^{-\frac{1}{d+4}}\hat{\sigma}.
+    \end{equation}
+    This then requires the estimation of $\hat{\sigma}$, which must we calculate 
+    from pairwise distances. Recall that for a random variable $X$, 
+    \[ 
+        \text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] 
+            = 2\text{Var}(X). 
+    \]
+    We develop our estimator for $\hat{\sigma}$ in a similar manner.  Let
+    \[
+        \hat{\sigma} = \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}\lVert 
+            \bm{X}_j - \bm{X}_k\rVert_2},
+    \]
+    where $\bm{X}_j$, $\bm{X}_k$ are both replicates of $\bm{X}\mid\bm{x}$. Then 
+    $\hat{\sigma}$ is employed in Equation~\ref{eqn:silverman} to produce $h$.
  
 \begin{equation}
     \label{eqn:ad_kde_h}

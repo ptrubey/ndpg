@@ -1,47 +1,53 @@
 \section{Results\label{sec:results}}
-As mentioned in~\ref{sec:novelty}, the goal of a novelty detection algorithm is to
-    produce a novelty \emph{score}, which ranks observations in order as to the degree 
-    they are anomalous.  This creates another problem: threshold selection---anomaly 
-    scores beyond what level are determined anomalous?  We mentioned \cite{clifton2011}
-    and \cite{gu2021} as examples of computing thresholds theoretically, but in general,
-    thresholds are determined heuristically, using performance criteria.  In specific
-    applications, this can be extremely costly.   For instance, 
+As mentioned in~\ref{sec:novelty}, the goal of a novelty detection algorithm is 
+    to produce a novelty \emph{score}, which ranks observations in order as to 
+    the degree they are anomalous.  This creates another problem: threshold 
+    selection---anomaly scores beyond what level are determined anomalous?  We 
+    mentioned \cite{clifton2011} and \cite{gu2021} as examples of computing 
+    thresholds theoretically, but in general, thresholds are determined 
+    heuristically, using performance criteria.  In specific applications, this 
+    can be extremely costly.   For instance, 
 
-One such criteria is the receiver operating characteristics, or \emph{ROC}, curve.  For
-    a given score threshold, one can compute the true positive rate, or TPR, as the number 
-    of anomalous observations with scores above the threshold, divided by the total number 
-    of anomalous observations.  The false positive rate, or FPR, is similarly the number 
-    of non-anomalous observations above the threshold, divided by the total number of 
-    non-anomalous observations.  The ROC curve is formed as the TPR is plotted on the 
-    vertical axis against the FPR on the horizontal axis for a range of possible 
-    thresholds.  The curve is non-decreasing, starting at the origin $(0,0)$, and ending at
-    unity $(1,1)$.  Threshold selection might include specifying an acceptable FPR, and 
-    determining the threshold that produces that FPR.
+One such criteria is the receiver operating characteristics, or \emph{ROC}, 
+    curve.  For  a given score threshold, one can compute the true positive 
+    rate, or TPR, as the number of anomalous observations with scores above the 
+    threshold, divided by the total number of anomalous observations.  The 
+    false positive rate, or FPR, is similarly the number of non-anomalous 
+    observations above the threshold, divided by the total number of 
+    non-anomalous observations.  The ROC curve is formed as the TPR is plotted 
+    on the vertical axis against the FPR on the horizontal axis for a range of 
+    possible thresholds.  The curve is non-decreasing, starting at the origin 
+    $(0,0)$, and ending at unity $(1,1)$.  Threshold selection might include 
+    specifying an acceptable FPR, and determining the threshold that produces 
+    that FPR.
 
 In assessing model performance, we sideline the issue of threshold selection by 
-    observing the whole ROC curve.  Specifically, we look for the area under the ROC 
-    curve, \emph{(AuROC)}.  The better a classifier is, the closer its ROC curve will approach
-    the upper left corner, and the closer its AuROC will approach 1.
+    observing the whole ROC curve.  Specifically, we look for the area under 
+    the ROC curve, \emph{(AuROC)}.  The better a classifier is, the closer its 
+    ROC curve will approach the upper left corner, and the closer its AuROC will 
+    approach 1.
 
-\add{\bf Before we go into the results, we need to provide some information about how we 
-do the computations. I am happy to provide the details of the MCMC in an appendix, or
-even in a supplementary material, but some idea of the computations has to be given in the 
-main body of the paper. Likewise, we need to provide information on the hyperparameter 
-choice, and how we tuned the procedure, how we assessed it, and how log it took to 
-obtain the results.}
+\add{\bf Before we go into the results, we need to provide some information 
+    about how we do the computations. I am happy to provide the details of the 
+    MCMC in an appendix, or even in a supplementary material, but some idea of 
+    the computations has to be given in the main body of the paper. Likewise, 
+    we need to provide information on the hyperparameter choice, and how we 
+    tuned the procedure, how we assessed it, and how log it took to obtain the 
+    results.}
 
-We tested our scores against several labelled datasets.  These included some strictly
-    categorical data, as well as categorical transformations of some mixed datasets.
-    For mixed datasets, we tested both the thresholding and rank-transformation regimes. 
-    Table~\ref{tab:data} includes an exploratory analysis of our datasets, both raw and
-    under the various testing regimes.
+We tested our scores against several labelled datasets.  These included some 
+    strictly categorical data, as well as categorical transformations of some 
+    mixed datasets.  For mixed datasets, we tested both the thresholding and 
+    rank-transformation regimes. Table~\ref{tab:data} includes an exploratory 
+    analysis of our datasets, both raw and under the various testing regimes.
 
 \begin{table}[t]
     \centering
-    \caption{Characteristics of datasets used in analysis.  $N$ refers to number of 
-    observations, $A$ number of anomalies, and $P$ the prevalence of anomalies in the
-    analysis set.    Peaks-over-threshold analysis uses the \emph{over} set, while rank
-    transformation and categorical analysis use the \emph{sub} set.\label{tab:data}}
+    \caption{Characteristics of datasets used in analysis.  $N$ refers to 
+    number of observations, $A$ number of anomalies, and $P$ the prevalence of 
+    anomalies in the analysis set.  Peaks-over-threshold analysis uses the 
+    \emph{over} set, while rank transformation and categorical analysis use 
+    the \emph{sub} set.\label{tab:data}}
     \bigskip
     \input {./tables/data_summary}
     % \makenote{Here lies a table of characteristics of datasets used in analysis.  
@@ -53,105 +59,121 @@ We tested our scores against several labelled datasets.  These included some str
     % many columns.  need to work on this.}
 \end{table}
 
-We compared the four developed scores against three canonical novelty detection algorithms,
-    including isolation forest \emph{(iso)} \cite{liu2000}, local outlier factor (lof)
-    \cite{breunig2000},
-    and one-class SVM (svm) \cite{chang2011}.  Each dataset was subject to 5-fold 
-    cross-validation, and out-of-sample performance scores were averaged to produce the
-    resulting performance tables seen in this section.
+We compared the four developed scores against three canonical novelty detection 
+    algorithms, including isolation forest \emph{(iso)} \cite{liu2000}, local 
+    outlier factor (lof) \cite{breunig2000}, and one-class SVM (svm) 
+    \cite{chang2011}.  Each dataset was subject to 5-fold cross-validation, and 
+    out-of-sample performance scores were averaged to produce the resulting 
+    performance tables seen in this section.
 
 \subsection{Categorical anomalies}
 The categorical transformation of \emph{cover}, \emph{pima}, and \emph{yeast}
-    discretized the real-valued and ordinal variables in those datasets.  For \emph{cover}
-    in particular, it seems this transformation lost a significant amount of data.  From
-    Table~\ref{tab:data}, it seems a large portion of data regarding anomalies is contained
-    within the radial component, so a categorical transformation loses that information.  
-    Likely for this reason, none of the methods offer exceptional performance on this dataset.
+    discretized the real-valued and ordinal variables in those datasets.  For 
+    \emph{cover} in particular, it seems this transformation lost a significant 
+    amount of data.  From Table~\ref{tab:data}, it seems a large portion of 
+    data regarding anomalies is contained within the radial component, so a 
+    categorical transformation loses that information.  Likely for this reason, 
+    none of the methods offer exceptional performance on this dataset.
 \begin{table}[ht]
     \centering
-    \caption{Area under the \emph{ROC} curve for various anomaly detection schemes,
-        on \emph{strictly categorical} datasets.  Reported here is arithmetic mean of 
-        out-of-sample performance for 5-fold cross-validation.  Values closer to 1 are preferred.\label{tab:perfcat}}
+    \caption{Area under the \emph{ROC} curve for various anomaly detection 
+        schemes, on \emph{strictly categorical} datasets.  Reported here is 
+        arithmetic mean of out-of-sample performance for 5-fold cross-validation.  
+        Values closer to 1 are preferred.\label{tab:perfcat}}
     \bigskip
     \input{./tables/ad_cat_performance_update}
 \end{table}
-The dataset \emph{solarflare} was also unique in our analysis, being the only truly 
-    categorical dataset used.  Our algorithm \emph{lsKDE} very slightly trailed the
-    performance of \emph{one-class SVM}, the best performing algorithm on this dataset.
-    On both \emph{pima} and \emph{yeast}, latent-simplex KDE performed significantly better
-    than any of the canonical methods.  On this analysis, \emph{hKDE} and \emph{hKNN} 
-    both performed poorly.  It seems the projection of the categorical probability vectors
-    into a unified sphere induces some loss of information.
+The dataset \emph{solarflare} was also unique in our analysis, being the only 
+    truly categorical dataset used.  Our algorithm \emph{lsKDE} very slightly 
+    trailed the performance of \emph{one-class SVM}, the best performing 
+    algorithm on this dataset.  On both \emph{pima} and \emph{yeast}, 
+    latent-simplex KDE performed significantly better than any of the canonical 
+    methods.  On this analysis, \emph{hKDE} and \emph{hKNN} both performed 
+    poorly.  It seems the projection of the categorical probability vectors into 
+    a unified sphere induces some loss of information.
 
 \subsection{Peaks-over-Threshold anomalies}
-We subjected six datasets to multivariate thresholding, only keeping observations that 
-    exceeded the threshold in at least one dimension.  For most datasets, this threshold 
-    was set at $\hat{F}_{\ell}^{-1}(0.95)$ for each dimension.  For \emph{cover}, we 
-    sub-sampled the data to produce a more manageable sized dataset.  For variables on 
-    these datasets that did not exhibit properties that would allow for a 
-    peak-over-threshold model to apply, these variables were instead converted to 
-    discrete values with two or three categories.  We built the mixed data model, and 
-    evaluated performance of the mixed scores, compared against the canonical methods.
-    Of particular interest here is the \emph{annthyroid} dataset, for which all of our
-    scores performed comparably, and significantly better than the canonical scores.  
-    Of the other tested datasets, on \emph{cardio}, \emph{lmKDE} approached the 
-    performance of \emph{isolation forest} and \emph{one-class SVM}, but all other 
-    methods performed worse.  For the datasets \emph{cover} and \emph{mammography}, 
-    \emph{hKNN}, \emph{lhKDE}, and \emph{lmKDE} performed comparably, and each 
-    significantly better than any of the canonical methods.  We see that 
-    \emph{lmKDE}, being the inheritor
+We subjected six datasets to multivariate thresholding, only keeping 
+    observations that exceeded the threshold in at least one dimension.  For 
+    most datasets, this threshold was set at $\hat{F}_{\ell}^{-1}(0.95)$ for 
+    each dimension.  For \emph{cover}, we sub-sampled the data to produce a 
+    more manageable sized dataset.  For variables on these datasets that did 
+    not exhibit properties that would allow for a peak-over-threshold model to 
+    apply, these variables were instead converted to discrete values with two 
+    or three categories.  We built the mixed data model, and evaluated 
+    performance of the mixed scores, compared against the canonical methods.  
+    Of particular interest here is the \emph{annthyroid} dataset, for which all 
+    of our scores performed comparably, and significantly better than the 
+    canonical scores.  Of the other tested datasets, on \emph{cardio}, 
+    \emph{lmKDE} approached the performance of \emph{isolation forest} and 
+    \emph{one-class SVM}, but all other methods performed worse.  For the 
+    datasets \emph{cover} and \emph{mammography}, \emph{hKNN}, \emph{lhKDE}, 
+    and \emph{lmKDE} performed comparably, and each significantly better than 
+    any of the canonical methods.  We see that \emph{lmKDE}, being the inheritor
     of the latent simplex KDE score, performs reasonably well reliably among 
-    datasets thus far in the peaks-over-threshold setting, but is outperformed by 
-    other metrics on each dataset. We may see some effect of the loss of information 
-    relating to the dependence structure between $\bm{w}$ and $\bm{v}$ on the derived
-    performance.  On that note, \emph{lhKDE} performed comparably to \emph{lmKDE} on \emph{annthyroid}, \emph{cover}, \emph{pima}, and \emph{yeast}, but slightly 
-    exceeded its performance on \emph{mammography}.  We saw in the categorical datasets,
-    \emph{lsKDE} performed generally well, so the projection onto a unified sphere may 
-    induce loss of information.  In that regard, it may be the case that preserving 
-    information about the dependence structure between $\bm{v}$ and $\bm{w}$ had a 
-    greater effect than a greater effect than preserving information within $\bm{w}$
-    specifically.
+    datasets thus far in the peaks-over-threshold setting, but is outperformed 
+    by other metrics on each dataset. We may see some effect of the loss of 
+    information relating to the dependence structure between $\bm{w}$ and 
+    $\bm{v}$ on the derived performance.  On that note, \emph{lhKDE} performed 
+    comparably to \emph{lmKDE} on \emph{annthyroid}, \emph{cover}, \emph{pima}, 
+    and \emph{yeast}, but slightly exceeded its performance on 
+    \emph{mammography}.  We saw in the categorical datasets, \emph{lsKDE} 
+    performed generally well, so the projection onto a unified sphere may 
+    induce loss of information.  In that regard, it may be the case that 
+    preserving information about the dependence structure between $\bm{v}$ and 
+    $\bm{w}$ had a greater effect than a greater effect than preserving 
+    information within $\bm{w}$ specifically.
     
 \begin{table}[ht]
     \centering
-    \caption{Area under the \emph{ROC} curve for various anomaly detection schemes, 
-        on \emph{mixed} data where the real component has undergone the \emph{threshold}
-        standard Pareto transformation.   Reported here is arithmetic mean of 
-        out-of-sample performance for 5-fold cross-validation.  Values closer to 1 are preferred.\label{tab:perfreal}}
+    \caption{Area under the \emph{ROC} curve for various anomaly detection 
+        schemes, on \emph{mixed} data where the real component has undergone 
+        the \emph{threshold} standard Pareto transformation.   Reported here is 
+        arithmetic mean of out-of-sample performance for 5-fold 
+        cross-validation.  Values closer to 1 are preferred.
+        \label{tab:perfreal}}
     \bigskip
     \input{./tables/ad_real_performance_update}
 \end{table}
 
-As to the poor performance of every method on \emph{pima} and \emph{yeast}, these reported
-    \emph{AuROC} values are conditional on the data exceeding the multivariate threshold used
-    in building the model.  As we see in Table~\ref{tab:data}, these datasets do not meet the
-    assumption that anomalies are concentrated in the tails.  Scores depending on $r_i$, the
-    radius component of $\bm{z}_i$, or \emph{magnitude} of the extremal observation, are 
-    going to perform poorly relative to metrics that do not make that assumption.
+As to the poor performance of every method on \emph{pima} and \emph{yeast}, 
+    these reported \emph{AuROC} values are conditional on the data exceeding 
+    the multivariate threshold used in building the model.  As we see in 
+    Table~\ref{tab:data}, these datasets do not meet the assumption that 
+    anomalies are concentrated in the tails.  Scores depending on $r_i$, the
+    radius component of $\bm{z}_i$, or \emph{magnitude} of the extremal 
+    observation, are going to perform poorly relative to metrics that do not 
+    make that assumption.
 
 \subsection{Rank Transformation anomalies}
-We subjected the same six datasets used in the peak-over-threshold model to rank transformation 
-    on the real and ordinal variables. We then built the mixed model including radius described
-    in Section~\ref{subsec:rank} on the transformed datasets.  For extremely large datasets, we
-    sub-sampled the data down to a manageable size.\makenote{need to rewrite sentence}
-    Note that rank transformation preserves the entire dataset, so we should not consider 
-    the values in Table~\ref{tab:perfrank} to be comparable to the values in Table~\ref{tab:perfreal}.
+We subjected the same six datasets used in the peak-over-threshold model to 
+    rank transformation on the real and ordinal variables. We then built the 
+    mixed model including radius described in Section~\ref{subsec:rank} on the 
+    transformed datasets.  For extremely large datasets, we sub-sampled the 
+    data down to a manageable size.
+    \makenote{need to rewrite sentence}  
+    Note that rank transformation preserves the entire dataset, so we should 
+    not consider the values in Table~\ref{tab:perfrank} to be comparable to 
+    the values in Table~\ref{tab:perfreal}.
     
 \begin{table}[ht]
     \centering
-    \caption{Area under the \emph{ROC} curve for various anomaly detection schemes,
-        on \emph{mixed} data where the real component has undergone the \emph{rank}
-        standard Pareto transformation. Reported here is arithmetic mean of 
-        out-of-sample performance for 5-fold cross-validation.  Values closer to 1 are preferred.\label{tab:perfrank}}
+    \caption{Area under the \emph{ROC} curve for various anomaly detection 
+        schemes, on \emph{mixed} data where the real component has undergone 
+        the \emph{rank} standard Pareto transformation. Reported here is 
+        arithmetic mean of out-of-sample performance for 5-fold 
+        cross-validation.  Values closer to 1 are preferred.
+        \label{tab:perfrank}}
     \bigskip
     \input{./tables/ad_rank_performance_update}
 \end{table}
 
-Here \emph{lmKDE} performs better than each of the canonical methods in four of six
-    datasets, performing slightly worse than \emph{one-class SVM} on \emph{mammography},
-    and significantly worse than \emph{isolation forest} on \emph{yeast}.  As we have stated 
-    before, \emph{yeast} and \emph{pima} are datasets that do not quite meet our assumptions as
-    to how anomalies are distributed, but our methods still make a strong showing on \emph{pima}.
+Here \emph{lmKDE} performs better than each of the canonical methods in four of 
+    six datasets, performing slightly worse than \emph{one-class SVM} on 
+    \emph{mammography}, and significantly worse than \emph{isolation forest} on 
+    \emph{yeast}.  As we have stated before, \emph{yeast} and \emph{pima} are 
+    datasets that do not quite meet our assumptions as to how anomalies are 
+    distributed, but our methods still make a strong showing on \emph{pima}.
     
 
 % EOF

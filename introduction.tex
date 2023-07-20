@@ -1,54 +1,46 @@
 \section{Introduction}
 
-%\makenote{Introduce basic extreme value theory, to be expanded in the next section.}
-
-%\makenote{Expand upon relevance of anomaly detection in the context of extreme value theory}.
-
 Anomaly detection, describes a field of methods for identifying observations as 
     \emph{anomalous}. This classification requires some explanation as to 
     \emph{what} defines an observation as anomalous. For this paper, following 
     the general trend of literature, we define anomalies as observations that 
     are in some manner \emph{different} than non-anomalous data. We interpret 
-    this to say that anomalies were not generated according to the same generating 
-    distribution as non-anomalous data, and as such, we would expect observations 
-    found in regions of relative data sparsity to be more likely to be anomalous 
-    those observations found in regions of high data abundance.  We characterize 
-    this assumption as \emph{anomalies stand alone}.  Normal data tend to cluster 
-    into homogenous groups, but anomalous data are heterogenous in their differences.
-    \makenote{I'm paraphrasing something I've seen, but don't remember exactly.  Need to find citation}.
+    this to say that anomalies were not generated according to the same 
+    generating distribution as non-anomalous data, and as such, we would expect 
+    observations found in regions of relative data sparsity to be more likely to 
+    be anomalous than those observations found in regions of high data 
+    abundance.  We characterize this assumption as \emph{anomalies stand alone}.  
+    Normal data tend to cluster into homogenous groups, but anomalous data are 
+    heterogenous in their differences. 
+      \makenote{I'm paraphrasing something I've seen, but don't remember 
+        exactly.  Need to find citation}.
 
-Equivalent names for this field include \emph{outlier} detection---observations lying outside the
-    distribution of non-anomalous data, and \emph{novelty} detection---\makenote{rewrite; observations
-    for which the distribution is functionally different than that of the observed data}.  Some authors will
-    distinguish the last by the assumption of a \emph{clean} training data set containing no anomalies.  Such
-    an assumption produces the interpretation that anomalies contain information that has not been seen before,
-    hence they are novelties.
+Equivalent names for this field include \emph{outlier} detection, and 
+    \emph{novelty} detection.  Some authors will distinguish the last by the 
+    assumption of a \emph{clean} training data set containing no anomalies.
+    \makenote{need citation}  
+    Such an assumption is merited by the interpretation that anomalies contain 
+    information that has not been seen before, and thus are novelties.
 
-The applicability of extreme value theory to anomaly detection is predicated on the assumption that
-    extreme observations are more likely to be anomalous.  A discussion on this point is provided by
-    \cite{goix2017}, stating that extreme observations exist at the border between anomalous and 
-    non-anomalous regions.  Indeed, for most datasets in our testing, the probability an individual 
-    observation is anomalous is higher
-  for data in the tails of the distribution. This relative abundance of anomalies among extremes might 
-  cause a naive classifier that does not take into account the dependence structure of extremes to 
-  classify all extremes as anomalous.  If we follow the assumption that anomalies stand alone, then extreme
-  observations that cluster into a homogenous group should not be considered anomalous.  For this reason, we
-  desire a classifier that considers the dependence structure of the extremes as well.
+The applicability of extreme value theory to anomaly detection is predicated on 
+    the assumption that extreme observations are more likely to be anomalous.  
+    A discussion on this point is provided by \cite{goix2017}, stating that 
+    extreme observations exist at the border between anomalous and non-anomalous 
+    regions.  Indeed, for most datasets in our testing, the probability an 
+    individual observation is anomalous is higher for data in the tails of the 
+    distribution. This relative abundance of anomalies among extremes might 
+    cause a naive classifier that does not take into account the dependence 
+    structure of extremes to classify all extremes as anomalous.  If we follow 
+    the assumption that anomalies stand alone, then extreme observations that 
+    cluster into a homogenous group should not be considered anomalous.  For 
+    this reason, we desire a classifier that considers the dependence structure 
+    of the extremes as well.
 
-For our purpose, we do not assume the existence of labels in the training dataset, and seek an
-  algorithm that can produce anomaly scores in an absence of class labels. As such, we will offer
-  a brief overview of unsupervised anomaly detection methods, as well as discussion of the methods
-  we are preparing here as competing models.
-
-\makenote{
-  roadmap of paper.  
-  section 2) review of relevant extreme value theory; 
-  section 3) proposed models; 
-  section 4) proposed categorical adaptations and mixed models, relevant distance metrics for each; 
-  section 5) results; 
-  section 6) Conclusion
-  }
-
+For our purpose, we do not assume the existence of labels in the training 
+    dataset, and seek an algorithm that can produce anomaly scores in an absence 
+    of class labels. As such, we will offer a brief overview of unsupervised 
+    anomaly detection methods, as well as discussion of the methods we are 
+    preparing here as competing models.
 
 % EOF
 

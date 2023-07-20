@@ -1,26 +1,28 @@
     \section{Review of Extreme Value Theory\label{sec:evt}}
 
 The use of methods based on extreme value theory to perform anomaly detection
-    has the advantage of focusing on the tail of the distribution, which is where
-    anomalous observations are more likely to be found. In the univariate case,
-    asymptotic results provide a unique parametric limiting extreme family. Software 
-    to infer the parameters of such family is widely available  \cite[see, 
-    for example,][]{coles2001}. A popular approach to study univariate 
-    extremes, is to consider the observations  that exceed a threshold, and 
-    calculate the excess values, then use them for inference on the parameters of 
-    the generalized Pareto distribution that correspond to the theoretical limit. 
-    This is known as  the peaks over threshold approach (PoT), and will be central 
-    to the methods in this paper. In the multivariate case the theory for PoT is well 
-    developed \citep[see, for example][]{dehaan2006}, and it indicates the existence 
-    of a limiting  distribution  that has no parametric representation. This presents
-    a challenge for inference. Furthermore, the difficulty of using a  PoT approach 
-    is compounded by the fact  that there is no unique definition of an  
-    exceedance of a multivariate threshold, as there is an obvious dependence on the norm 
-    used to measure the vectors sizes.
+    has the advantage of focusing on the tail of the distribution, which is 
+    where anomalous observations are more likely to be found. In the univariate 
+    case, asymptotic results provide a unique parametric limiting extreme 
+    family. Software to infer the parameters of such family is widely available 
+    \cite[see, for example,][]{coles2001}. A popular approach to study 
+    univariate extremes, is to consider the observations  that exceed a 
+    threshold, and calculate the excess values, then use them for inference on 
+    the parameters of the generalized Pareto distribution that correspond to 
+    the theoretical limit. This is known as  the peaks over threshold approach 
+    (PoT), and will be central to the methods in this paper. In the multivariate 
+    case the theory for PoT is well developed 
+    \citep[see, for example][]{dehaan2006}, and it indicates the existence of a 
+    limiting  distribution  that has no parametric representation. This 
+    presents a challenge for inference. Furthermore, the difficulty of using a 
+    PoT approach is compounded by the fact  that there is no unique definition 
+    of an exceedance of a multivariate threshold, as there is an obvious 
+    dependence on the norm used to measure the vectors sizes.
 
-The multivariate PoT model considered in this paper has been developed in \cite{trubey:pg},
-    and it is based on a representation of the limiting distribution proposed in \cite{RoSeWa2018a}.
-    Let $\bm{W} = (W_1, \ldots ,W_d)$ be a $d$-dimensional random vector with
+The multivariate PoT model considered in this paper has been developed in 
+    \cite{trubey:pg}, and it is based on a representation of the limiting 
+    distribution proposed in \cite{RoSeWa2018a}.  Let 
+    $\bm{W} = (W_1, \ldots ,W_d)$ be a $d$-dimensional random vector with
     cumulative distribution $F$. Assume 
     that there exist sequences of vectors $\bm{a}_n$ and $\bm{b}_n$,
     and a $d$-variate distribution $G$ such that 
@@ -29,7 +31,8 @@ The multivariate PoT model considered in this paper has been developed in \cite{
     distribution. Then
     \begin{equation*}
         \begin{aligned}
-            \lim\limits_{n\rightarrow\infty} &\prob{\bm{a}^{-1}_n (\bm{W} - \bm{b}_n) 
+            \lim\limits_{n\rightarrow\infty} 
+                &\prob{\bm{a}^{-1}_n (\bm{W} - \bm{b}_n) 
                 \leq \bm{w} \mid \bm{W} \not\leq \bm{b}_n)}  
                 = \frac{\log G(\bm{w} \wedge \bm{0}) 
                 - \log G(\bm{w}) }{\log G(\bm{0})} = H(\bm{w}).
@@ -73,20 +76,22 @@ Starting with a collection of observations
 
 Recall that the radial component $R \in {\mathbb R}_+$ follows a standard 
     Pareto distribution, we focus on describing the distribution of the angular 
-    component $\bm{V}\in {\mathbb S}_{\infty}^{d-1}$. For this purpose we use the 
-    samples  $\bm{v}_i ,\; i=1, \ldots ,m$. A suitable distribution for $\bm{V}$ 
-    can be approximated by projecting a distribution in $\mathbb{R}_+^d$ onto 
-    $\mathbb{S}_{p}^{d-1}$. Recall that the $\mathcal{L}_p$ norm is 
-    $\lVert \bm{s} \rVert_p = (\sum_{\ell = 1}^d \rvert s\lvert_{\ell}^p)^{1/p}$. For 
-    $\bm{x} \in\mathbb{R}_+^d$, we define the transformation 
+    component $\bm{V}\in {\mathbb S}_{\infty}^{d-1}$. For this purpose we use 
+    the samples $\bm{v}_i ,\; i=1, \ldots ,m$. A suitable distribution for 
+    $\bm{V}$ can be approximated by projecting a distribution in 
+    $\mathbb{R}_+^d$ onto $\mathbb{S}_{p}^{d-1}$. Recall that the 
+    $\mathcal{L}_p$ norm is 
+    $\lVert \bm{s} \rVert_p = (\sum_{\ell = 1}^d \rvert s\lvert_{\ell}^p)^{1/p}$. 
+    For $\bm{x} \in\mathbb{R}_+^d$, we define the transformation 
     \[T_p(\bm{x}) = (\lVert\bm{x}\rVert_p, x_1/\lVert\bm{x}\rVert_p, \ldots, 
     x_{d-1}/\lVert\bm{x}\rVert_p)=: (r,\bm{y})\], where
     $\bm{y} = (y_1, \ldots , y_{d-1}) \in \mathbb{S}_{p}^{d-1}$, $r>0$, and 
     $y_d = \left(1 - \sum_{\ell = 1}^{d-1}y_\ell^p\right)^{\frac{1}{p}}$.
-    Thus, a distribution on $\bm{X}$ induces a distribution on $\mathbb{S}_{p}^{d-1}$. 
-    In particular, assume that $\bm{X}$ has independent components, each of 
-    them distributed as $\mathcal{G}a(\alpha_{\ell}, \beta_{\ell})$, then it can 
-    be seen that the density of $\bm{y}$ is
+    Thus, a distribution on $\bm{X}$ induces a distribution on 
+    $\mathbb{S}_{p}^{d-1}$. In particular, assume that $\bm{X}$ has independent 
+    components, each of them distributed as 
+    $\mathcal{G}a(\alpha_{\ell}, \beta_{\ell})$, then it can be seen that the 
+    density of $\bm{y}$ is
     \begin{equation}
         \label{eqn:projgamma}
         f(\bm{ y}\mid\bm{ \alpha},\bm{ \beta}) =
@@ -99,31 +104,36 @@ Recall that the radial component $R \in {\mathbb R}_+$ follows a standard
                 \right]
             \frac{\Gamma({\textstyle\sum}_{\ell = 1}^d\alpha_{\ell})}{
                     \left({\textstyle\sum}_{\ell = 1}^d
-                \beta_{\ell}y_{\ell}\right)^{{\scriptstyle\sum_{\ell = 1}^d \alpha_{\ell}}}
+                \beta_{\ell}y_{\ell}\right)^{
+                    {\scriptstyle\sum_{\ell = 1}^d \alpha_{\ell}}}
                 },
   \end{equation}
-    \citep[see,][for details]{trubey:pg}. This distribution is a generalization to $\mathbb{S}_{p}^{d-1}$
-    of the projected gamma distribution defined for $p=2$ in \cite{nunez2019}. We will denote its
-    density as  $\mathcal{PG}_p(\bm{y}|\bm{\alpha},\bm{\beta})$.
+    \citep[see,][for details]{trubey:pg}. This distribution is a generalization 
+    to $\mathbb{S}_{p}^{d-1}$ of the projected gamma distribution defined for 
+    $p=2$ in \cite{nunez2019}. We will denote its density as 
+    $\mathcal{PG}_p(\bm{y}|\bm{\alpha},\bm{\beta})$.
 %  Then letting $R = \lVert \bm{S}\rVert_p$, we can let 
 %    $Y_d = \left(1 - \sum_{\ell = 1}^{d-1}Y_{\ell}^{p}\right)^{\frac{1}{p}}$ 
 %    then $\bm{Y} = \frac{\bm{S}}{R}\Rightarrow \bm{S} = R\bm{Y}$, 
 %    and the determinant of the Jacobian of the transformation becomes
 %    \[
-%        \lvert J \rvert = r^{d-1}\left[y_d^p + \sum_{\ell = 1}^{d-1}y_{\ell}^p\left(y_d^p\right)^{\frac{1}{p} - 1} \right].
+%        \lvert J \rvert = r^{d-1}\left[y_d^p + 
+%    \sum_{\ell = 1}^{d-1}y_{\ell}^p\left(y_d^p\right)^{\frac{1}{p} - 1} \right].
 %    \o]
 
-Note that $T$ is not differentiable at $p = \infty$, so we can not use it to directly 
-    model on ${\mathbb S}_{\infty}^{d-1}$. However, for a sufficiently large $p$, 
-    the space ${\mathbb S}_p^{d-1}$ will tend to approach $\mathbb{S}_{\infty}^{d-1}$
-    This approximation is leveraged in~\cite{trubey:pg} to obtain samples of a 
-    distribution on ${\mathbb S}_{\infty}^{d-1}$. To obtain a flexible model for $\Phi$ we
-    use the projected gamma density as the kernel of a random measure mixture
-    model, based on the Pitman Yor ($\mathcal{PY}$) process introduced in~\cite{perman1992}.
-    Pitman Yor processes have the advantage over the more commonly used Dirichlet 
-    processes \citep{Ferguson74} of including a discount parameter along with the 
-    concentration parameter, for greater control over the formation of 
-    new clusters.  A hierarchical formulation of the model for observations 
+Note that $T$ is not differentiable at $p = \infty$, so we can not use it to 
+    directly model on ${\mathbb S}_{\infty}^{d-1}$. However, for a sufficiently 
+    large $p$, the space ${\mathbb S}_p^{d-1}$ will tend to approach 
+    $\mathbb{S}_{\infty}^{d-1}$ This approximation is leveraged 
+    in~\cite{trubey:pg} to obtain samples of a distribution on 
+    ${\mathbb S}_{\infty}^{d-1}$. To obtain a flexible model for $\Phi$ we use 
+    the projected gamma density as the kernel of a random measure mixture model, 
+    based on the Pitman Yor ($\mathcal{PY}$) process introduced 
+    in~\cite{perman1992}. Pitman Yor processes have the advantage over the more 
+    commonly used Dirichlet processes \citep{Ferguson74} of including a 
+    discount parameter along with the concentration parameter, for greater 
+    control over the formation of new clusters.  A hierarchical formulation of 
+    the model for observations 
     $\bm{y}_i\in \mathbb{S}_{p}^{d-1}i, i=1, \ldots,m$, is
     \begin{equation}
         \label{eqn:modelsphere}
@@ -141,18 +151,18 @@ Note that $T$ is not differentiable at $p = \infty$, so we can not use it to dir
         \end{aligned}
     \end{equation}
     Here $\mathcal{LN}$ denotes a log-normal, $\mathcal{N}$ a normal, and 
-    $\mathcal{IW}$ an inverse Wishart. Details of the implementation of this model 
-    using and adaptive MCMC approach are provided in the supplementary material.  
-    As a kernel density, it was observed in \cite{trubey:pg} that the unrestricted 
-    form of the $\mathcal{PG}_p$
-    with both shape and rate parameters offered no improvement in model fidelity than
-    the restricted form, where the rate parameters are fixed at 1.  For a more parsimonious
-    model, and for compatibility with the categorical regime, in this paper we choose to use
-    the restricted form.
+    $\mathcal{IW}$ an inverse Wishart. Details of the implementation of this 
+    model using and adaptive MCMC approach are provided in the supplementary 
+    material.  As a kernel density, it was observed in \cite{trubey:pg} that 
+    the unrestricted form of the $\mathcal{PG}_p$ with both shape and rate 
+    parameters offered no improvement in model fidelity than the restricted 
+    form, where the rate parameters are fixed at 1.  For a more parsimonious 
+    model, and for compatibility with the categorical regime, in this paper we 
+    choose to use the restricted form.
     \makenote{mention dimensions}
     
-The approach proposed in this section produces a sample of the angular measure of
-    the distribution of the tails of the sample. The methods has a number of 
+The approach proposed in this section produces a sample of the angular measure 
+    of the distribution of the tails of the sample. The methods has a number of 
     advantages for anomaly detection: It focuses on the tails, which is where we 
     are more likely to find anomalous behavior;  It accounts for asymptotic 
     dependence between the different components of the observation vector; It 
