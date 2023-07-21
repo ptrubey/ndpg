@@ -1,9 +1,22 @@
 paragraph + example on threshold discussion
 - ROC curve, threshold selection
 
-
-
 Add goix et al to comparison.
-- Difficult.  Only regime it's applicable to is rank-transformed.  Currently, in thresholded data, canonical methods are applied *after* standardization/thresholding, but DAMEX uses rank transformation from *before* thresholding.
+- Difficult.  Only regime it's applicable to is rank-transformed.  Currently, 
+    in thresholded data, canonical methods are applied *after* 
+    standardization/thresholding, but DAMEX uses rank transformation from 
+    *before* thresholding.
 
 current idea of variational bayes approach 
+
+
+Blue stuff
+
+look at technometrics: is journal appropriate to paper
+look at other possible journals
+	- Journal of computational and graphical statistics
+	journals about anomaly detection.
+
+journal of statistical software
+
+build a package for
