@@ -1,21 +1,60 @@
 \section{Novelty Detection Methods\label{sec:novelty}}
 As previously stated, a novelty detection algorithm produces an anomaly score 
     which provides a ranked ordering of which observations are likely to be 
-    anomalous. Building on the notion that anomalies occur in areas of low 
-    density, a simple score might establish for observation $x_i$, 
-    \[S_i = f_{x}(x\mid\mathcal{D})^{-1}\]
-    where $\mathcal{D}$ is the observed data.  That is, the inverse of the 
-    posterior predictive density at observation $x_i$.  
-    
-    
-    
-    
-    
-    As applied to angular data, this presents
-    us something of a problem:  
+    anomalous, with higher scores indicating more likely anomalous. Building on 
+    the notion that anomalies occur in areas of low density, a general score 
+    might establish for observation $x_i$, 
+    \[S_i = \text{E}\left[f_{x}(x_i\mid\mathcal{D})^{-1}\right]\]
+    where $\mathcal{D}$ is the observed data.  That is, the reciprocal of the 
+    posterior predictive density at observation $x_i$.
 
+With independence established between the angular and radial components of an
+    extreme observation, we can consider sub-scores established under radial 
+    and angular components independently.  That is,
+    \[
+        S_i = S_i^{(r)}\times S_i^{(\bm{v})} = 
+            \text{E}\left[f_r(r_i\mid\mathcal{D})^{-1}\right]\times
+            \text{E}\left[f_v(\bm{v}_i\mid\mathcal{D})^{-1}\right]
+    \]
+    As we have established, $r_i$ follows a standard Pareto distribution, so its
+    density $f_r(r_i) = r_i^{-2}$.  Estimating the angular density, 
+    $f_v(\bm{v}_i)$, is more complicated.  As we have previously established in
+    Section~\ref{sec:evt}, density estimation on the surface of 
+    ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem. To establish a method
+    of inferring such a distribution, we instead projected the data from 
+    $\mathbb{S}_{\infty}^{d-1}$ onto $\mathbb{S}_p^{d-1}$ for a large but finite
+    $p$.  This makes estimation of distributional parameters possible, but a
+    calculated density for a given observation under a finite $p > 1$ depends on
+    which dimension $\ell \in \lbrace 1,\ldots,d\rbrace$ was used as the summary
+    variable.  Calculated density, and thus rank ordering of anomaly scores,
+    could change depending on which dimension was used.  This is not ideal.
+    Further, for an observation near 0 evaluated on a gamma-related distribution 
+    with a shape parameter $\alpha$ near 0 creates an evaluated density that 
+    tends towards infinity.  This instability would play havoc on directly 
+    calculated density-based scores.
 
+We sidestep these problems of angular density evaluation by establishing a 
+    non-parametric angular density estimator, using as input a sample from the 
+    posterior predictive distribution of the model established in 
+    Section~\ref{sec:evt}. By fitting an angular model to the data, we can 
+    generate an arbitrarily large sample with which to establish the 
+    non-parametric density estimator.  Here, we consider two well-established
+    methods: $k$-nearest neighbors, or \emph{$k$NN}, and 
+    kernel density estimation, or \emph{KDE}.  Both of these methods make
+    use of pairwise distances between the observed values to evaluate, and
+    observations from an input dataset.  We use a sample from the posterior
+    predictive distribution as that input dataset.  
 
+As described in \cite{trubey:pg}, \emph{distance} on $\mathbb{S}_{\infty}^{d-1}$ 
+    is computationally expensive to evaluate.  Instead, they propose a kernel
+    metric that is computationally cheap to evaluate, bearing a cost
+    equivalent to Euclidean norm.  For observations on different faces of 
+    $\mathbb{S}_{\infty}^{d-1}$, a performant analogue to distance can be
+    evaluated by rotating the face of the second observation along the axis of
+    the first observation, and computing the Euclidean norm between the first
+    observation and the transformed second observation.  Indeed, this metric can
+    be considered an upper bound on distance on $\mathbb{S}_{\infty}^{d-1}$
+    between the two observations.
 
 \add{\bf This whole section needs to rewritten. First we have to connect to 
     the previous section. As a result of what the methods presented in the 
@@ -26,53 +65,11 @@ As previously stated, a novelty detection algorithm produces an anomaly score
     measure of distance on ${\mathbb S}_{\infty}^{d-1}$, and you refer to the 
     previous paper.}
 
-We can consider a novelty detection algorithm as a function that assigns a
-    novelty score $S_i$ to observation $i$.  We interpret a larger $S_i$
-    as indicative that the observation is more likely to be anomalous.
-
-Building on the notion that anomalies occur in areas of low density, a simple
-    score might establish
-    \[
-        S_i = f_{\bm{x}}(\bm{x}_i\mid \mathcal{D})^{-1}.  
-    \]  
-    where $\mathcal{D}$ denotes all observed data.  That is, the reciprocal of 
-    the fitted posterior predictive density, $f_{\bm{x}}\mid \mathcal{D}$ at 
-    $\bm{x}_i$.  As previously established in Section~\ref{sec:evt}, density 
-    estimation on the surface of ${\mathbb S}_{\infty}^{d-1}$ is not an easy 
-    problem, so for purposes of establishing inference on the dependence 
-    structure of the data projected from ${\mathbb S}_{\infty}^{d-1}$ onto 
-    ${\mathbb S}_p^{d-1}$ for some large but finite $p$.  This makes density 
-    estimation \emph{possible}, but for purposes of anomaly detection, the 
-    projection onto ${\mathbb S}_p^{d-1}$ is strongly dependent on \emph{which} 
-    dimension was used as a summary--that is, which dimension became a function 
-    of the others, hereafter referred to as the \emph{dependent} variable. 
-    In~\cite{trubey:pg}, $y_d = (1 - \sum_{\ell = 1}^{d-1}y_{\ell}^p)^{1-p}$ 
-    was the dependent variable.  This works for establishing the projected Gamma 
-    density, and via proportionality, inference on the parameters of the PG 
-    distribution is not affected by the choice of the summary variable. However, 
-    when we look to establish density estimation routines for purposes of 
-    anomaly detection, where we do take into account the full calculated 
-    density, the 
-    choice of summary variable does affect the calculated density.  Moreover, 
-    density on $\mathbb{S}_p^{d-1}$ is only a proxy to density on 
-    $\mathbb{S}_{\infty}^{d-1}$, which is our goal.
-
-\makenote{A reviewer might ask about $p=1$, and using the direct density 
-  calculated thereof.  We should add that fitted gamma densities are inherently 
-  unstable and the spiking behavior near axes results in \emph{extremely} 
-  non-normal behavior.  True density metrics based on projected gamma (at any $p$) 
-  are not going to behave properly and are undesireable.}
-
-One way around this issue would be the use of a non-parametric density 
-  estimation routine on a sample from the fitted posterior predictive 
-  distribution.  We consider two such well-established methods: $k$-nearest 
-  neighbors, or \emph{$k$NN}, and kernel density estimation, or \emph{KDE}.
-  These estimators of local density will act on the angular component of the 
-  observation, $\bm{v}_i$.  We also have available the radial component $r_i$, 
-  and under the assumptions of multivariate EVT, 
-  $f(\bm{v},r) = f_{\bm{v}}(\bm{v})\;f_{r}(r)$.  As such, we multiply the 
-  angular scores by $r_i^{-2}$, the density of the standard pareto distribution 
-  at $r$.
+% \makenote{A reviewer might ask about $p=1$, and using the direct density 
+%   calculated thereof.  We should add that fitted gamma densities are inherently 
+%   unstable and the spiking behavior near axes results in \emph{extremely} 
+%   non-normal behavior.  True density metrics based on projected gamma (at any $p$) 
+%   are not going to behave properly and are undesireable.}
 
 \subsection{$k$-Nearest Neighbors Density estimation}
 We establish a local posterior predictive density under the $k$-Nearest Neighbor 
