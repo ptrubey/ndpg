@@ -40,30 +40,53 @@ We sidestep these problems of angular density evaluation by establishing a
     generate an arbitrarily large sample with which to establish the 
     non-parametric density estimator.  Here, we consider two well-established
     methods: $k$-nearest neighbors, or \emph{$k$NN}, and 
-    kernel density estimation, or \emph{KDE}.  Both of these methods make
-    use of pairwise distances between the observed values to evaluate, and
-    observations from an input dataset.  We use a sample from the posterior
-    predictive distribution as that input dataset.  
+    kernel density estimation, or \emph{KDE}.  For both of these methods we make
+    use of pairwise distances between observations from the dataset, and
+    replicates from a posterior predictive sample.  
 
 As described in \cite{trubey:pg}, \emph{distance} on $\mathbb{S}_{\infty}^{d-1}$ 
-    is computationally expensive to evaluate.  Instead, they propose a kernel
-    metric that is computationally cheap to evaluate, bearing a cost
-    equivalent to Euclidean norm.  For observations on different faces of 
+    is computationally expensive to evaluate.  Instead, they propose an estimate
+    of distance that is computationally cheap to evaluate, bearing a cost
+    equivalent to Euclidean norm.  
+    % \makenote{option 1}
+    For observations on different faces of 
     $\mathbb{S}_{\infty}^{d-1}$, a performant analogue to distance can be
     evaluated by rotating the face of the second observation along the axis of
     the first observation, and computing the Euclidean norm between the first
-    observation and the transformed second observation.  Indeed, this metric can
+    observation and the transformed second observation.  
+    % \makenote{option 2}
+    % Let
+    % ${\mathbb C}_{\ell}^{d-1} = \lbrace \bm{x} : 
+    %     \bm{x} \in {\mathbb S}_{\infty}^{d-1}, x_{\ell} = 1\rbrace$
+    % comprise the $\ell$th face of $\mathbb{S}_{\infty}^{d-1}$.  For two points
+    % on the same face, Euclidean distance corresponds to the shortest possible
+    % path between those points.  For points 
+    % $\bm{a} \in \mathbb{C}_{\ell}^{d-1},\;\bm{b}\in\mathbb{C}_{\jmath}^{d-1}$,
+    % we can rotate $\mathbb{C}_{\jmath}^{d-1}$ into the same hyperplane as 
+    % $\mathbb{C}_{\ell}^{d-1}$ as
+    % \begin{equation}
+    %     \bm{b}^{\prime}_i = P_{\jmath\ell}(\bm{b}) = 
+    %     \begin{cases}
+    %         b_{i} &\text{for }i\neq \jmath,\ell\\
+    %         1 &\text{for }i = \ell\\
+    %         2 - b_{\ell} &\text{for }i = \jmath
+    %     \end{cases},\;\;\;\;
+    %     g(\bm{a},\bm{b}) = \pnorm{\bm{a} - \bm{b}^{\prime}}{2}
+    % \end{equation}
+    % After transformation, the Euclidean norm between $\bm{a}$ and transformed
+    % provides a 
+    Indeed, this metric can
     be considered an upper bound on distance on $\mathbb{S}_{\infty}^{d-1}$
     between the two observations.
 
-\add{\bf This whole section needs to rewritten. First we have to connect to 
-    the previous section. As a result of what the methods presented in the 
-    previous section we have a sample from the angular density that 
-    characterizes the extreme behavior of our observations. We have samples, 
-    but we have no way to evaluate it. At this point you provide information 
-    about estimated of the density, and then you have to mention that a 
-    measure of distance on ${\mathbb S}_{\infty}^{d-1}$, and you refer to the 
-    previous paper.}
+% \add{\bf This whole section needs to rewritten. First we have to connect to 
+%     the previous section. As a result of what the methods presented in the 
+%     previous section we have a sample from the angular density that 
+%     characterizes the extreme behavior of our observations. We have samples, 
+%     but we have no way to evaluate it. At this point you provide information 
+%     about estimated of the density, and then you have to mention that a 
+%     measure of distance on ${\mathbb S}_{\infty}^{d-1}$, and you refer to the 
+%     previous paper.}
 
 % \makenote{A reviewer might ask about $p=1$, and using the direct density 
 %   calculated thereof.  We should add that fitted gamma densities are inherently 
@@ -72,51 +95,57 @@ As described in \cite{trubey:pg}, \emph{distance} on $\mathbb{S}_{\infty}^{d-1}$
 %   are not going to behave properly and are undesireable.}
 
 \subsection{$k$-Nearest Neighbors Density estimation}
-We establish a local posterior predictive density under the $k$-Nearest Neighbor 
-    estimator \citep{mack1979} by assuming a locally uniform density within a 
-    $d$--dimensional ball $\mathbb{B}$, centered on observation $i$, with 
-    radius $D_{k}^d(x_i)$ calculated as the distance to the $k$th nearest 
-    neighbor to observation $i$ in a sample from the posterior predictive 
-    distribution. The volume of the ball is calculated as
+We establish a local posterior predictive density under the $k$NN estimator 
+    \citep{mack1979} on $\mathbb{S}_{\infty}^{d-1}$ by assuming a locally 
+    uniform density within a $d-1$--dimensional ball $\mathbb{B}$, centered on 
+    observation $i$, with radius $D_{k}(\bm{v}_i)$ calculated as the aforementioned
+    distance analogue \makenote{would prefer a ref to callback to} to 
+    the $k$th nearest neighbor to observation $i$ in a sample from the 
+    posterior predictive distribution. The volume of the ball is calculated as
     \begin{equation}
         \label{eq:vol_sphere}
-        \text{Vol}(\mathbb{B}_d^k) =
-        \frac{\pi^{\frac{d}{2}}D_{k}(\bm{x}_i)^d}{
-            \Gamma\left(\frac{d}{2} + 1\right)}
+        \text{Vol}(\mathbb{B}_{d-1}^k) =
+        \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
+            \Gamma\left(\frac{d-1}{2} + 1\right)}.
     \end{equation}
-    where $D_k(\bm{x}_i)$ is the distance from $\bm{x}_i$ to the $k$th nearest 
-    replicate of $\bm{X}\mid\bm{x}$.  A density is established as 
-    \begin{equation}
-        \label{eq:ad_knn}
-        f_{x}^{(k\text{NN})}(x_i\mid X) \approx 
-            \frac{k}{N}\left(\text{Vol}(\mathbb{B}_d^k\right)^{-1}
-    \end{equation}
-    where $N$ is the total number of replicates of $\bm{X}\mid\bm{x}$.  As 
-    mentioned, we desire a score interpreted as higher is more likely anomalous, 
-    so we take the score as the reciprocal of the density.
-
-When implementing this analysis on the hypercube, we lose one degree of freedom,
-    and as a stand-in for distance, we use the negative definite kernel metric 
-    previously explored in~\cite{trubey:pg} as a means of establishing a proper 
-    scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
+    A density is thus established as 
+    $f_{x}^{(k\text{NN})}(x_i\mid X) \approx 
+        \frac{k}{N}\left(\text{Vol}(\mathbb{B}_{d-1}^k)\right)^{-1}$
+    where $N$ is the total number of replicates of from the posterior predictive
+    distribution.  Taking the reci[rocal of the estimated angular density, 
+    the angular score under the $k$NN estimator is then
     \begin{equation}
         \label{eq:ad_knn_h}
-        S_i^{hKNN} = \frac{r_i^{2}N}{k}
-        \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
-          \Gamma\left(\frac{d-1}{2} - 1\right)}
-  \end{equation}
-    This is of course an approximation to the true posterior predictive density 
-    at observation $i$.  In addition to the noise induced by using random 
-    samples from the posterior predictive, there is some bias induced in the 
-    calculated volume
-    if $D_k(\bm{v}_i)^{d-1}$ is greater than the distance from $\bm{v}_i$ to 
-  unity ($\bm{1}_d$), or from $\bm{v}_i$ to some axis.  In practice,
-  this induced bias seems to have relatively small effect. 
-  \makenote{worth looking into what proportion of observations experience this 
-  bias, and what performance outcome is}.
-  In our experience, using a large posterior predictive sample, the resulting 
-  ordering of scores in $k$NN based methods was robust to the choice of $k$, for 
-  values between 2 and 10.
+        S_i^{(\bm{v})} = \frac{r_i^{2}N}{k}
+            \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
+            \Gamma\left(\frac{d-1}{2} - 1\right)}
+    \end{equation}
+    In our experience, using a large posterior predictive sample, 
+        \makenote{this should be quantified}
+    the resulting odering of scores was relatively robust to choice of $k$, for
+    values between 2 and 10.  We used $k = 5$ in our performance analysis.
+% When implementing this analysis on the hypercube, we lose one degree of freedom,
+%     and as a stand-in for distance, we use the negative definite kernel metric 
+%     previously explored in~\cite{trubey:pg} as a means of establishing a proper 
+%     scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
+%     \begin{equation}
+%         \label{eq:ad_knn_h}
+%         S_i^{hKNN} = \frac{r_i^{2}N}{k}
+%         \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
+%           \Gamma\left(\frac{d-1}{2} - 1\right)}
+%   \end{equation}
+%     This is of course an approximation to the true posterior predictive density 
+%     at observation $i$.  In addition to the noise induced by using random 
+%     samples from the posterior predictive, there is some bias induced in the 
+%     calculated volume
+%     if $D_k(\bm{v}_i)^{d-1}$ is greater than the distance from $\bm{v}_i$ to 
+%   unity ($\bm{1}_d$), or from $\bm{v}_i$ to some axis.  In practice,
+%   this induced bias seems to have relatively small effect. 
+%   \makenote{worth looking into what proportion of observations experience this 
+%   bias, and what performance outcome is}.
+%   In our experience, using a large posterior predictive sample, the resulting 
+%   ordering of scores in $k$NN based methods was robust to the choice of $k$, for 
+%   values between 2 and 10.
 
 \subsection{Kernel Density Estimation}
 \makenote{needs citation for KDE}
