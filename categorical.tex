@@ -6,43 +6,56 @@ In the previous sections we have used extreme value theory to obtain samples
     data, so here we consider an extension of the projected gamma mixture model 
     to handle categorical observations. 
 
-Suppose $C$ is a vector of $M$ random categorical variables.  Then $\bm{C}_{m}$ 
+Suppose $\bm{C}$ is a vector of $M$ random categorical variables.  Then $C_m$ 
     is a random categorical variable, with $K_{m} \geq 2$ categories. Regard 
-    $\bm{W}$ as $\bm{C}$, recoded in one-hot encoding.  That is, $\bm{W}$ is a 
-    binary vector of length $K = \sum_{m = 1}^M K_{m}$, 
+    $\bm{W}_m$ as $C_m$, recoded in one-hot encoding, and $\bm{W}$ the 
+    concatenation of $M$ one-hot encoded categorical RV's. That is, $\bm{W}$ 
+    is a binary vector of length $K = \sum_{m = 1}^M K_{m}$, 
     $\sum_{k = 1}^K W_k = M$, and every $m$ subset of $\bm{W}$ sums to 1.  This 
-    corresponds to multinomial encoding for $\bm{C}_m$, with size 1. We then 
-    consider a Dirichlet-multinomial density for $\bm{W}_m$, established as 
-\add{
-    \bf This paragraph needs more clarity. In particular, the 
-    notation needs to be consisten: Bold face for vectors; Capital letters for 
-    random  variables. Thus a random vector is bold face capitalized. Then 
-    there is the story of the Dirichlet-multinomial that needs more 
-    explanation. We say that $C_m$ (or is it $\bm{C}_m$?) is multinomial. Then 
-    we say that, to deal with overdispersion, we consider a 
-    Dirichlet-Multinomial, as a generalization of the beta-binomial. Then you 
-    write, explicitly, how the $PG_1$ is brought in. Finally, you bring the 
-    Pitman Yor mixture and comment that we have proposed a very flexible model 
-    for categorical data.
-    }
-
+    corresponds to multinomial encoding for $C_m$, with size 1. To account for
+    over-dispersion, we consider a Dirichlet-multinomial density for $\bm{W}_m$.
+    Recall that the Dirichlet distribution is a special case of projected gamma,
+    projected onto $\mathbb{S}_1^{d-1}$, with rate parameters uniformly fixed
+    as $\beta_{\ell} = \beta = 1$ by convention. 
     \begin{equation}
         \label{eqn:dirmultinom}
-        \bm{w}_{im}\mid\bm{\alpha} 
+        \bm{w}_{m}\mid\bm{\alpha}_m 
         \sim 
-        \int_{\pi_{im}} 
-        \text{Multinom}(\bm{w}_{im}\mid\pi_{im})\;
-        \mathcal{PG}_1(\pi\mid\bm{\alpha},\bm{1})\;\text{d}\pi_{im}.
+        \mathcal{DM}(\bm{w}_m\mid\bm{\alpha}_m) =
+        \int_{\pi_{m}} 
+        \text{Multinom}(\bm{w}_{m}\mid\pi_{m})\;
+        \mathcal{PG}_1(\pi\mid\bm{\alpha}_m,\bm{1})\;\text{d}\pi_{m}.
     \end{equation}
-    Recall that the Dirichlet distribution is a special case of the projected 
-    gamma, where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  
-    We investigated the general $\mathcal{PG}_1$ to replace the Dirichlet in 
-    Equation~\ref{eqn:dirmultinom}, but a closed-form solution to the integral 
-    was not available.  That said, we observe in \cite{trubey:pg}, that as a 
-    kernel density in a Dirichlet process class mixture, there was no 
-    demonstrable performance advantage to allowing the rate parameters to vary.
- 
-For simplicity of notation, consider, a \emph{concatenated} 
+    % We then 
+    % consider a Dirichlet-multinomial density for $\bm{W}_m$, established as 
+% \add{
+%     \bf This paragraph needs more clarity. In particular, the 
+%     notation needs to be consisten: Bold face for vectors; Capital letters for 
+%     random  variables. Thus a random vector is bold face capitalized. Then 
+%     there is the story of the Dirichlet-multinomial that needs more 
+%     explanation. We say that $C_m$ (or is it $\bm{C}_m$?) is multinomial. Then 
+%     we say that, to deal with overdispersion, we consider a 
+%     Dirichlet-Multinomial, as a generalization of the beta-binomial. Then you 
+%     write, explicitly, how the $PG_1$ is brought in. Finally, you bring the 
+%     Pitman Yor mixture and comment that we have proposed a very flexible model 
+%     for categorical data.
+%     }
+    % \begin{equation}
+    %     \label{eqn:dirmultinom}
+    %     \bm{w}_{im}\mid\bm{\alpha} 
+    %     \sim 
+    %     \int_{\pi_{im}} 
+    %     \text{Multinom}(\bm{w}_{im}\mid\pi_{im})\;
+    %     \mathcal{PG}_1(\pi\mid\bm{\alpha},\bm{1})\;\text{d}\pi_{im}.
+    % \end{equation}
+    % Recall that the Dirichlet distribution is a special case of the projected 
+    % gamma, where the rate parameters are uniformly fixed $\beta_{\ell} = \beta$.  
+    % We investigated the general $\mathcal{PG}_1$ to replace the Dirichlet in 
+    % Equation~\ref{eqn:dirmultinom}, but a closed-form solution to the integral 
+    % was not available.  That said, we observe in \cite{trubey:pg}, that as a 
+    % kernel density in a Dirichlet process class mixture, there was no 
+    % demonstrable performance advantage to allowing the rate parameters to vary.
+    For simplicity of notation, consider a \emph{concatenated} 
     Dirichlet-multinomial ($\mathcal{CDM}$) as a product of 
     Dirichlet-multinomial densities.  That is, 
     $\mathcal{CDM}(\bm{w}\mid\bm{\alpha}) = 
