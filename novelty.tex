@@ -117,7 +117,7 @@ We establish a local posterior predictive density under the $k$NN estimator
     the angular score under the $k$NN estimator is then
     \begin{equation}
         \label{eq:ad_knn_h}
-        S_i^{(\bm{v})} = \frac{r_i^{2}N}{k}
+        S_i^{(\bm{v})} = \frac{N}{k}
             \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
             \Gamma\left(\frac{d-1}{2} - 1\right)}
     \end{equation}
@@ -150,52 +150,96 @@ We establish a local posterior predictive density under the $k$NN estimator
 
 \subsection{Kernel Density Estimation}
 \makenote{needs citation for KDE}
-
-If we assume a Gaussian kernel, then the KDE density for a generic $\bm{x}$ can 
-    be approximated as 
-    \begin{equation}
-        \label{eq:ad_kde}
-        f_{\bm{x}}^{(\text{KDE})}(\bm{x}_i) \propto 
-        \frac{1}{N}\sum_{j = 1}^{N}\exp
-        \left\lbrace-\frac{1}{2}\left(
-        \frac{D(\bm{x}_i,\bm{X}_j)}{h}\right)^2\right\rbrace
-    \end{equation}
-    where $\bm{X}_j$ is the $j$th 
-    replicate from $\bm{X}\mid\bm{x}$.  The \emph{bandwidth} parameter $h$ 
-    serves to smooth the calculated density, with larger values creating a 
-    larger smoothing effect.  Bandwidth selection is a vast field of study, and 
-    its nuances lie outside the scope of this work.  As in general KDE can be 
-    expressed using a multivariate normal density, the bandwidth can be 
-    expressed as a covariance matrix.  In such a case, the log-score is 
-    effectively the negative squared Mahalanobis distance.  For our purpose, as 
-    distance on $\mathbb{S}_{\infty}^{d-1}$ is less straightforward, we must 
-    restrict ourselves to the univariate representation outlined above.
-
-To develop a bandwidth parameter, we employ a univariate variation on 
-    Silverman's rule of thumb\makenote{find citation}
-    \begin{equation}
-        \label{eqn:silverman}
-        h = \left(\frac{4}{d+2}\right)^{
-            \frac{1}{d+4}}n^{-\frac{1}{d+4}}\hat{\sigma}.
-    \end{equation}
-    This then requires the estimation of $\hat{\sigma}$, which must we calculate 
-    from pairwise distances. Recall that for a random variable $X$, 
-    \[ 
-        \text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] 
-            = 2\text{Var}(X). 
-    \]
-    We develop our estimator for $\hat{\sigma}$ in a similar manner.  Let
+Kernel density estimation~\citep{parzen1962} is a routine that makes use of 
+    kernel smoothing to produce a semi-parametric estimate of the density
+    function for a dataset.  In a univariate case,
     \[
-        \hat{\sigma} = \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}\lVert 
-            \bm{X}_j - \bm{X}_k\rVert_2},
+        f_n(x) = 
+            \int_{\Omega}\frac{1}{h}
+                K\left(\frac{\lVert x - s\rVert}{h}\right)dF_n(s) \approx
+            \frac{1}{nh}\sum_{j = 1}^n
+                K\left(\frac{\lVert x - X_j\rVert}{h}\right)
     \]
-    where $\bm{X}_j$, $\bm{X}_k$ are both replicates of $\bm{X}\mid\bm{x}$. Then 
-    $\hat{\sigma}$ is employed in Equation~\ref{eqn:silverman} to produce $h$.
- 
-\begin{equation}
+    where $X_j$ are random replicates from $F$.  The choice of kernel function 
+    $K$ and selection of the bandwidth parameter $h$ are both topics that have
+    been well researched.  The Gaussian kernel is frequently employed for its 
+    simplicity and flexibility: in the multivariate case with Euclidean 
+    distance, bandwidth can be described using a matrix.  For our analysis, we
+    are making use of a distance analogue on $\mathbb{S}_{\infty}^{d-1}$, which
+    precludes the ability to describe bandwidth using a matrix.  We consider
+    the univariate case of $f$ in kernel space, where $\lVert x - X\rVert$ has
+    been replaced with $g(\bm{v}}, \bm{V})$.
+
+For selection of the bandwidth parameter $h$, we employ Silverman's rule of
+    thumb \citep{silverman2018}, estimating 
+    $h = \left(\frac{4}{d+2}\right)^{\frac{1}{d+4}}
+        n^{-\frac{1}{d+4}}\hat{\sigma}$.
+    This then requires the estimation of $\hat{\sigma}$, which in this case we
+    calculate from pairwise distance analogues.  Recall that for a random 
+    variable $X$,
+    $\mbox{\text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] 
+        = 2\text{Var}(X)}$.
+    In that case, $\hat{\sigma} = 
+        \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}g(\bm{V}_j,\bm{V}_k)}$, where
+    $\bm{V}$ are replicates from the posterior predictive distribution.
+    Then $\hat{\sigma}$ is used in the aforementioned rule of thumb for $h$.
+    Finally, the angular score under KDE is then calculated as
+    \begin{equation}
     \label{eqn:ad_kde_h}
-    S_i^{\text{hKDE}} = r_i^{2}\text{E}\left[\exp\left\lbrace -
-    \left(\frac{d(\bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\mid\bm{v}\right]
-\end{equation}
+    S_i^{\bm{v}} = \text{E}\left[\exp\left\lbrace -
+    \left(\frac{g(\bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\mid\bm{v}\right].
+    \end{equation}
+    We investigated other methods of calculating bandwidth, as well as searched
+    the neighborhood around our bandwidth estimate for example datasets.
+    The estimator following Silverman's rule of thumb as described consistently 
+    produced the most performant rank ordering of angular anomaly scores on the
+    tested datasets.
+
+% If we assume a Gaussian kernel, then the KDE density for a generic $\bm{x}$ can 
+%     be approximated as 
+%     \begin{equation}
+%         \label{eq:ad_kde}
+%         f_{\bm{x}}^{(\text{KDE})}(\bm{x}_i) \propto 
+%         \frac{1}{N}\sum_{j = 1}^{N}\exp
+%         \left\lbrace-\frac{1}{2}\left(
+%         \frac{D(\bm{x}_i,\bm{X}_j)}{h}\right)^2\right\rbrace
+%     \end{equation}
+%     where $\bm{X}_j$ is the $j$th 
+%     replicate from $\bm{X}\mid\bm{x}$.  The \emph{bandwidth} parameter $h$ 
+%     serves to smooth the calculated density, with larger values creating a 
+%     larger smoothing effect.  Bandwidth selection is a vast field of study, and 
+%     its nuances lie outside the scope of this work.  As in general KDE can be 
+%     expressed using a multivariate normal density, the bandwidth can be 
+%     expressed as a covariance matrix.  In such a case, the log-score is 
+%     effectively the negative squared Mahalanobis distance.  For our purpose, as 
+%     distance on $\mathbb{S}_{\infty}^{d-1}$ is less straightforward, we must 
+%     restrict ourselves to the univariate representation outlined above.
+
+% To develop a bandwidth parameter, we employ a univariate variation on 
+%     Silverman's rule of thumb\makenote{find citation}
+%     \begin{equation}
+%         \label{eqn:silverman}
+%         h = \left(\frac{4}{d+2}\right)^{
+%             \frac{1}{d+4}}n^{-\frac{1}{d+4}}\hat{\sigma}.
+%     \end{equation}
+%     This then requires the estimation of $\hat{\sigma}$, which must we calculate 
+%     from pairwise distances. Recall that for a random variable $X$, 
+%     \[ 
+%         \text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] 
+%             = 2\text{Var}(X). 
+%     \]
+%     We develop our estimator for $\hat{\sigma}$ in a similar manner.  Let
+%     \[
+%         \hat{\sigma} = \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}\lVert 
+%             \bm{X}_j - \bm{X}_k\rVert_2},
+%     \]
+%     where $\bm{X}_j$, $\bm{X}_k$ are both replicates of $\bm{X}\mid\bm{x}$. Then 
+%     $\hat{\sigma}$ is employed in Equation~\ref{eqn:silverman} to produce $h$.
+ 
+% \begin{equation}
+%     \label{eqn:ad_kde_h}
+%     S_i^{\text{hKDE}} = r_i^{2}\text{E}\left[\exp\left\lbrace -
+%     \left(\frac{d(\bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\mid\bm{v}\right]
+% \end{equation}
 
 % EOF
