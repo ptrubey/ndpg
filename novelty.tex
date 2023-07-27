@@ -168,7 +168,7 @@ Kernel density estimation~\citep{parzen1962} is a routine that makes use of
     are making use of a distance analogue on $\mathbb{S}_{\infty}^{d-1}$, which
     precludes the ability to describe bandwidth using a matrix.  We consider
     the univariate case of $f$ in kernel space, where $\lVert x - X\rVert$ has
-    been replaced with $g(\bm{v}}, \bm{V})$.
+    been replaced with $g(\bm{v}, \bm{V})$.
 
 For selection of the bandwidth parameter $h$, we employ Silverman's rule of
     thumb \citep{silverman2018}, estimating 
@@ -177,8 +177,8 @@ For selection of the bandwidth parameter $h$, we employ Silverman's rule of
     This then requires the estimation of $\hat{\sigma}$, which in this case we
     calculate from pairwise distance analogues.  Recall that for a random 
     variable $X$,
-    $\mbox{\text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] 
-        = 2\text{Var}(X)}$.
+    $\text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] 
+        = 2\text{Var}(X)$.
     In that case, $\hat{\sigma} = 
         \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}g(\bm{V}_j,\bm{V}_k)}$, where
     $\bm{V}$ are replicates from the posterior predictive distribution.
