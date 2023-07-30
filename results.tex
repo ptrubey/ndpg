@@ -33,14 +33,14 @@ In assessing model performance, we sideline the issue of threshold selection by
     the computations has to be given in the main body of the paper. Likewise, 
     we need to provide information on the hyperparameter choice, and how we 
     tuned the procedure, how we assessed it, and how log it took to obtain the 
-    results.}
+    results.}\makenote{addressed all but time}
 
 In developing our model, we employ the blocked Gibbs sampler for stick-breaking
     priors detailed in~\cite{ishwaran2001}.  We set a discount factor of $0.1$, 
     and a concentration parameter of $1.0$.  In our testing, in the neighborhood
     around these values we found the resultant number of extant clusters to be 
     relatively stable.  We use $(\mu_0 = \bm{0}_d,\Sigma_{\mu} = \bm{I}_d)$ as 
-    prior parameters for $\mu$, and $(\nu = 50,\Psi = \nu I_d)$ as prior 
+    prior parameters for $\mu$, and $(\nu = d + 50,\Psi = \nu I_d)$ as prior 
     parameters for $\Sigma$, except for the categorical components of the shape 
     vector as described in Section~\ref{sec:categorical}.  Deviations in $\mu_0$ 
     towards the negative direction bias the model towards asymptotic 
