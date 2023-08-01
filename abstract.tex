@@ -1,3 +1,25 @@
 \add{\bf{We need and abstract!}}
 
+A fundamental result of multivariate extreme value theory is independence
+    in distribution between the angular component and radial component of an
+    extreme observation.   We make use of this independence to develop an 
+    anomaly detection algorithm that separates the \emph{anomaly score} into 
+    independent angular and radial scores.  These scores are then developed
+    separately as functions of calculated density.
+
+To fit an angular density, we project the angular component onto 
+    $\mathbb{S}_p^{d-1}$ and fit a Bayesian non-parametric model implementing 
+    projected gamma as the kernel density.  This works well for fitting a model, 
+    but actual density estimation for use in anomaly scores is unstable.
+    Instead, we use the fitted model to generate a posterior predictive sample, 
+    and make use of non-parametric density estimation algorithms to generate
+    anomaly scores.  We offer two such angular scores, based on the $k$-nearest
+    neighbors, and kernel density estimation algorithms respectively.
+
+We expand the applicability of our approach by implementing a categorical data
+    model, making use of Dirichlet-multinomial as the kernel density.  We then 
+    adapt the posterior predictive density scores developed for the angular 
+    data to the categorical data model.
+
+
 % EOF

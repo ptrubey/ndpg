@@ -55,7 +55,7 @@ Suppose $\bm{C}$ is a vector of $M$ random categorical variables.  Then $C_m$
     % was not available.  That said, we observe in \cite{trubey:pg}, that as a 
     % kernel density in a Dirichlet process class mixture, there was no 
     % demonstrable performance advantage to allowing the rate parameters to vary.
-    For simplicity of notation, consider a \emph{concatenated} 
+    For simplicity of notation, then consider a \emph{concatenated} 
     Dirichlet-multinomial ($\mathcal{CDM}$) as a product of 
     Dirichlet-multinomial densities.  That is, 
     $\mathcal{CDM}(\bm{w}\mid\bm{\alpha}) = 
@@ -84,6 +84,11 @@ Suppose $\bm{C}$ is a vector of $M$ random categorical variables.  Then $C_m$
     where $d_m$ is the number of categories in the $m$th categorical variable.
     This value corresponds to the covariance of a categorical variable where all 
     category probabilities are equal.
+    We investigated using a product of gammas as the centering distribution in
+    Equation~(\ref{eqn:modelcat}), but we observed this very quickly induced
+    numerical instability.  We observed that the log-normal distribution, with
+    its squared exponential tails and ability to account for negative covariance
+    within the prior, provided a more stable fitting routine.
 
 \subsection{Anomaly Detection Methods for Categorical Data\label{subsec:catscores}}
 To establish an anomaly detection algorithm using the data model described in 
@@ -143,60 +148,61 @@ The hypercube KNN \emph{(hKNN)} metric applied to the latent projected
     to the $d-1$ power.
 
 The \emph{hKDE} score applied to the categorical space operates in much the 
-  same way.  We compute $\expect{\bm{\nu}_i}$, and employ the same kernel metric
-  to compute distance from a sample from the posterior predictive distribution. 
-  From there, however, we employ kernel density estimation 
+    same way.  We compute $\expect{\bm{\nu}_i}$, and employ the same kernel 
+    metric to compute distance from a sample from the posterior predictive 
+    distribution.  From there, however, we employ kernel density estimation 
     \makenote{include either citation or callback}
-  to compute local density for observation $i$.  The score is then
-\begin{equation}
-    \label{score:cat_hkde}
-    S_i^{hKDE} = \text{E}\left[
-    \exp\left\lbrace
-    -\frac{1}{2}\left(
-    \frac{
-    d\left[\expect{\bm{\nu}_i}, \bm{\nu}\right]}{h}
-    \right)^2
-    \right\rbrace 
-    \given \bm{w}\right]
-\end{equation}
+    to compute local density for observation $i$.  The score is then
+    \begin{equation}
+        \label{score:cat_hkde}
+        S_i^{hKDE} = \text{E}\left[
+            \exp\left\lbrace
+            -\frac{1}{2}\left(
+            \frac{d\left[\expect{\bm{\nu}_i}, \bm{\nu}\right]}{h}
+            \right)^2
+            \right\rbrace 
+        \given \bm{w}\right]
+    \end{equation}
 This differs from the previous score only in the method of density estimation 
-  used.  We use the same routine for calculating $h$ previously established.  An 
-  exploration of manually tuning $h$ was performed, but the score orders 
-  produced did not consistently outperform this variant of the rule of thumb 
-  estimator.
+    used.  We use the same routine for calculating $h$ previously established.  
+    An exploration of manually tuning $h$ was performed, but the score orders 
+    produced did not consistently outperform this variant of the rule of thumb 
+    estimator.
 
 In the \emph{hKDE} metric, we computed two integrals separately: first 
     $\expect{\bm{v}_{\bm{w}_i}}$, then the kernel score.  In the latent hypercube 
     KDE \emph{(lhKDE)}, we compute those integrals simultaneously.
-  \begin{equation}
-    \label{score:cat_lhkde}
-    S_i^{lhKDE} = \text{E}\left[
-    \exp\left\lbrace
-    -\frac{1}{2}\left(
-    \frac{d(\bm{\nu}_i, \bm{\nu})}{h}
-    \right)^2
-    \right\rbrace 
-    \mid \bm{w}, \bm{w}_i
-    \right]
-  \end{equation}
-Computing this on a sample of size $S$ is necessarily more expensive than \emph{hKDE}, 
-    as it requires averaging $S^2$ samples.  However, first computing 
-    $\expect{\bm{v}_{\bm{w}_i}}$ arbitrarily removes a significant degree of 
-    uncertainty around the distribution of $\bm{v}_{\bm{w}_i}$, which may be relevant.
+    \begin{equation}
+        \label{score:cat_lhkde}
+        S_i^{lhKDE} = \text{E}\left[
+        \exp\left\lbrace
+        -\frac{1}{2}\left(
+        \frac{d(\bm{\nu}_i, \bm{\nu})}{h}
+        \right)^2
+        \right\rbrace 
+        \mid \bm{w}, \bm{w}_i
+        \right]
+    \end{equation}
+    Computing this on a sample of size $S$ is necessarily more expensive than 
+    \emph{hKDE}, as it requires averaging $S^2$ samples.  However, first 
+    computing $\expect{\bm{v}_{\bm{w}_i}}$ arbitrarily removes a significant 
+    degree of uncertainty around the distribution of $\bm{v}_{\bm{w}_i}$, which 
+    may be relevant.
 
 If, instead of projecting the unnormalized probability vectors onto a unified 
     hypersphere, we normalize them, or project each $m$-component onto its 
-    own simplex, and using Manhattan distance, we arrive at the latent simplex KDE \emph{(lsKDE)}.
-\begin{equation}
-    \label{score:cat_lskde}
-    S_i^{lsKDE} = \text{E}\left[\exp\left\lbrace
+    own simplex, and using Manhattan distance, we arrive at the latent simplex 
+    KDE \emph{(lsKDE)}.
+    \begin{equation}
+        \label{score:cat_lskde}
+        S_i^{lsKDE} = \text{E}\left[\exp\left\lbrace
         -\frac{1}{2}\left(
         \frac{\lVert \bm{\pi}_i - \bm{\pi}\rVert_1}{h}
         \right)^2
         \right\rbrace
         \mid \bm{w},\bm{w}_i
         \right]
-\end{equation}
+    \end{equation}
 
 
 % EOF

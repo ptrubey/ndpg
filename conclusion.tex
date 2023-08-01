@@ -3,8 +3,11 @@ In this paper, we established a method of \emph{scoring} observations as
     anomalous based on their posterior-predictive angular density, using the 
     result from multivariate extreme value theory that---assuming the existence 
     of a limiting behavior---given observations are in excess of a high 
-    threshold, then their angular distribution on $\mathbb{S}_{\infty}^{d-1}$ 
-    and radial distribution on $\mathbb{R}_+$ are independent. A Bayesian 
+    threshold, after transformation their angular distribution on 
+    $\mathbb{S}_{\infty}^{d-1}$ is independent of the radial distribution on 
+    $\mathbb{R}_+$.  In the anomaly detection setting, this independence allows
+    us to separate anomaly scores into an angular and radial component, and
+    treat them separately.  To establish an angular anomaly score, a Bayesian 
     non-parametric model is established on the angular data projected onto 
     $\mathbb{S}_p^{d-1}$, and as a true density on $\mathbb{S}_{\infty}^{d-1}$ 
     is not available, anomaly scores are declared using a non-parametric 
@@ -36,12 +39,22 @@ We then expanded the model to handle categorical data, recognizing that in the
 We incorporated the categorical data model with the real data model to create a 
     mixed-data model, and adjusted the categorical scores to the mixed-data 
     regime.  We subjected six datasets to our peaks-over-threshold analysis and 
-    observed that \emph{lmkde} performed reliably well, better than canonical 
+    observed that \emph{lmKDE} performed reliably well, better than canonical 
     methods most of the time, but was itself outperformed in some cases by other 
     methods that project the latent probability vector along with the angular 
-    vector into a single unified space.
+    vector into a unified space.
 
 We observed that the data thresholding process may not always be applicable, so 
-    we
+    finally we applied the mixed model to data with its angular component 
+    transformed via the standard Pareto rank ordering transformation.  We
+    acknowledge that the application of the projected gamma model to this
+    transformation ignores the existence of the moment constraint implied by
+    construction. In this setting, we observed the latent models (\emph{lmkde} 
+    and \emph{lskde}) performed reliably well, exceeding or achieving parity
+    with canonical methods in 5 of 6 tested cases.
+
+
+
+    
     
 % EOF
