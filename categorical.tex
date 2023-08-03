@@ -123,14 +123,14 @@ To establish an anomaly detection algorithm using the data model described in
     categorical data has no radius so the adaptation of the angular scores to 
     the categorical space omits the radial component.
 
-The hypercube KNN \emph{(hKNN)} metric applied to the latent projected 
+The hypercube KNN \emph{(h$k$nn} metric applied to the latent projected 
     $\mathcal{S}_{\infty}$ space uses the negative definite kernel metric 
     previously established to estimate distance between $\expect{\bm{\nu}_i}$ 
-    and $\bm{\nu}$.  The score takes the form:
+    and $\bm{\nu}$.  This score takes the form:
     \begin{equation}
       \label{score:cat_hknn}
       \begin{aligned}
-      S_i^{hKNN} &= \text{E}\left[\frac{N}{k}
+      S_{i,\bm{v}}^{\text{h$k$nn}} &= \text{E}\left[\frac{N}{k}
         \frac{\pi^{\frac{d-1}{2}}D_{k}
         \left(\tilde{\text{E}}\left[\bm{\nu}_i\right]\right)^{d-1}}{
           \Gamma\left(\frac{d-1}{2} + 1\right)}
@@ -147,15 +147,14 @@ The hypercube KNN \emph{(hKNN)} metric applied to the latent projected
     expectation of $\bm{\nu}_i$, then the expectation of the kernel metric taken 
     to the $d-1$ power.
 
-The \emph{hKDE} score applied to the categorical space operates in much the 
+The \emph{hkde} score applied to the categorical space operates in much the 
     same way.  We compute $\expect{\bm{\nu}_i}$, and employ the same kernel 
     metric to compute distance from a sample from the posterior predictive 
-    distribution.  From there, however, we employ kernel density estimation 
-    \makenote{include either citation or callback}
+    distribution.  From there, however, we employ kernel density estimation
     to compute local density for observation $i$.  The score is then
     \begin{equation}
         \label{score:cat_hkde}
-        S_i^{hKDE} = \text{E}\left[
+        S_{i,\bm{v}}^{\text{hkde}} = \text{E}\left[
             \exp\left\lbrace
             -\frac{1}{2}\left(
             \frac{d\left[\expect{\bm{\nu}_i}, \bm{\nu}\right]}{h}
@@ -169,12 +168,12 @@ This differs from the previous score only in the method of density estimation
     produced did not consistently outperform this variant of the rule of thumb 
     estimator.
 
-In the \emph{hKDE} metric, we computed two integrals separately: first 
+In the \emph{hkde} metric, we computed two integrals separately: first 
     $\expect{\bm{v}_{\bm{w}_i}}$, then the kernel score.  In the latent hypercube 
-    KDE \emph{(lhKDE)}, we compute those integrals simultaneously.
+    KDE \emph{(lhkde)}, we compute those integrals simultaneously.
     \begin{equation}
         \label{score:cat_lhkde}
-        S_i^{lhKDE} = \text{E}\left[
+        S_i^{\text{lhkde}} = \text{E}\left[
         \exp\left\lbrace
         -\frac{1}{2}\left(
         \frac{d(\bm{\nu}_i, \bm{\nu})}{h}
@@ -184,7 +183,7 @@ In the \emph{hKDE} metric, we computed two integrals separately: first
         \right]
     \end{equation}
     Computing this on a sample of size $S$ is necessarily more expensive than 
-    \emph{hKDE}, as it requires averaging $S^2$ samples.  However, first 
+    \emph{hkde}, as it requires averaging $S^2$ samples.  However, first 
     computing $\expect{\bm{v}_{\bm{w}_i}}$ arbitrarily removes a significant 
     degree of uncertainty around the distribution of $\bm{v}_{\bm{w}_i}$, which 
     may be relevant.
@@ -192,10 +191,10 @@ In the \emph{hKDE} metric, we computed two integrals separately: first
 If, instead of projecting the unnormalized probability vectors onto a unified 
     hypersphere, we normalize them, or project each $m$-component onto its 
     own simplex, and using Manhattan distance, we arrive at the latent simplex 
-    KDE \emph{(lsKDE)}.
+    KDE \emph{(lskde)}.
     \begin{equation}
         \label{score:cat_lskde}
-        S_i^{lsKDE} = \text{E}\left[\exp\left\lbrace
+        S_i^{\text{lskde}} = \text{E}\left[\exp\left\lbrace
         -\frac{1}{2}\left(
         \frac{\lVert \bm{\pi}_i - \bm{\pi}\rVert_1}{h}
         \right)^2
@@ -203,6 +202,8 @@ If, instead of projecting the unnormalized probability vectors onto a unified
         \mid \bm{w},\bm{w}_i
         \right]
     \end{equation}
-
+    Using the normalized latent class probabilities offers the advantage of
+    numerical stability: diverging estimates of $\rho$ are isolated to the
+    relevant $m$-component.
 
 % EOF

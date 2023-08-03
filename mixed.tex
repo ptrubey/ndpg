@@ -45,16 +45,16 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  Let
     generic $\bm{\nu}$ not specifically dependent on observation $i$.  The 
     score is then calculated as
     \[
-        S_i^{hKNN} = \frac{r_i^2 N\pi^{\frac{d-1}{2}}}{
+        S_{i,\bm{v}}^{\text{h$k$nn}} = \frac{r_i^2 N\pi^{\frac{d-1}{2}}}{
                 k\Gamma\left(\frac{d-1}{2} + 1\right)}
         \expect{D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}\given\bm{y},\bm{w}}.
     \]
     Note again that we are computing the two expectations separately.  The 
-    \emph{hKDE} score works in the same manner, this using kernel density 
+    \emph{hkde} score works in the same manner, this using kernel density 
     estimation rather than $k$-nearest neighbors density estimation on 
     $\mathbb{S}_{\infty}^{d-1}$;
     \[
-        S_i^{hKDE} = r_i^2 \expect{\exp\left\lbrace -\frac{1}{2}
+        S_{i,\bm{v}}^{\text{hkde}} = r_i^2 \expect{\exp\left\lbrace -\frac{1}{2}
             \left(
             \frac{d\left(T_{\infty}
                 \left(\expect{\bm{\nu}_i}\right), \bm{\nu})\right)}{h}
@@ -62,19 +62,25 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  Let
             \right\rbrace \given \bm{y},\bm{w}
             }.
     \]
-    The \emph{lhKDE} score \makenote{rewrite sentence}
+    The \emph{lhkde} score works similarly to the \emph{hkde} score, projecting
+    $R_i\bm{y}_i$ and $\bm{\rho}_i$ onto $\mathbb{S}_{\infty}^{d-1}$.  
     \[
-    S_i^{lhKDE} = r_i^2 \expect{\exp\left\lbrace-\frac{1}{2}\left(
+    S_{i,\bm{v}}^{\text{lhkde}} = r_i^2 \expect{\exp\left\lbrace-\frac{1}{2}\left(
         \frac{d\left(\bm{\nu}_i, \bm{\nu}\right)}{h}\right)^2\right\rbrace
         \given \bm{y},\bm{w},\bm{y}_i,\bm{w}_i}
     \]
-    The \emph{lmKDE} score serves as a comparison to the above three scores, 
+    The difference between the two scores is $S_{i,\bm{v}}^{\text{lhkde}}$
+    takes the integral with regard to a random 
+    $T_{\infty}(R_i\bm{y}_i,\bm{\rho}_i)$, and $S_{i,\bm{v}}^{\text{hkde}}$ 
+    takes the integral with regard to the expectation of that quantity.
+
+The \emph{lmkde} score serves as a comparison to the above three scores, 
     which seek to unify all data onto a single sphere and calculate a 
-    consistent distance metric.  Instead, \emph{lmKDE} evaluates distances 
+    consistent distance metric.  Instead, \emph{lmkde} evaluates distances 
     between angular data in its own space, and latent posterior class 
     probabilities in its own space, with the appropriate distance metric for 
-    each.  In effect, this combines \emph{hKDE} from
-    the angular component and \emph{lsKDE} from the categorical component.
+    each.  In effect, this combines \emph{hkde} from
+    the angular component and \emph{lskde} from the categorical component.
     \[
     S_i^{lmKDE} = r_i^2 \expect{
         \exp
@@ -104,12 +110,11 @@ A valid critique of the model presented thus far is that in order to justify
     multivariate threshold in at least one dimension.  For some applications, 
     this represents a very powerful data reduction with little loss of 
     information pertaining to anomalies, as anomalies tend to be in the tails 
-    (see, for  example, \makenote{Insert table relating to anomaly prevalence 
-    in tails}).  For other applications, this data reduction represents a 
-    significant loss of information about anomalies of anomalies being in the 
-    tails is not borne out.  For this second group, one available avenue is to 
-    relax the assumption of independence between the angular and radial 
-    components.
+    (see, for  example, Table~\ref{tab:data}).  For other applications, this 
+    data reduction represents a significant loss of information about anomalies 
+    of anomalies being in the tails is not borne out.  For this second group, 
+    one available avenue is to relax the assumption of independence between the 
+    angular and radial components.
 
 Let $z_{i\ell} = \frac{1}{1 - \hat{F}(x_{i\ell})}$ be the 
     \emph{rank-transformation} to the standard Pareto scale.  The lower range 
@@ -118,7 +123,10 @@ Let $z_{i\ell} = \frac{1}{1 - \hat{F}(x_{i\ell})}$ be the
     $\bm{v}_i = \bm{z}_i/r_i$ the angular component of $\bm{z}_i$, and 
     $\bm{y}_i$ its projection onto $\mathbb{S}_p^{d-1}$.  Because under the 
     rank transformation the data is no longer subject to thresholding, we can 
-    no longer make the assumption that angles are independent of radius.  
+    no longer make the assumption that angles are independent of radius.
+    \makenote{In retrospect, I'm actually not convinced about this.  Rather,
+        we may end up with the moment constraint on the angular distribution.
+        It might make sense to explicitly say we're ignoring said constraint.}
     Instead, we can include the radius within the model.  As the radius is on 
     the range $[1,\infty)$, a logical choice of kernel for modeling it is the 
     Pareto density, with shape parameter $\alpha_r$.  

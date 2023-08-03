@@ -9,18 +9,22 @@ Anomaly detection, describes a field of methods for identifying observations as
     generating distribution as non-anomalous data, and as such, we would expect 
     observations found in regions of relative data sparsity to be more likely to 
     be anomalous than those observations found in regions of high data 
-    abundance.  We characterize this assumption as \emph{anomalies stand alone}.  
-    Normal data tend to cluster into homogenous groups, but anomalous data are 
-    heterogenous in their differences. 
-      \makenote{I'm paraphrasing something I've seen, but don't remember 
-        exactly.  Need to find citation}.
-
+    abundance.  We characterize this assumption as \emph{anomalies stand apart}.
+    In literature as here, the term \emph{normal data} is used to refer to data 
+    which is not anomalous.  Normal data tend to cluster into homogenous groups, 
+    but anomalous data are heterogenous in their differences. 
+    \makenote{This is a paraphrase of a similar statement.  Looking for source.}
+    
 Equivalent names for this field include \emph{outlier} detection, and 
-    \emph{novelty} detection.  Some authors will distinguish the last by the 
-    assumption of a \emph{clean} training data set containing no anomalies.
-    \makenote{need citation}  
-    Such an assumption is merited by the interpretation that anomalies contain 
-    information that has not been seen before, and thus are novelties.
+    \emph{novelty} detection, though these terms include their own nuances.
+    Outliers are characterized as observations that are in some manner 
+    \emph{far} from \emph{normal} data.  In a regression context, they may have
+    large fitted residuals, or exert large influence on model fits.  Novelties
+    in contrast are data coming from a distribution that has not been seen
+    before.  A novelty detection application will then assume a \emph{clean} 
+    training data set containing no anomalies, and identify observations not
+    belonging to the distribution as trained.  \cite{Chandola2009} refer to 
+    this practice as \emph{semisupervised} anomaly detection.
 
 The applicability of extreme value theory to anomaly detection is predicated on 
     the assumption that extreme observations are more likely to be anomalous.  
@@ -31,7 +35,7 @@ The applicability of extreme value theory to anomaly detection is predicated on
     distribution. This relative abundance of anomalies among extremes might 
     cause a naive classifier that does not take into account the dependence 
     structure of extremes to classify all extremes as anomalous.  If we follow 
-    the assumption that anomalies stand alone, then extreme observations that 
+    the assumption that anomalies stand apart, then extreme observations that 
     cluster into a homogenous group should not be considered anomalous.  For 
     this reason, we desire a classifier that considers the dependence structure 
     of the extremes as well.

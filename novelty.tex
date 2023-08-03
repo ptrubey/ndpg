@@ -12,7 +12,7 @@ With independence established between the angular and radial components of an
     extreme observation, we can consider sub-scores established under radial 
     and angular components independently.  That is,
     \[
-        S_i = S_i^{(r)}\times S_i^{(\bm{v})} = 
+        S_i = S_{i,r}\times S_{i,\bm{v}} = 
             \text{E}\left[f_r(r_i\mid\mathcal{D})^{-1}\right]\times
             \text{E}\left[f_v(\bm{v}_i\mid\mathcal{D})^{-1}\right]
     \]
@@ -117,13 +117,13 @@ We establish a local posterior predictive density under the $k$NN estimator
     the angular score under the $k$NN estimator is then
     \begin{equation}
         \label{eq:ad_knn_h}
-        S_i^{(\bm{v})} = \frac{N}{k}
+        S_{i,\bm{v}}^{\text{$k$nn}} = \frac{N}{k}
             \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
             \Gamma\left(\frac{d-1}{2} - 1\right)}
     \end{equation}
     In our experience, using a large posterior predictive sample, 
         \makenote{this should be quantified}
-    the resulting odering of scores was relatively robust to choice of $k$, for
+    the resulting ordering of scores was relatively robust to choice of $k$, for
     values between 2 and 10.  We used $k = 5$ in our performance analysis.
 % When implementing this analysis on the hypercube, we lose one degree of freedom,
 %     and as a stand-in for distance, we use the negative definite kernel metric 
@@ -149,7 +149,6 @@ We establish a local posterior predictive density under the $k$NN estimator
 %   values between 2 and 10.
 
 \subsection{Kernel Density Estimation}
-\makenote{needs citation for KDE}
 Kernel density estimation~\citep{parzen1962} is a routine that makes use of 
     kernel smoothing to produce a semi-parametric estimate of the density
     function for a dataset.  In a univariate case,
@@ -186,7 +185,7 @@ For selection of the bandwidth parameter $h$, we employ Silverman's rule of
     Finally, the angular score under KDE is then calculated as
     \begin{equation}
     \label{eqn:ad_kde_h}
-    S_i^{\bm{v}} = \text{E}\left[\exp\left\lbrace -
+    S_{i,\bm{v}}^{\text{kde}} = \text{E}\left[\exp\left\lbrace -
     \left(\frac{g(\bm{v}_i,\bm{V})}{h}\right)^2\right\rbrace\mid\bm{v}\right].
     \end{equation}
     We investigated other methods of calculating bandwidth, as well as searched
