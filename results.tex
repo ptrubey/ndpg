@@ -57,7 +57,9 @@ In developing our model, we employ the blocked Gibbs sampler for stick-breaking
     with probability \makenote{add state exchange probability equation}.
     For each example dataset, the sampler was ran for $50,000$ iterations,
     discarding the first 40,000 as burn-in.  The resulting chain was thinned,
-    keeping only every 10th iteration.
+    keeping only every 10th iteration.  For evaluating density under the 
+    posterior predictive distribution, we generate 10 replicates from each
+    iteration kept.
 
 We tested our scores against several labelled datasets.  These included some 
     strictly categorical data, as well as categorical transformations of some 
