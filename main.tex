@@ -11,6 +11,7 @@
 \usepackage{soul}
 \usepackage{algorithm2e}
 \usepackage{bm}
+\usepackage[inline]{enumitem}
 % \usepackage{setspace}
 % \linespread{1.8}
 
@@ -32,6 +33,9 @@
 
 \newcommand{\add}[1]{\textcolor{blue}{#1}}
 \newcommand{\delete}[1]{\textcolor{red}{\st{#1}}}
+
+\newlist{inlinelist}{enumerate*}{1}
+\setlist[inlinelist]{label=(\arabic*)}
 
 \title{Anomaly Detection in Extremes}
 \author{Peter Trubey and Bruno Sans\'o\\

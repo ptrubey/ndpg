@@ -2,25 +2,8 @@
 
 The complete field of anomaly detection is vast.  However, most methods can be 
     roughly grouped into three core ideas: statistical model approaches, 
-    non-statistical model approaches, and clustering methods. Core to the 
-    development of a method lies a basic the question of what is an anomaly.  
-    The answer to this question depends on what we hope to
-    learn in a specific application.  For instance, in a regression setting, 
-    observations that produce large outliers, or exert outsized influence on 
-    parameter estimates, might be considered anomalous.  Common to most 
-    methods of anomaly detection is the belief that anomalous data is in some 
-    manner different than the rest of the data. This belief implies that data 
-    belonging to regions of relative data sparsity are more likely to be 
-    anomalous, and thus, the goal is to identify the regions of relative 
-    data sparsity. It is common in most approaches not to assume the existence 
-    of labels in the training dataset, meaning anomaly detection is an 
-    unsupervised learning problem.  Instead we seek anomaly \emph{scores}, 
-    which rank observations in terms of probability of being anomalous.  The 
-    decision threshold---the score value above which observations would be 
-    declared anomalous---is then set heuristically.
+    non-statistical model approaches, and clustering methods.
     
-\add{\bf We need references in this paragraph}
-
 {\bf Statistical Models} for anomaly detection attempt to model the distribution 
     of data, with the goal of estimating the data density around an observation. 
     The core assumption is that observations in regions of low estimated density 
@@ -39,8 +22,7 @@ The complete field of anomaly detection is vast.  However, most methods can be
     linkage-based, centroid-based, and density-based. These methods as applied 
     to the field of anomaly detection assume that anomalous observations tend 
     to stand apart from non-anomalous data.  
-    \add{\bf We need references here as well.}
-
+    
 Linkage-based clustering methods group data based on pairwise distance 
     point-to-point, or between elements of clusters.  \cite{ackerman2010} offers
     a review of the topic.  An illustrative example is single linkage, where 
@@ -101,8 +83,9 @@ The application of multivariate extreme value theory to anomaly detection is
     extremes, to classify all extremes as anomalous. Yet, extreme observations 
     that cluster into a homogenous group should not be considered anomalous.
     \cite{goix2017} offers one example of considering the dependence structure 
-    of extremes; subjecting the data to the standard Pareto transformation 
-    $T(x) = \frac{1}{1 - \hat{F}(x)}\;\in\;[1,\infty)$, 
+    of extremes; subjecting the data to the standard Pareto rank transformation 
+    $T(x) = 1/(1 - \hat{F}(x))\;\in\;[1,\infty)$, where $\hat{F}$ corresponds 
+    to the empirical distribution function, 
     and partitioning the space $[1,\infty)^d$ into $\alpha$-cones---where 
     $\alpha$ the subset of dimensions in excess of a threshold---and bins 
     data according to which $\alpha$-cone it falls into.  $\alpha$-cones with 
@@ -111,7 +94,8 @@ The application of multivariate extreme value theory to anomaly detection is
 
 A central result of multivariate EVT is that, conditional on an observation 
     being extreme, its radial component---or magnitude---is independent of its 
-    angular component.  In this paper, We fit a Bayesian non-parametric mixture 
+    angular component.  In this paper, following \cite{trubey:pg}
+    we fit a Bayesian non-parametric mixture 
     of projected gammas to the angular component, and use samples from its 
     posterior predictive distribution to compute an estimate of the density 
     of the angular component.   Direct estimation of density via a fitted model

@@ -2,7 +2,7 @@
 In the previous sections we have used extreme value theory to obtain samples
     from the tail distribution of a given sample of observations. Unfortunately 
     those results can only be applied to continuous random variables.  Many 
-    applications novelty detection problems feature both real and categorical 
+    applications of novelty detection include both real and categorical 
     data, so here we consider an extension of the projected gamma mixture model 
     to handle categorical observations. 
 
@@ -85,10 +85,10 @@ Suppose $\bm{C}$ is a vector of $M$ random categorical variables.  Then $C_m$
     This value corresponds to the covariance of a categorical variable where all 
     category probabilities are equal.
     We investigated using a product of gammas as the centering distribution in
-    Equation~(\ref{eqn:modelcat}), but we observed this very quickly induced
+    Equation~(\ref{eqn:modelcat}), but we observed this very quickly induces
     numerical instability.  We observed that the log-normal distribution, with
     its squared exponential tails and ability to account for negative covariance
-    within the prior, provided a more stable fitting routine.
+    within the prior, proved more stable during model fitting.
 
 \subsection{Anomaly Detection Methods for Categorical Data\label{subsec:catscores}}
 To establish an anomaly detection algorithm using the data model described in 
@@ -140,7 +140,7 @@ The hypercube KNN \emph{(h$k$nn} metric applied to the latent projected
       \end{aligned}
     \end{equation}
     where $D_{k}\left[T_{\infty}(\text{E}\bm{\nu}_i)\right]$ measures the 
-    distance from the  $\expect{\bm{\nu}_i}$ to the $k$th nearest replicate from 
+    distance from $\expect{\bm{\nu}_i}$ to the $k$th nearest replicate from 
     a sample from the posterior predictive distribution for $\bm{\nu}$.  This 
     projection places all the class probabilities within the same sphere and 
     subject to the same distance measure.  Note here we are first taking the 

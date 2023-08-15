@@ -85,8 +85,8 @@ Recall that the radial component $R \in {\mathbb R}_+$ follows a standard
     For $\bm{x} \in\mathbb{R}_+^d$, we define the transformation 
     \[
         T_p(\bm{x}) = (\lVert\bm{x}\rVert_p, x_1/\lVert\bm{x}\rVert_p, \ldots, 
-        x_{d-1}/\lVert\bm{x}\rVert_p)=: (r,\bm{y})
-    \], where
+        x_{d-1}/\lVert\bm{x}\rVert_p)=: (r,\bm{y}),
+    \] where
     $\bm{y} = (y_1, \ldots , y_{d-1}) \in \mathbb{S}_{p}^{d-1}$, $r>0$, and 
     $y_d = \left(1 - \sum_{\ell = 1}^{d-1}y_\ell^p\right)^{\frac{1}{p}}$.
     Thus, a distribution on $\bm{X}$ induces a distribution on 
@@ -115,10 +115,34 @@ Recall that the radial component $R \in {\mathbb R}_+$ follows a standard
     $p=2$ in \cite{nunez2019}. We will denote its density as 
     $\mathcal{PG}_p(\bm{y}|\bm{\alpha},\bm{\beta})$.
 
+% \begin{algorithm}[ht]
+%     \caption{Workflow}
+%     \KwData{$\bm{v}_i$, $i \in \lbrace1,\ldots,n\rbrace$}
+%     \KwResult{Replicates of $\bm{V}$}
+%     
+% \end{algorithm}
+\begin{algorithm}[ht]
+    \caption{Workflow to }\label{alg:workflow}
+    \begin{enumerate}
+        \item $b_{t\ell} = \hat{F}_{\ell}^{-1}\left(1 - \frac{1}{t}\right)$; 
+            For $w_{i\ell} > b_{t\ell}$, fit $a_{\ell}$, $\xi_{\ell}$ 
+            by likelihood-based method.
+        \item Transform 
+            $\bm{z}_{i\ell} = \left(1 + \xi_{\ell}\frac{w_{i\ell} 
+                - b_{t\ell}}{a_{\ell}}\right)_+$ for $\bm{w}_i\not< \bm{b}_t$.
+        \item Transform $(r_i,\bm{v}_i) = \lVert \bm{z}_i\rVert_\infty, 
+            \frac{\bm{z}_i}{\lVert \bm{z}_i\rVert_{\infty}}$.
+        \item Project $\bm{v}_i$ onto $\mathbb{S}_{p}^{d-1}$ to facilitate 
+            fitting a semi-parametric distribution.
+    \end{enumerate}
+\end{algorithm}
+
 Note that $T$ is not differentiable at $p = \infty$, so we can not use it to 
-    directly model on ${\mathbb S}_{\infty}^{d-1}$. However, for a sufficiently 
-    large $p$, the space ${\mathbb S}_p^{d-1}$ will tend to approach 
-    $\mathbb{S}_{\infty}^{d-1}$ This approximation is leveraged 
+    directly model on ${\mathbb S}_{\infty}^{d-1}$. However, as $p$ increases,
+    the surface $\mathbb{S}_p^{d-1}$ will approach $\mathbb{S}_{\infty}^{d-1}$.
+    This means that a projected gamma built on $\mathbb{S}_p^{d-1}$ with a
+    sufficiently large $p$ will serve to approximate a distribution on 
+    $\mathbb{S}_{\infty}^{d-1}$.  This approximation is leveraged 
     in~\cite{trubey:pg} to obtain samples of a distribution on 
     ${\mathbb S}_{\infty}^{d-1}$. To obtain a flexible model for $\Phi$ we use 
     the projected gamma density as the kernel of a random measure mixture model, 
@@ -129,6 +153,8 @@ Note that $T$ is not differentiable at $p = \infty$, so we can not use it to
     control over the formation of new clusters.  A hierarchical formulation of 
     the model for observations 
     $\bm{y}_i\in \mathbb{S}_{p}^{d-1}i, i=1, \ldots,m$, is
+    \makenote{add reason/justification/workflow for why postpred sample on 
+        $\mathbb{S}_{\infty}^{d-1}$}
     \begin{equation}
         \label{eqn:modelsphere}
         \begin{aligned}
@@ -139,9 +165,9 @@ Note that $T$ is not differentiable at $p = \infty$, so we can not use it to
         \end{aligned}
         ~\hspace{1cm}
         \begin{aligned}
-        G_0 &= \mathcal{LN}\left(\bm{\alpha}\mid\bm{\mu},\Sigma\right)\\
-        \mu &\sim \mathcal{N}\left(\bm{0},\bm{1}\right)\\
-        \Sigma &\sim \mathcal{IW}\left(\nu, \Psi\right).
+        G_0 &= \mathcal{LN}_d\left(\bm{\alpha}\mid\bm{\mu},\Sigma\right)\\
+        \mu &\sim \mathcal{N}_d\left(\bm{0},\bm{1}\right)\\
+        \Sigma &\sim \mathcal{IW}_d\left(\nu, \Psi\right).
         \end{aligned}
     \end{equation}
     Here $\mathcal{LN}$ denotes a log-normal, $\mathcal{N}$ a normal, and 

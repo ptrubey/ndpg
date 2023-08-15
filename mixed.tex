@@ -124,9 +124,6 @@ Let $z_{i\ell} = \frac{1}{1 - \hat{F}(x_{i\ell})}$ be the
     $\bm{y}_i$ its projection onto $\mathbb{S}_p^{d-1}$.  Because under the 
     rank transformation the data is no longer subject to thresholding, we can 
     no longer make the assumption that angles are independent of radius.
-    \makenote{In retrospect, I'm actually not convinced about this.  Rather,
-        we may end up with the moment constraint on the angular distribution.
-        It might make sense to explicitly say we're ignoring said constraint.}
     Instead, we can include the radius within the model.  As the radius is on 
     the range $[1,\infty)$, a logical choice of kernel for modeling it is the 
     Pareto density, with shape parameter $\alpha_r$.  
