@@ -1,37 +1,51 @@
-A fundamental result of multivariate extreme value theory is independence
-    in distribution between the angular component and radial component of an
-    extreme observation.  We make use of this independence to develop an 
-    anomaly detection algorithm that separates the \emph{anomaly score} into 
-    independent angular and radial scores.  These scores are then developed
-    separately as functions of calculated density.  We induce applicability of
-    EVT in real data by considering the peaks-over-threshold regime,
-    transforming only data in excess of a large threshold to be standard 
-    multivariate Pareto.
+%%%%% Omitted for Technometrics; should be 100 words or less.
+% A fundamental result of multivariate extreme value theory is independence
+%     in distribution between the angular component and radial component of an
+%     extreme observation.  We make use of this independence to develop an 
+%     anomaly detection algorithm that separates the \emph{anomaly score} into 
+%     independent angular and radial scores.  These scores are then developed
+%     separately as functions of calculated density.  We induce applicability of
+%     EVT in real data by considering the peaks-over-threshold regime,
+%     transforming only data in excess of a large threshold to be standard 
+%     multivariate Pareto.
 
-To fit an angular density, we project the angular component onto 
-    $\mathbb{S}_p^{d-1}$ and fit a Bayesian non-parametric model implementing 
-    projected gamma as the kernel density. This works well for fitting a model, 
-    but density estimation for use in anomaly scores is unstable.
-    Instead, we use the fitted model to generate a posterior predictive sample, 
-    and make use of non-parametric density estimation algorithms on that sample
-    to compute anomaly scores.  We offer two such angular scores, based on the 
-    $k$-nearest neighbors, and kernel density estimation algorithms 
-    respectively.
+% To fit an angular density, we project the angular component onto 
+%     $\mathbb{S}_p^{d-1}$ and fit a Bayesian non-parametric model implementing 
+%     projected gamma as the kernel density. This works well for fitting a model, 
+%     but density estimation for use in anomaly scores is unstable.
+%     Instead, we use the fitted model to generate a posterior predictive sample, 
+%     and make use of non-parametric density estimation algorithms on that sample
+%     to compute anomaly scores.  We offer two such angular scores, based on the 
+%     $k$-nearest neighbors, and kernel density estimation algorithms 
+%     respectively.
 
-We further expand the applicability of our approach by implementing a 
-    categorical data model, making use of Dirichlet-multinomial as the kernel 
-    density.  We then adapt the posterior predictive density scores developed 
-    for the angular data model to the categorical data model.
+% We further expand the applicability of our approach by implementing a 
+%     categorical data model, making use of Dirichlet-multinomial as the kernel 
+%     density.  We then adapt the posterior predictive density scores developed 
+%     for the angular data model to the categorical data model.
 
-Finally, we combine the regimes to create a \emph{mixed} data model.  We further
-    adapt the scores developed in the angular and categorical data models to the
-    mixed data regime.  We analyze the performance of our methods in the 
-    categorical and mixed data regimes.  Additionally, we investigate the 
-    standard Pareto rank-ordered transformation, which expands the applicability
-    of our method to all real-valued data, not only that in excess of a 
-    threshold.
+% Finally, we combine the regimes to create a \emph{mixed} data model.  We further
+%     adapt the scores developed in the angular and categorical data models to the
+%     mixed data regime.  We analyze the performance of our methods in the 
+%     categorical and mixed data regimes.  Additionally, we investigate the 
+%     standard Pareto rank-ordered transformation, which expands the applicability
+%     of our method to all real-valued data, not only that in excess of a 
+%     threshold.
 
-We find anomaly scores developed in our methods to perform generally better than
-    the canonical methods we tested.
+% We find anomaly scores developed in our methods to perform generally better than
+%     the canonical methods we tested.
+
+%% 130 words.  Need to cut this down.
+
+We develop anomaly detection scores leveraging the independence between the radial 
+    and angular components of vectors in extreme value settings.
+    The angular density is modeled as a Bayesian non-parametric mixture of 
+    projected gammas.  The resulting posterior predictive density is used
+    for the angular score. For flexible categorical data modeling, we develop 
+    an extension of  the projected gammas model using a Dirichlet-multinomial 
+    kernel. This is coupled with our  proposed anomaly detection  score in 
+    mixed data settings. We evaluate  the anomaly detection  efficacy of 
+    our proposed scores and find that  they are generally superior to tested 
+    canonical methods.    
 
 % EOF

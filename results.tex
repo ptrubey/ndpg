@@ -1,12 +1,12 @@
 \section{Results\label{sec:results}}
-As mentioned in~\ref{sec:novelty}, the goal of a novelty detection algorithm is 
-    to produce a novelty \emph{score}, which ranks observations in order as to 
-    the degree they are anomalous.  This creates another problem: threshold 
+As mentioned in~\ref{sec:novelty}, our goal is 
+    to produce novelty scores to rank observations according to how likely 
+    they are of being anomalous.  This creates another problem: threshold 
     selection---anomaly scores beyond what level are determined anomalous?  We 
     mentioned \cite{clifton2011} and \cite{gu2021} as examples of computing 
     thresholds theoretically, but in general, thresholds are determined 
-    heuristically, using performance criteria.  In specific applications, this 
-    can be extremely costly.   For instance, 
+    heuristically, using performance criteria.  In some applications, 
+    heuristic determination can be extremely costly.
 
 One such criteria is the receiver operating characteristics, or \emph{ROC}, 
     curve.  For  a given score threshold, one can compute the true positive 
@@ -27,12 +27,12 @@ In assessing model performance, we sideline the issue of threshold selection by
     ROC curve will approach the upper left corner, and the closer its AuROC will 
     approach 1.
 
-\add{\bf Before we go into the results, we need to provide some information 
+\add{\bf \st{Before we go into the results, we need to provide some information 
     about how we do the computations. I am happy to provide the details of the 
     MCMC in an appendix, or even in a supplementary material, but some idea of 
     the computations has to be given in the main body of the paper. Likewise, 
     we need to provide information on the hyperparameter choice, and how we 
-    tuned the procedure, how we assessed it, and how log it took to obtain the 
+    tuned the procedure, how we assessed it}, and how log it took to obtain the 
     results.}\makenote{addressed all but time}
 
 In developing our model, we employ the blocked Gibbs sampler for stick-breaking
@@ -51,10 +51,12 @@ In developing our model, we employ the blocked Gibbs sampler for stick-breaking
     algorithm.\makenote{needs citation}.  To hasten updates to the shape
     parameters, and speed convergence of the model, we employ a parallel
     tempering algorithm where parallel MCMC chains are sampled at an ascending
-    temperature ladder.  \emph{Hotter} chains have flatter posteriors, and thus 
-    more readily move around the parameter space.  Chain states are randomly 
-    exchanged via a Metropolis step
-    with probability \makenote{add state exchange probability equation}.
+    temperature ladder.  Chains with higher temperatures have flatter 
+    posteriors, and thus more readily move around the parameter space.  
+    Chain states are randomly exchanged via a Metropolis step with probability
+    $p_{1,2} = \exp\left\lbrace (t_2^{-1} - t_1^{-1})(L_2-L_1)\right\rbrace$,
+    where $t$ refers to chain temperature, and $L$ refers to the
+    \emph{energy}, or log-density of the chain at its current state.  
     For each example dataset, the sampler was ran for $50,000$ iterations,
     discarding the first 40,000 as burn-in.  The resulting chain was thinned,
     keeping only every 10th iteration.  For evaluating density under the 
@@ -69,12 +71,18 @@ We tested our scores against several labelled datasets.  These included some
 
 \begin{table}[t]
     \centering
-    \caption{Characteristics of datasets used in analysis.  $N$ refers to 
+    \caption{\makenote{add additional columns covering dimensionality (real, 
+    categorical, total \# of categories)}
+    Characteristics of datasets used in the analysis.  $N$ refers to 
     number of observations, $A$ number of anomalies, and $P$ the prevalence of 
     anomalies in the analysis set.  Peaks-over-threshold analysis uses the 
-    \emph{over} set, while rank transformation and categorical analysis use 
-    the \emph{sub} set.\label{tab:data}}
+    set of parameters with the \emph{over} subindex, while rank 
+    transformation and categorical analysis use  the set of parameters with 
+    the \emph{sub} subindex.
+    \label{tab:data}
+    }
     \bigskip
+    
     \input {./tables/data_summary}
     % \makenote{Here lies a table of characteristics of datasets used in analysis.  
     % Imagine first column dataset name, second column number of obsv. original, third 
@@ -85,12 +93,16 @@ We tested our scores against several labelled datasets.  These included some
     % many columns.  need to work on this.}
 \end{table}
 
-We compared the four developed scores against three canonical novelty detection 
+We compared our four proposed scores against three canonical novelty detection 
     algorithms, including isolation forest \emph{(iso)} \cite{liu2000}, local 
     outlier factor (lof) \cite{breunig2000}, and one-class SVM (svm) 
     \cite{chang2011}.  Each dataset was subject to 5-fold cross-validation, and 
     out-of-sample performance scores were averaged to produce the resulting 
-    performance tables seen in this section.
+    performance tables seen in this section. \add{\bf Here you need a description
+    of what was done in each of the three sections that follow. My understanding is
+    that you first used a purely categorical scoring. Then used mixed scoring
+    with thresholding of the continuous variables. Finally you used the ranked 
+    transformation. Is that right?}
 
 \subsection{Categorical anomalies}
 The categorical transformation of \emph{cover}, \emph{pima}, and \emph{yeast}
@@ -110,11 +122,11 @@ The categorical transformation of \emph{cover}, \emph{pima}, and \emph{yeast}
     \input{./tables/ad_cat_performance_update}
 \end{table}
 The dataset \emph{solarflare} was also unique in our analysis, being the only 
-    truly categorical dataset used.  Our algorithm \emph{lsKDE} very slightly 
+    truly categorical dataset used.  Our algorithm \emph{lskde} very slightly 
     trailed the performance of \emph{one-class SVM}, the best performing 
     algorithm on this dataset.  On both \emph{pima} and \emph{yeast}, 
     latent-simplex KDE performed significantly better than any of the canonical 
-    methods.  On this analysis, \emph{hKDE} and \emph{hKNN} both performed 
+    methods.  On this analysis, \emph{hkde} and \emph{hKNN} both performed 
     poorly.  It seems the projection of the categorical probability vectors into 
     a unified sphere induces some loss of information.
 
@@ -131,19 +143,19 @@ We subjected six datasets to multivariate thresholding, only keeping
     Of particular interest here is the \emph{annthyroid} dataset, for which all 
     of our scores performed comparably, and significantly better than the 
     canonical scores.  Of the other tested datasets, on \emph{cardio}, 
-    \emph{lmKDE} approached the performance of \emph{isolation forest} and 
+    \emph{lmkde} approached the performance of \emph{isolation forest} and 
     \emph{one-class SVM}, but all other methods performed worse.  For the 
-    datasets \emph{cover} and \emph{mammography}, \emph{hKNN}, \emph{lhKDE}, 
-    and \emph{lmKDE} performed comparably, and each significantly better than 
-    any of the canonical methods.  We see that \emph{lmKDE}, being the inheritor
+    datasets \emph{cover} and \emph{mammography}, \emph{hKNN}, \emph{lhkde}, 
+    and \emph{lmkde} performed comparably, and each significantly better than 
+    any of the canonical methods.  We see that \emph{lmkde}, being the inheritor
     of the latent simplex KDE score, performs reasonably well reliably among 
     datasets thus far in the peaks-over-threshold setting, but is outperformed 
     by other metrics on each dataset. We may see some effect of the loss of 
     information relating to the dependence structure between $\bm{w}$ and 
-    $\bm{v}$ on the derived performance.  On that note, \emph{lhKDE} performed 
-    comparably to \emph{lmKDE} on \emph{annthyroid}, \emph{cover}, \emph{pima}, 
+    $\bm{v}$ on the derived performance.  On that note, \emph{lhkde} performed 
+    comparably to \emph{lmkde} on \emph{annthyroid}, \emph{cover}, \emph{pima}, 
     and \emph{yeast}, but slightly exceeded its performance on 
-    \emph{mammography}.  We saw in the categorical datasets, \emph{lsKDE} 
+    \emph{mammography}.  We saw in the categorical datasets, \emph{lskde} 
     performed generally well, so the projection onto a unified sphere may 
     induce loss of information.  In that regard, it may be the case that 
     preserving information about the dependence structure between $\bm{v}$ and 
@@ -194,7 +206,7 @@ We subjected the same six datasets used in the peak-over-threshold model to
     \input{./tables/ad_rank_performance_update}
 \end{table}
 
-Here \emph{lmKDE} performs better than each of the canonical methods in four of 
+Here \emph{lmkde} performs better than each of the canonical methods in four of 
     six datasets, performing slightly worse than \emph{one-class SVM} on 
     \emph{mammography}, and significantly worse than \emph{isolation forest} on 
     \emph{yeast}.  As we have stated before, \emph{yeast} and \emph{pima} are 

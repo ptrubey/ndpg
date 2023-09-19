@@ -1,77 +1,85 @@
 \subsection{Mixed Models}
-We make a strong assumption at this point, for establishment of the angular
-    measure, that conditional on $\bm{\alpha}$, the distribution of the 
-    categorical variables is independent of that of the angular variables.  
-    That is, conditional on $\bm{\alpha}$, $\bm{Y} \in {\mathbb S}_{p}^{d-1}$ 
-    is independent of $\bm{W}$.  This is not unreasonable, as the generalized 
-    Pareto parameters estimated to transform $\bm{X}$ into $\bm{Z}$ are 
-    estimated marginally, and the projection from $\bm{Z}\to\bm{Y}$ is 
-    independent of $\bm{W}$.  Thus we can establish a \emph{mixed} model as
+To obtain a joint model for the density of a vector with mixed components
+    we consider a product kernel, then mix over the parameters that define 
+    both kernels in order to capture the dependence between components. Thus,
     \begin{equation}
         \label{model:mixed}
         (\bm{y},\bm{w})\sim \int_{\bm{\alpha}}\mathcal{PRG}_{p}
             (\bm{y}\mid\bm{\alpha}_{\bm{y}})
         \;\mathcal{CDM}(\bm{w}\mid\bm{\alpha}_{\bm{w}})\;dG(\bm{\alpha})
     \end{equation}
-  with the distribution of $\bm{\alpha}$ as expanded in 
-    Equation~\ref{eqn:modelcat}. By this conditional independence assumption, 
-    the dependence structure (and associated inference) between  $\bm{Y}$ and 
-    $\bm{W}$ is transferred up to the distribution of $\bm{\alpha}$.  Note for 
-    the projected gamma distribution, we are restricting the rate parameters 
-    $\beta_{\ell} := 1$.  Also note that for the mixed model, the hyperparameter 
-    for the covariance matrix $\Sigma_{\bm{\alpha}}$ is a blocked diagonal 
+  with the distribution of $\bm{\alpha}=(\bm{\alpha_\bm{y},\bm{\alpha_\bm{w}})}$ as
+    defined in Equation~\ref{eqn:modelcat}. Note that for 
+    the projected gamma distribution, we restrict the rate parameters 
+    to $\beta_{\ell} := 1$.  Also note that for the mixed model, the hyperparameter 
+    for the covariance matrix $\Sigma_{\bm{\alpha}}$ is taken as a blocked diagonal 
     matrix, with the block corresponding to the angular component being a 
     diagonal matrix.
 
 \subsection{Mixed Model Anomaly Scores\label{sec:mixedscores}}
-Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  Let 
+Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  \st{Let 
     $\bm{\alpha}_{\bm{y}}$ be the component of the $\bm{\alpha}$ vector that 
     corresponds  to the angular component $\bm{y}$, and $\bm{\alpha}_{\bm{w}}$ 
-    the component that corresponds to the categorical component $\bm{w}$.
+    the component that corresponds to the categorical component $\bm{w}$.}
     Then, for the mixed model, let 
-    $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\rho}_{i\bm{w}})$, and 
-    $\bm{\nu} = T_{\infty}(\bm{\rho})$.  The \emph{hKNN} score can be adapted 
+    $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\varrho}_{i\bm{w}})$, and 
+    $\bm{\nu} = T_{\infty}(\bm{\varrho})$.  The \emph{hKNN} score can be adapted 
     to the mixed model by re-projecting the angular data and the latent 
     categorical component into the same sphere. This requires moving $\bm{y}_i$ 
     back to $\mathbb{R}_+^{d_{\bm{y}}}$, by multiplying by the radial component
     generated according to
-    \[
+    \begin{equation}
+        \label{eqn:angularradial}
         R_i\mid\bm{\alpha} \sim \mathcal{G}
         \left(R_i\given\sum_{\ell = 1}^{d_{\bm{y}}}\alpha_{\ell}, 1\right).
-    \]
-    Then $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\rho}_{i\bm{w}})$ is the 
+    \end{equation}
+    Then $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\varrho}_{i\bm{w}})$ is the 
     latent projection of both the real component and categorical component into 
-    the same sphere.  Also, let $\bm{\nu} = T_{\infty}(\bm{\rho})$ be the 
+    the same sphere.  \add{\bf Maybe here we could add a figure with a graphical
+    explanation} Also, let $\bm{\nu} = T_{\infty}(\bm{\varrho})$ be the 
     generic $\bm{\nu}$ not specifically dependent on observation $i$.  The 
     score is then calculated as
     \[
-        S_{i,\bm{v}}^{\text{h$k$nn}} = \frac{r_i^2 N\pi^{\frac{d-1}{2}}}{
+        S_{i,\bm{v}}^{\text{h$k$nn}} = \left[\frac{N\pi^{\frac{d-1}{2}}}{
                 k\Gamma\left(\frac{d-1}{2} + 1\right)}
-        \expect{D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}\given\bm{y},\bm{w}}.
+        D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}\right]^{-1}.
     \]
     Note again that we are computing the two expectations separately.  The 
     \emph{hkde} score works in the same manner, this using kernel density 
     estimation rather than $k$-nearest neighbors density estimation on 
     $\mathbb{S}_{\infty}^{d-1}$;
-    \[
-        S_{i,\bm{v}}^{\text{hkde}} = r_i^2 \expect{\exp\left\lbrace -\frac{1}{2}
+    \begin{equation}
+        \label{eqn:adhkdecat}
+        S_{i,\bm{v}}^{\text{hkde}} = \text{E}_{\bm{\nu}}\left[\exp\left\lbrace -\frac{1}{2}
             \left(
-            \frac{d\left(T_{\infty}
-                \left(\expect{\bm{\nu}_i}\right), \bm{\nu})\right)}{h}
+            \frac{d\left(\tilde{\text{E}}[{\bm{\nu}_i}], \bm{\nu}^*\right)}{h}
+            \right)^2\right\rbrace
+            \right]^{-1}
+            = 
+            \left[\frac{1}{K}\sum_{k = 1}^K\exp\left\lbrace
+            -\frac{1}{2}
+            \left(
+            d(\tilde{\text{E}}[\bm{\nu}_i], \bm{\nu}_k^*)
             \right)^2
-            \right\rbrace \given \bm{y},\bm{w}
-            }.
-    \]
+            \right\rbrace
+            \right]^{-1}
+    \end{equation}
     The \emph{lhkde} score works similarly to the \emph{hkde} score, projecting
-    $R_i\bm{y}_i$ and $\bm{\rho}_i$ onto $\mathbb{S}_{\infty}^{d-1}$.  
-    \[
-    S_{i,\bm{v}}^{\text{lhkde}} = r_i^2 \expect{\exp\left\lbrace-\frac{1}{2}\left(
-        \frac{d\left(\bm{\nu}_i, \bm{\nu}\right)}{h}\right)^2\right\rbrace
-        \given \bm{y},\bm{w},\bm{y}_i,\bm{w}_i}
-    \]
+    $R_i\bm{y}_i$ and $\bm{\varrho}_i$ onto $\mathbb{S}_{\infty}^{d-1}$.  
+    \begin{equation}
+        \label{eqn:adlhkdecat}
+    S_{i,\bm{v}}^{\text{lhkde}} = \text{E}_{\bm{\nu},\bm{\nu}_i}
+        \left[\exp\left\lbrace-\frac{1}{2}\left(
+            \frac{d\left(\bm{\nu}_i, \bm{\nu}\right)}{h}\right)^2
+        \right\rbrace\right]^{-1}
+        = \left[
+        \frac{1}{K_{\bm{\nu}}K_{\bm{\nu}_i}}\exp\left\lbrace
+        -\frac{1}{2}\left(\frac{d(\bm{\nu}_i,\bm{\nu})}{\hat{h}}\right)^2
+        \right\rbrace\right]^{-1}
+    \end{equation}
     The difference between the two scores is $S_{i,\bm{v}}^{\text{lhkde}}$
     takes the integral with regard to a random 
-    $T_{\infty}(R_i\bm{y}_i,\bm{\rho}_i)$, and $S_{i,\bm{v}}^{\text{hkde}}$ 
+    $T_{\infty}(R_i\bm{y}_i,\bm{\varrho}_i)$, and $S_{i,\bm{v}}^{\text{hkde}}$ 
     takes the integral with regard to the expectation of that quantity.
 
 The \emph{lmkde} score serves as a comparison to the above three scores, 
@@ -81,25 +89,59 @@ The \emph{lmkde} score serves as a comparison to the above three scores,
     probabilities in its own space, with the appropriate distance metric for 
     each.  In effect, this combines \emph{hkde} from
     the angular component and \emph{lskde} from the categorical component.
-    \[
-    S_i^{lmKDE} = r_i^2 \expect{
+    \begin{equation}
+    \label{eqn:lmkdecat}
+    \begin{aligned}
+    S_{i,\bm{v}}^{lmkde} &= \text{E}_{\bm{v}^*,\bm{\pi}^*,\bm{\pi}_i}\left[
         \exp
         \left\lbrace 
         -\frac{1}{2}
         \left(
-        \frac{d\left(\bm{v}_i, \bm{V}_i\right)}{h_{\bm{V}}}
+        \frac{d\left(\bm{v}_i, \bm{v}^*\right)}{\hat{h}_{\bm{v}^*}}
         \right)^2
         -\frac{1}{2}
         \left(
-        \frac{\lVert\bm{\pi}_i - \bm{\pi}\rVert_1}{h_{\bm{W}}}
+        \frac{\lVert\bm{\pi}_i - \bm{\pi}^*\rVert_1}{\hat{h}_{\bm{\pi}^*}}
         \right)^2
         \right\rbrace
-        \given \bm{y},\bm{w},\bm{y}_i,\bm{w}_i}
-    \]
+        \right]^{-1}\\
+        &= \left[\frac{1}{K_{\bm{\pi}^*}K_{\bm{\pi}_i}}
+            \exp\left\lbrace-\frac{1}{2}
+            \sum_{}
+            \left(\frac{d(\bm{v}_i,\bm{v}_k^*)}{\hat{h}_{\bm{v}^*}}\right)^2
+            \right\rbrace\right]^{-1}
+    \end{aligned}
+    \end{equation}
     This choice to evaluate each component within its own space presents some 
     loss of information as to the dependence structure between $\bm{y}$ and 
     $\bm{w}$ within the score.  We will see to what extent that loss of 
     information is damning.
+
+\begin{algorithm}[htb]
+    \caption{Workflow for anomaly detection for \emph{mixed} data}\label{alg:admixed}
+    % \begin{enumerate}[nolistsep]
+        % \item
+    \begin{algorithmic}[1]
+        \State Take $r_i$, $\bm{y}_i$ according to Algorithm~(\ref{alg:workflow}); $\bm{w}_i$ as in Algorithm~\ref{alg:adcat}.
+        \State Fit $(\bm{y},\bm{w})$ using mixed model from Equation~(\ref{model:mixed})
+        \State From $\bm{\alpha}\mid\bm{y},\bm{w}$, sample
+            $\bm{\varrho}_k^{*}\mid\bm{\alpha}\sim\prod_{\ell}\mathcal{G}(\alpha_{\ell})$ for $k = 1,\ldots,K$
+        \If{$S_{i,v}$ is \emph{hknn}, \emph{hkde}, or \emph{lhkde}}
+            \State From $\bm{\alpha}\mid\bm{y}_i,\bm{w}_i$:
+                sample $R_i$ according to Equation~(\ref{eqn:angularradial}), 
+                $\bm{\varrho}_{iw}$ similar to Algorithm~\ref{alg:adcat}.
+            \State Take $\bm{\nu}_i = T_{infty}(R_i\bm{y}_i,\bm{\varrho}_{iw})$;      
+                $\bm{\nu}^* = T_{\infty}(\bm{\varrho}^*)$.
+            \State Apply Score function.
+        \ElsIf{metric is \emph{lmkde}}
+            \State From $\bm{\alpha}\mid\bm{y}_i,\bm{w}_i$, 
+                sample $\bm{\varrho}_{iw}$ similar to Algorithm~\ref{alg:adcat}.
+            \State Take $\bm{\pi}_i = \prod_{m = 1}^M T_{1}(\bm{\varrho}_{im})$;    
+                $\bm{\pi}^* = \prod_{m = 1}^{M} T_1(\bm{\varrho}^*)$
+            \State Apply Score function.
+        \EndIf
+    \end{algorithmic}
+\end{algorithm}
 
 \subsection{Relaxing the assumption of independence\label{subsec:rank}}
 A valid critique of the model presented thus far is that in order to justify 
@@ -111,22 +153,22 @@ A valid critique of the model presented thus far is that in order to justify
     this represents a very powerful data reduction with little loss of 
     information pertaining to anomalies, as anomalies tend to be in the tails 
     (see, for  example, Table~\ref{tab:data}).  For other applications, this 
-    data reduction represents a significant loss of information about anomalies 
-    of anomalies being in the tails is not borne out.  For this second group, 
+    data reduction represents a significant loss of information about possible
+    anomalies not corresponding to the tails.  For this second group,
     one available avenue is to relax the assumption of independence between the 
     angular and radial components.
 
-Let $z_{i\ell} = \frac{1}{1 - \hat{F}(x_{i\ell})}$ be the 
+Let $z_{i\ell} = 1/(1 - \hat{F}(x_{i\ell}))$ be the 
     \emph{rank-transformation} to the standard Pareto scale.  The lower range 
     of this transformation is bounded at 1. For data transformed in this manner, 
     let $r_i = \lVert \bm{Z}_i\rVert_{\infty}$ be the radial component, 
     $\bm{v}_i = \bm{z}_i/r_i$ the angular component of $\bm{z}_i$, and 
-    $\bm{y}_i$ its projection onto $\mathbb{S}_p^{d-1}$.  Because under the 
-    rank transformation the data is no longer subject to thresholding, we can 
-    no longer make the assumption that angles are independent of radius.
-    Instead, we can include the radius within the model.  As the radius is on 
-    the range $[1,\infty)$, a logical choice of kernel for modeling it is the 
-    Pareto density, with shape parameter $\alpha_r$.  
+    $\bm{y}_i$ its projection onto $\mathbb{S}_p^{d-1}$.  
+    As no thresholding is performed we can no longer make the assumption that 
+    angles are independent of radius.  Instead, we can include the radius 
+    within a joint model.  As the radius is on the range $[1,\infty)$, 
+    we use the Pareto density, with shape parameter $\alpha_r$ as our choice 
+    of kernel.  
     \begin{equation}
         \label{model:rank}
         (\bm{y}_i,\bm{w}_i,r_i) \sim \int_{\bm{\alpha}}
@@ -135,11 +177,9 @@ Let $z_{i\ell} = \frac{1}{1 - \hat{F}(x_{i\ell})}$ be the
             \mathcal{P}(r_i\mid\alpha_r)\;
             \text{d}G(\bm{\alpha})
     \end{equation}
-    As $\alpha_r > 0$, a logical centering distribution for it would be the 
-    log-normal distribution.  So this choice of modelling fits in very well 
-    with the expansion we have previously explored in 
-    Equation~\ref{eqn:modelcat}, effectively adding one dimension to the mean 
-    vector and covariance matrix.  The scores developed previously in 
+    As $\alpha_r > 0$, we augment the kernel parameters to $\bm{\alpha}= 
+    (\bm{\alpha}_{\bm{y}}, \bm{\alpha}_{\bm{w}}, \alpha_r)$, and use a joint log-normal
+    as the center of the random measure prior for $G$. The scores developed previously in 
     Section~\ref{sec:mixedscores} remain applicable.
 
 % EOF

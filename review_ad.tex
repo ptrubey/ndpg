@@ -2,20 +2,26 @@
 
 The complete field of anomaly detection is vast.  However, most methods can be 
     roughly grouped into three core ideas: statistical model approaches, 
-    non-statistical model approaches, and clustering methods.
-    
-{\bf Statistical Models} for anomaly detection attempt to model the distribution 
-    of data, with the goal of estimating the data density around an observation. 
-    The core assumption is that observations in regions of low estimated density 
-    are more likely to be anomalous.  Common methods include non-parametric 
-    density estimation based on $k$-Nearest Neighbors, or 
-    \emph{$k$-NN}~\citep{kramer2013}; kernel density estimation approaches such 
-    as the Parzen-Rosenblatt windowing method~\citep{parzen1962,rosenblatt1956}; 
-    and semi-parametric density estimation methods, such as Gaussian mixture 
+    non-statistical model approaches, and clustering methods.  Common to all
+    approaches is the assumption that anomalous data will tend to stand
+    apart from normal data.
+
+%{\bf Statistical Models} 
+Statistical models for anomaly detection attempt to model the distribution 
+    of data, with the goal of estimating the data density around an observation.
+    In specific applications, one might
+    make assumptions about the parametric form of the generating distribution
+    of the data, but for general application, a non-parametric density estimator
+    is frequently used.  This might include algorithms such as
+    $k$-Nearest Neighbors  \emph{$k$-NN}~\citep{kramer2013}; 
+    kernel density estimation approaches such as the Parzen-Rosenblatt 
+    windowing method~\citep{rosenblatt1956,parzen1962}; 
+    or even semi-parametric density estimation methods, such as Gaussian mixture 
     models~\citep{mcnicholas2010}.  Local Outlier Factor~\cite{breunig2000} is 
     an example of an anomaly score using a non-parametric density estimator.
 
-{\bf Clustering Methods} group data into clusters of similar observations.
+%{\bf Clustering Methods} 
+Clustering methods group data into clusters of similar observations.
     The grouping methods tend to rely on distance metrics and generally make no 
     assumptions regarding the underlying distribution of the data.  We can 
     further sub-divide this sub-field into types of clustering methods: 
@@ -50,7 +56,8 @@ Density based clustering methods use pairwise distances between observations to
     neighborhoods of observations and assigning labels based on the 
     neighborhood. 
     
-{\bf Non-Statistical Models} beyond clustering are generally adaptations 
+% {\bf Non-Statistical Models} 
+Non-statistical---or algorithmic---models beyond clustering are generally adaptations 
     of general classification methods, applied to unsupervised learning.  
     The Isolation Forest~\citep{liu2000}, adapted from random 
     forests~\citep{breiman2001}, uses decision trees to isolate observations.
@@ -83,7 +90,7 @@ The application of multivariate extreme value theory to anomaly detection is
     extremes, to classify all extremes as anomalous. Yet, extreme observations 
     that cluster into a homogenous group should not be considered anomalous.
     \cite{goix2017} offers one example of considering the dependence structure 
-    of extremes; subjecting the data to the standard Pareto rank transformation 
+    of extremes; subjecting the data to a standard Pareto rank transformation 
     $T(x) = 1/(1 - \hat{F}(x))\;\in\;[1,\infty)$, where $\hat{F}$ corresponds 
     to the empirical distribution function, 
     and partitioning the space $[1,\infty)^d$ into $\alpha$-cones---where 

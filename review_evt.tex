@@ -121,20 +121,27 @@ Recall that the radial component $R \in {\mathbb R}_+$ follows a standard
 %     \KwResult{Replicates of $\bm{V}$}
 %     
 % \end{algorithm}
-\begin{algorithm}[ht]
-    \caption{Workflow to }\label{alg:workflow}
-    \begin{enumerate}
-        \item $b_{t\ell} = \hat{F}_{\ell}^{-1}\left(1 - \frac{1}{t}\right)$; 
+\begin{algorithm}[htb]
+    \caption{Workflow to fit a distribution to data 
+        on $\mathbb{S}_{\infty}^{d-1}$.}\label{alg:workflow}
+    % \begin{enumerate}[nolistsep]
+        % \item
+    \begin{algorithmic}[1]
+        \State $b_{t\ell} := \hat{F}_{\ell}^{-1}\left(1 - \frac{1}{t}\right)$; 
             For $w_{i\ell} > b_{t\ell}$, fit $a_{\ell}$, $\xi_{\ell}$ 
             by likelihood-based method.
-        \item Transform 
+        % \item 
+        \State Transform 
             $\bm{z}_{i\ell} = \left(1 + \xi_{\ell}\frac{w_{i\ell} 
                 - b_{t\ell}}{a_{\ell}}\right)_+$ for $\bm{w}_i\not< \bm{b}_t$.
-        \item Transform $(r_i,\bm{v}_i) = \lVert \bm{z}_i\rVert_\infty, 
-            \frac{\bm{z}_i}{\lVert \bm{z}_i\rVert_{\infty}}$.
-        \item Project $\bm{v}_i$ onto $\mathbb{S}_{p}^{d-1}$ to facilitate 
-            fitting a semi-parametric distribution.
-    \end{enumerate}
+        %\item 
+        \State Transform $(r_i,\bm{v}_i) = \left(\lVert \bm{z}_i\rVert_\infty, 
+            \frac{\bm{z}_i}{\lVert \bm{z}_i\rVert_{\infty}}\right)$.
+        % \item 
+        \State $\bm{y}_i = \frac{\bm{z}_i}{\lVert \bm{z}_i\rVert_p}$ is used to facilitate fitting $f(\bm{\alpha}, \bm{\beta}\mid\bm{y})$.
+        % \item 
+    % \end{enumerate}
+    \end{algorithmic}
 \end{algorithm}
 
 Note that $T$ is not differentiable at $p = \infty$, so we can not use it to 
@@ -171,22 +178,57 @@ Note that $T$ is not differentiable at $p = \infty$, so we can not use it to
         \end{aligned}
     \end{equation}
     Here $\mathcal{LN}$ denotes a log-normal, $\mathcal{N}$ a normal, and 
-    $\mathcal{IW}$ an inverse Wishart. Details of the implementation of this 
+    $\mathcal{IW}$ an inverse Wishart.  We refer to this model as a
+    \emph{Pitman--Yor mixture of projected gammas} $(\mathcal{PYPG})$.
+    Details of the implementation of this 
     model using and adaptive MCMC approach are provided in the supplementary 
     material.  As a kernel density, it was observed in \cite{trubey:pg} that 
     the unrestricted form of the $\mathcal{PG}_p$ with both shape and rate 
-    parameters offered no improvement in model fidelity on real data than the 
-    restricted form, where the rate parameters are fixed at 1.  For a more 
-    parsimonious model, and for compatibility with the categorical regime, in 
+    parameters offered no improvement in model fidelity on real data compared to 
+    the restricted form, where the rate parameters are fixed at 1.  For a more 
+    parsimonious model, and for compatibility with the categorical \st{regime}
+    that will be developed in Section \ref{sec:categorical}, in 
     this paper we choose to use the restricted form.
-    
+
+Pitman--Yor processes, as with other types of mixture models, can be used to group 
+    observations into stochastically assigned clusters, where all observations
+    within a cluster share a set of cluster parameters.  The Pitman-Yor process
+    can be expanded in a stick-breaking representation, where
+    \[
+        \text{Pr}(\alpha\mid\cdots) = \sum_{j = 1}^{\infty}p_j\delta_{\bm{\alpha}_j};
+        \hspace{1cm}\sum_{j = 1}^{\infty}p_j = 1
+    \]
+    where $\delta_{\bm{\alpha}_k}$ indicates a point mass at $\bm{\alpha}_k$.
+    In practicality we define a maximum number of possible clusters as a 
+    truncation point $J$.  Cluster assignment is accomplished through data 
+    augmentation, where a cluster identifier $\delta_i$ is sampled according to
+    both cluster weight and kernel density of observation $i$ given cluster parameters.
+    We make use of the blocked-Gibbs sampler on the stick-breaking representation of the
+    Pitman--Yor model.  Cluster weights are sampled as
+    \begin{equation}
+        \label{eqn:clusterweight}
+        \chi_{j} \mid n_j, n_{k>j} \sim \text{Beta}\left(1 + n_j - d, 
+            \eta + \sum_{k = j + 1}^J n_k + jd\right);
+        \hspace{1cm}p_j := \chi_j \prod_{k = 1}^{j-1}(1 - \chi_k)
+    \end{equation}
+    where $n_j$ is the number of observations in cluster $j$, $\eta$ is a strength 
+    parameter governing the formation of new clusters, and $d$ a discount parameter.
+    Then the cluster identifier for observation $i$ is generated as
+    \begin{equation}
+        \label{eqn:clusterid}
+        \text{Pr}\left[\varphi_i = j\mid \bm{p},\bm{\alpha}\right] =
+            \frac{p_j\;\mathcal{PG}_p\left(\bm{y}_i\mid\bm{\alpha}_j,\bm{1}\right)}{
+                \sum_{k = 1}^J p_k\;
+                \mathcal{PG}_p\left(\bm{y}_i\mid\bm{\alpha}_k,\bm{1}\right)}
+    \end{equation}
+
 The approach proposed in this section produces a sample of the angular measure 
     of the distribution of the tails of the sample. The methods has a number of 
-    advantages for anomaly detection: It focuses on the tails, which is where we 
-    are more likely to find anomalous behavior;  It accounts for asymptotic 
-    dependence between the different components of the observation vector; It 
+    advantages for anomaly detection: it focuses on the tails, which is where we 
+    are more likely to find anomalous behavior;  it accounts for asymptotic 
+    dependence between the different components of the observation vector; it
     reduces the computational burden, by thinning the sample using thresholding; 
-    It decouples the radial component to the angular component, thanks to 
+    and it decouples the radial component to the angular component, thanks to 
     independence. Samples of the radial component can easily be obtained from a 
     standard Pareto.
 

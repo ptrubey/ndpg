@@ -7,53 +7,56 @@ As previously stated, a novelty detection algorithm produces an anomaly score
     \[
     S_i = \left[\int_{\Theta}f(x_i\mid\theta)dG(\theta\mid\mathcal{D})\right]^{-1}
     \]
-    where $\mathcal{D}$ is the observed data.  That is, the reciprocal of the 
-    posterior predictive density at observation $x_i$.
+    where $\mathcal{D}$ is the observed data and $\theta$ the distributional
+    parameters.  That is, the reciprocal of the posterior predictive density 
+    at observation $x_i$.
 
-With independence established between the angular and radial components of an
-    extreme observation, we can consider sub-scores established under radial 
+Given the independence between the angular and radial components of an
+    extreme observation, we can consider sub-scores for the radial 
     and angular components independently.  That is,
     \[
         S_i = S_{i,r}\times S_{i,\bm{v}} = 
             f_r(r_i)^{-1}\times
-            \left[\int_{\Theta}f_v(\bm{v}_i\mid\theta)
-                dG(\theta\mid\mathcal{D}])\right]^{-1}
+            \left[\int_{\Omega} f_v(\bm{v}_i\mid\bm{\alpha})
+                \,\text{d}G(\bm{\alpha}\mid\mathcal{D})\right]^{-1}
     \]
-    As we have established, $r_i$ follows a standard Pareto distribution, so its
-    density $f_r(r_i) = r_i^{-2}$.  Estimating the angular density, 
-    $f_v(\bm{v}_i)$, is more complicated.  As we have previously established in
-    Section~\ref{sec:evt}, density estimation on the surface of 
-    ${\mathbb S}_{\infty}^{d-1}$ is not an easy problem. To establish a method
-    of inferring such a distribution, we instead projected the data from 
-    $\mathbb{S}_{\infty}^{d-1}$ onto $\mathbb{S}_p^{d-1}$ for a large but finite
-    $p$.  This makes estimation of distributional parameters possible, and allows
-    us to fit model parameters, but the normalizing coefficient of the
-    calculated density for a given observation under a finite $p > 1$ depends on
-    which dimension $\ell \in \lbrace 1,\ldots,d\rbrace$ was used as the summary
-    variable.  Calculated density, and thus rank ordering of anomaly scores,
-    could change depending on which dimension was used.  This is not ideal.
+    By construction $r_i$ follows a standard Pareto distribution, so its
+    density is $f_r(r_i) = r_i^{-2}$.  As previously discussed in
+    Section~\ref{sec:evt}, the kernel $\mathcal{PG}_\infty$, needed for 
+    density estimation on the surface of ${\mathbb S}_{\infty}^{d-1}$ is 
+    not available in analytic form, thus, we resorted to transforming the
+    data to $\mathbb{S}_p^{d-1}$ for a large but finite $p$.
+    This makes estimation of distributional parameters possible, 
+    but in the context of anomaly detection, a score based on
+    $\mathcal{PG}_p$ is problematic.  Recall in 
+    Equation~(\ref{eqn:projgamma}), the value of the Jacobian is dependent
+    upon which dimension is replaced in the transformation.  This implies that
+    under uniform $\bm{\alpha}$, calculated density can be changed by
+    permuting the order of dimensions.  This is problematic in an anomaly
+    detection application, because a relative ordering of density between 
+    observations is specifically what we're trying to calculate.
+    % \add{\bf Can you make this argument more clear? I am not sure I get it.}
+    % \makenote{I think its now sufficiently clear?}
     Further, for an observation near 0 evaluated on a gamma-related distribution 
-    with a shape parameter $\alpha$ near 0 creates an evaluated density that 
-    tends towards infinity.  This instability would play havoc on any directly 
-    calculated density-based scores.\makenote{expand this argument}
+    with a shape parameter $\alpha$ near 0, evaluated density can be divergent.
+    This instability would play havoc on any directly 
+    calculated density-based scores.
 
-We sidestep these problems of angular density evaluation by establishing a 
-    non-parametric angular density estimator, using as input a sample from the 
-    posterior predictive distribution of the model established in 
-    Section~\ref{sec:evt}. By fitting an angular model to the data, we can 
-    generate an arbitrarily large sample with which to establish the 
-    non-parametric density estimator.  Here, we consider two well-established
-    methods: $k$-nearest neighbors, or \emph{$k$NN}, and 
-    kernel density estimation, or \emph{KDE}.  For both of these methods we make
-    use of pairwise distances between observations from the dataset, and
-    replicates from a posterior predictive sample.  
+To avoid the problems of angular density evaluation we use a 
+    non-parametric angular density estimator based on a sample from the 
+    posterior predictive distribution of the model developed in 
+    Section~\ref{sec:evt}. Here, we consider two well-established
+    methods: $k$-nearest neighbors, or \emph{$k$NN} \citep{mack1979}, and 
+    kernel density estimation, or \emph{KDE} \citep{parzen1962}.  For both of 
+    these methods we make use of pairwise distances between observations 
+    from the dataset, and replicates from a posterior predictive sample.  
 
-As described in \cite{trubey:pg}, \emph{distance} on 
+As described in \cite{trubey:pg}, the  geodesic distance on 
     $\mathbb{S}_{\infty}^{d-1}$ 
-    is expensive to evaluate, with the computational burden growing 
-    combinatorically with number of dimensions.  Instead, they propose an 
+    is expensive to evaluate, as the computational burden grows 
+    combinatorically with the number of dimensions.  As an alternative they propose an 
     estimate of distance that is computationally cheap to evaluate, bearing 
-    a cost equivalent to Euclidean norm.  
+    a cost equivalent to that of a Euclidean norm.
     % \makenote{option 1}
     % For observations on different faces of 
     % $\mathbb{S}_{\infty}^{d-1}$, a performant analogue to distance can be
@@ -65,7 +68,7 @@ As described in \cite{trubey:pg}, \emph{distance} on
     ${\mathbb C}_{\ell}^{d-1} = \lbrace \bm{x} : 
         \bm{x} \in {\mathbb S}_{\infty}^{d-1}, x_{\ell} = 1\rbrace$
     comprise the $\ell$th \emph{face} of $\mathbb{S}_{\infty}^{d-1}$.  For a 
-    pair of points on the same face, Euclidean distance corresponds to the
+    pair of points on the same face, the Euclidean distance corresponds to the
     geodesic, or length of the shortest possible path between those two points.  
     For a pair of points 
     $\bm{a} \in \mathbb{C}_{\ell}^{d-1},\;\bm{b}\in\mathbb{C}_{\jmath}^{d-1}$,
@@ -81,25 +84,9 @@ As described in \cite{trubey:pg}, \emph{distance} on
         \end{cases}\;\hspace{2cm}\;
         g(\bm{a},\bm{b}) = \lVert \bm{a} - \bm{b}^{\prime}\rVert_2
     \end{equation}
-    % \begin{minipage}{0.45\textwidth}
-    % \begin{equation*}
-    %     \label{eqn:rotation}
-    %     \bm{b}^{\prime} = P_{\jmath\ell}(\bm{b}) = 
-    %     \begin{cases}
-    %         b_{i} &\text{for }i\neq \jmath,\ell\\
-    %         1 &\text{for }i = \ell\\
-    %         2 - b_{\ell} &\text{for }i = \jmath
-    %     \end{cases}
-    % \end{equation*}
-    % \end{minipage}
-    % \begin{minipage}{0.45\textwidth}
-    % \begin{equation}
-    %     \label{eqn:rotation}
-    %     g(\bm{a},\bm{b}) = \lVert \bm{a} - \bm{b}^{\prime}\rVert_2
-    % \end{equation}
-    % \end{minipage}\\\\
     After transformation, the Euclidean norm between $\bm{a}$ and 
-    $\bm{b}^{\prime}$ provides an upper bound on geodesic distance on 
+    $\bm{b}^{\prime}$ corresponds to a negative definite kernel that
+    provides an upper bound on geodesic distance on 
     $\mathbb{S}_{\infty}^{d-1}$ between $\bm{a}$ and $\bm{b}$.
 
 % \add{\bf This whole section needs to rewritten. First we have to connect to 
@@ -111,42 +98,37 @@ As described in \cite{trubey:pg}, \emph{distance} on
 %     measure of distance on ${\mathbb S}_{\infty}^{d-1}$, and you refer to the 
 %     previous paper.}
 
-% \makenote{A reviewer might ask about $p=1$, and using the direct density 
-%   calculated thereof.  We should add that fitted gamma densities are inherently 
-%   unstable and the spiking behavior near axes results in \emph{extremely} 
-%   non-normal behavior.  True density metrics based on projected gamma (at any $p$) 
-%   are not going to behave properly and are undesireable.}
-
 \subsection{$k$-Nearest Neighbors Density estimation}
-We establish a local posterior predictive density under the $k$NN estimator 
-    \citep{mack1979} on $\mathbb{S}_{\infty}^{d-1}$ by assuming a locally 
+We use the kernel $g$ defined in Equation \ref{eqn:rotation} to obtain 
+    a local posterior predictive density based on a $k$NN estimator 
+    on $\mathbb{S}_{\infty}^{d-1}$. To this end we consider a locally 
     uniform density within a $d-1$--dimensional ball $\mathbb{B}$, centered on 
-    observation $i$, with radius $D_{k}(\bm{v}_i)$ calculated as in 
-    Equation~(\ref{eqn:rotation})
-    to the $k$th nearest neighbor to observation $i$ in a sample from the 
+    observation $\bm{v}_i$.  The radius $D_{k}(\bm{v}_i)$ is calculated as 
+    $g(\bm{v}_i, \bm{v}_{N(i)})$, where $\bm{v}_{N(i)}$ is the $k$th nearest 
+    neighbor of $\bm{v}_i$ in a sample from the 
     posterior predictive distribution. The volume of the ball is calculated as
     \begin{equation}
-        \label{eq:vol_sphere}
-        \text{Vol}(\mathbb{B}_{d-1}^k) =
+        \label{eqn:vol_sphere}
+        \text{Vol}(\mathbb{B}_k^{d-1}) =
         \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
             \Gamma\left(\frac{d-1}{2} + 1\right)}.
     \end{equation}
-    A density is thus established as 
-    $f_{x}^{(k\text{NN})}(x_i\mid X) \approx 
-        \frac{k}{N}\left(\text{Vol}(\mathbb{B}_{d-1}^k)\right)^{-1}$
+    The density is thus estimated as 
+    $f_{\bm{v}}^{(k\text{NN})}(\bm{v}_i\mid \bm{V}) \approx 
+        \frac{k}{N}\left(\text{Vol}(\mathbb{B}_{k}^{d-1})\right)^{-1}$
     where $N$ is the total number of replicates of from the posterior predictive
     distribution.  Taking the reciprocal of the estimated angular density, 
     the angular score under the $k$NN estimator is then
     \begin{equation}
-        \label{eq:ad_knn_h}
+        \label{eqn:ad_knn_h}
         S_{i,\bm{v}}^{\text{$k$nn}} = \frac{N}{k}
             \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
             \Gamma\left(\frac{d-1}{2} - 1\right)}
     \end{equation}
     In our experience, using a large posterior predictive sample, 
         \makenote{this should be quantified}
-    the resulting ordering of scores was relatively robust to choice of $k$, for
-    values between 2 and 10.  We used $k = 5$ in our performance analysis.
+    the resulting ordering of scores was relatively robust to a choice of $k$ 
+    between 2 and 10.  We used $k = 5$ in our performance analysis.
 % When implementing this analysis on the hypercube, we lose one degree of freedom,
 %     and as a stand-in for distance, we use the negative definite kernel metric 
 %     previously explored in~\cite{trubey:pg} as a means of establishing a proper 
@@ -171,7 +153,7 @@ We establish a local posterior predictive density under the $k$NN estimator
 %   values between 2 and 10.
 
 \subsection{Kernel Density Estimation}
-Kernel density estimation~\citep{parzen1962} is a routine that makes use of 
+Kernel density estimation is an approach that makes use of 
     kernel smoothing to produce a semi-parametric estimate of the density
     function for a dataset.  For a scalar bandwidth parameter $h$,
     \[
@@ -179,9 +161,9 @@ Kernel density estimation~\citep{parzen1962} is a routine that makes use of
             \int_{\Omega}\frac{1}{h}
                 K\left(\frac{ \bm{x} - \bm{s}}{h}\right)dF_n(s) \;\approx\;
             \frac{1}{nh}\sum_{j = 1}^n
-                K\left(\frac{ \bm{x} - \bm{X}_j}{h}\right)
+                K\left(\frac{ \bm{x} - \bm{x}_j^{*}}{h}\right)
     \]
-    where $X_j$ are random replicates from $F$.  The choice of kernel function 
+    where $\bm{x}_j^{*}$ are random replicates from $F$.  The choice of kernel function 
     $K$, and selection of the bandwidth parameter $h$ are both topics that have
     been extensively researched. In practice the Gaussian kernel seems to be 
     well regarded for its simplicity, flexibility, and interpretability.  The
@@ -196,7 +178,7 @@ Kernel density estimation~\citep{parzen1962} is a routine that makes use of
     $\mathbb{S}_{\infty}^{d-1}$ described in Equation~(\ref{eqn:rotation}), 
     which precludes the ability to describe bandwidth using a matrix.  We 
     therefore consider the univariate case of $f$ in kernel space, where 
-    $\lVert x - X\rVert$ has been replaced with $g(\bm{v}, \bm{V})$.
+    $\lVert x - x^*\rVert$ has been replaced with $g(\bm{v}, \bm{v}^*)$.
 
 For selection of the bandwidth parameter $h$, we employ Silverman's rule of
     thumb \citep{silverman2018}, estimating 
@@ -207,19 +189,37 @@ For selection of the bandwidth parameter $h$, we employ Silverman's rule of
     $\text{E}\left[\left\lVert X_j - X_k\right\rVert_2\right] 
         = 2\text{Var}(X)$.
     In that case, $\hat{\sigma} = 
-        \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}g(\bm{V}_j,\bm{V}_k)}$, where
-    $\bm{V}$ are replicates from the posterior predictive distribution.
+        \sqrt{\frac{1}{2N(N-1)}\sum_{j\neq k}g(\bm{v}_j^*,\bm{v}_k^*)}$, where
+    $\bm{v}_j^*,\bm{v}_k^*$ are replicates from the posterior predictive distribution.
     Then $\hat{\sigma}$ is used in the aforementioned rule of thumb for $h$.
     Finally, the angular score under KDE is then calculated as
     \begin{equation}
     \label{eqn:ad_kde_h}
-    S_{i,\bm{v}}^{\text{kde}} = \text{E}\left[\exp\left\lbrace -
-    \left(\frac{g(\bm{v}_i,\bm{V})}{\hat{h}}\right)^2\right\rbrace\mid\bm{v}\right].
+    S_{i,\bm{v}}^{\text{kde}} = \text{E}_{\bm{v}^*}\left[\exp\left\lbrace -
+    \left(\frac{g(\bm{v}_i,\bm{v}^*)}{\hat{h}}\right)^2\right\rbrace\mid\bm{v}\right]^{-1}
+    \approx
+    \left[\frac{1}{K}\sum_{k = 1}^{K}
+    \exp\left\lbrace-\left(\frac{g(\bm{v}_i,\bm{v}_k^*}{\hat{h}}\right)^2\right\rbrace\right]^{-1}
     \end{equation}
+    where $\bm{v}_k^*$ are again replicates from the posterior predictive distribution.
     We investigated other methods of calculating bandwidth, as well as searched
     the neighborhood around our bandwidth estimate for example datasets.
     The estimator following Silverman's rule of thumb as described consistently 
     produced the most performant rank ordering of angular anomaly scores on 
     tested datasets.
+
+\begin{algorithm}[htb]
+    \caption{Workflow for anomaly detection on $\mathbb{S}_{\infty}^{d-1}$.}\label{alg:adreal}
+    % \begin{enumerate}[nolistsep]
+        % \item
+    \begin{algorithmic}[1]
+        \State Take $r_i$, $\bm{y}_i$ according to Algorithm~(\ref{alg:workflow})
+        \State Fit $\bm{y}\sim\mathcal{PYPG}$ from Equation~(\ref{eqn:modelsphere})
+        \State From $\bm{\alpha}\mid\bm{y}$, sample
+            $\bm{\varrho}_k^{*}\mid\bm{\alpha}\sim\prod_{\ell}\mathcal{G}(\alpha_{\ell})$ for $k = 1,\ldots,K$
+        \State Take $\bm{v}_k^{*} = T_{\infty}(\bm{\varrho}_k^{*})$
+        \State Take $S_{i,v}$ as per Equations~(\ref{eqn:ad_knn_h},\ref{eqn:ad_kde_h})
+    \end{algorithmic}
+\end{algorithm}
 
 % EOF
