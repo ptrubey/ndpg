@@ -8,22 +8,21 @@ In the previous sections we have used extreme value theory to obtain samples
 
 Suppose $\bm{C}$ is a vector of $M$ random categorical variables.  Then $C_m$ 
     is a random categorical variable, with $K_{m} \geq 2$ categories. Regard 
-    $\bm{W}_m$ as $C_m$, recoded in one-hot encoding, and $\bm{W}$ the 
-    concatenation of $M$ one-hot encoded categorical RV's. That is, $\bm{W}$ 
-    is a binary vector of length $K = \sum_{m = 1}^M K_{m}$; 
-    $\sum_{k = 1}^K W_k = M$; and every $m$ subset of $\bm{W}$ sums to 1.  This 
-    corresponds to multinomial encoding for $C_m$, with size 1. To account for
-    over-dispersion, we consider a Dirichlet-multinomial density for $\bm{W}_m$.
-    Recall that the Dirichlet distribution is a special case of projected gamma,
-    projected onto $\mathbb{S}_1^{d-1}$, with rate parameters uniformly fixed
-    as $\beta_{\ell} = \beta = 1$ by convention.  The Dirichlet-multinomial,
-    $\mathcal{DM}$
-    is reached by integrating the latent categorical probability vector from
-    the product of Dirichlet and multinomial distributions; 
+    $\bm{W}_m$ as $C_m$, recoded in one-hot, or multinomial, encoding, and 
+    $\bm{W}$ the concatenation of $M$ one-hot encoded categorical RV's. That is, 
+    $\bm{W}$ is a binary vector of length $K = \sum_{m = 1}^M K_{m}$; 
+    $\sum_{k = 1}^K W_k = M$; and every $m$ subset of $\bm{W}$ sums to 1.
+    To account for over-dispersion, we consider a Dirichlet-multinomial 
+    density for $\bm{W}_m$. Recall that the Dirichlet distribution is a 
+    special case of projected gamma, projected onto $\mathbb{S}_1^{d-1}$, 
+    with rate parameters uniformly fixed as $\beta_{\ell} = \beta = 1$ 
+    by convention.  The Dirichlet-multinomial, $\mathcal{DM}$
+    is reached by integrating out the latent categorical probability vector 
+    from the product of Dirichlet and multinomial distributions; 
     $\mathcal{DM}(\bm{w}\mid\bm{\alpha}) = \int_{\pi}\mathcal{M}(\bm{w}\mid\pi)\mathcal{D}(\pi\mid\bm{\alpha})d\pi$.
-    Considering the special case with size $1$, we can further simplify the
-    Dirichlet-multinomial to a Dirichlet-categorical, reducing the computational 
-    burden.
+    Recalling that a categorical RV as a special case of the multinomial with 
+    size $1$, we can further simplify the Dirichlet-multinomial to a 
+    Dirichlet-categorical, reducing the computational burden.
     \begin{equation}
         \begin{aligned}
         \label{eqn:dirmultinom}
@@ -73,14 +72,14 @@ Suppose $\bm{C}$ is a vector of $M$ random categorical variables.  Then $C_m$
 This section makes much use of samples from the posterior distribution of
     latent parameters.  Some explanation is required regarding precisely how 
     this distribution is developed.  Extrapolating Equation~(\ref{eqn:clusterid})
-    to the categorical model, cluster identifiers $\delta_i$ are sampled
+    to the categorical model, cluster identifiers $\varphi_i$ are sampled
     \begin{equation}
         \label{eqn:latentposterior}
-        \text{Pr}[\delta_i = j\mid \bm{\alpha}, \bm{p}, \bm{w}_i] = \frac{p_j\,\mathcal{CDC}\left(\bm{w}_i\mid\bm{\alpha}_j\right)}{\sum_{k = 1}^J\,p_k\,\mathcal{CDC}\left(\bm{w}_i\mid\bm{\alpha}_k\right)}
+        \text{Pr}[\varphi_i = j\mid \bm{\alpha}, \bm{p}, \bm{w}_i] = \frac{p_j\,\mathcal{CDC}\left(\bm{w}_i\mid\bm{\alpha}_j\right)}{\sum_{k = 1}^J\,p_k\,\mathcal{CDC}\left(\bm{w}_i\mid\bm{\alpha}_k\right)}
             \;\;\;\text{ for }j = 1, \ldots, J
     \end{equation}
     For a given sample from the posterior for $\bm{\alpha}$,
-    first we sample $\delta_i$, then $\bm{\alpha}_i = \bm{\alpha}_{\delta_i}$, and
+    first we sample $\varphi_i$, then $\bm{\alpha}_i = \bm{\alpha}_{\varphi_i}$, and
     \begin{equation}
         \label{eqn:postpredrho}
         \bm{\varrho}_i\mid\bm{\alpha}_i \sim 
@@ -94,7 +93,7 @@ This section makes much use of samples from the posterior distribution of
     the domain of the component probability vectors for the concatenated multinomial.
 
 To establish an anomaly detection algorithm using the data model described in 
-    Equation~\ref{eqn:modelcat}, we establish a method using logic similar to 
+    Equation~\ref{eqn:modelcat}, we consider a method using logic similar to 
     that described in Section~\ref{sec:novelty}.  We desire a transformation that 
     can be projected onto the unit sphere $\mathbb{S}_{\infty}^{d-1}$.  To that 
     end, rather than using $\bm{w}_i$ directly, we use data augmentation
@@ -102,36 +101,36 @@ To establish an anomaly detection algorithm using the data model described in
     the latent unnormalized posterior class probabilities for observation $i$, 
     sampled given $\bm{w}_i$.  Compared to 
     establishing distances based on $\bm{w}_i$, this affords us a distinct 
-    advantage: distance metrics between projections of 
-    $\bm{\varrho}\mid\bm{w}_i$ and replicates of $\bm{\varrho}$ from the posterior 
-    predictive 
-    distribution can be straightforward, whereas the distance between $\bm{w}_i$ 
+    advantage: distance metrics between projections of $\bm{\varrho}_i$ and 
+    replicates of $\bm{\varrho}^*$ from the posterior predictive distribution 
+    can be straightforward, whereas the distance between $\bm{w}_i$ 
     and $\bm{W}$ is less so~\citep{Alamuri2014}. We develop four methods based
-    on applications of the KNN and KDE metrics previously established.
+    on applications of the KNN and KDE metrics previously described.
     Making an abuse of notation for simplicity of presentation, let 
     $\tilde{\text{E}}\left[\bm{\nu}_i\right] := T_{\infty}(\expect{\bm{\nu}_i\mid\bm{w}_i})$, 
     % $\add{\bf What is $\bm{\nu}_i$? } % I think comment no longer relevant; 
     % $\nu$ introduced at end of previous paragraph.
     the projection of the expectation of $\bm{\nu}_i$ back onto 
-    $\mathbb{S}_{\infty}^{d-1}$.  Evaluating this integral by
+    $\mathbb{S}_{\infty}^{d-1}$.  Evaluating this expectation by
     Monte Carlo approximation is equivalent the spherical mean 
     \citep{mardia1999}, which takes the arithmetic mean of observations in 
-    Cartesian coordinates, then projects back onto the sphere. Note, 
+    Cartesian coordinates, then projects back onto the sphere. \st{Note, 
     categorical data has no radius so the adaptation of the angular scores to 
-    the categorical data space omits the radial component.
+    the categorical data space omits the radial component.}\makenote{isolated angular 
+    and radial scores already.}
 
 The hypercube KNN \emph{(h$k$nn)} metric applied to the latent projected 
-    $\mathcal{S}_{\infty}$ space uses the negative definite kernel metric 
+    $\mathbb{S}_{\infty}^{d-1}$ space uses the negative definite kernel metric 
     previously established to estimate distance between $\tilde{\text{E}}[\bm{\nu}_i]$
     and $\bm{\nu}^*$.  This score takes the form:
     \begin{equation}
       \label{score:cat_hknn}
-      S_{i,\bm{\nu}}^{\text{h$k$nn}} = \frac{N\,\pi^{\frac{d-1}{2}}}{k\,\Gamma\left(\frac{d-1}{2} + 1\right)}
+      \score_{i,\bm{\nu}}^{\text{h$k$nn}} = \frac{N\,\pi^{\frac{d-1}{2}}}{k\,\Gamma\left(\frac{d-1}{2} + 1\right)}
         \;D_{k}\left(\tilde{\text{E}}[\bm{\nu}_i]\right)^{d-1}
     \end{equation}
     where $D_{k}\left(\tilde{\text{E}}[\bm{\nu}_i]\right)$ measures the 
     distance from $\tilde{\text{E}}[\bm{\nu}_i]$ to the $k$th nearest replicate from 
-    a sample from the posterior predictive distribution for $\bm{\nu}$.  This 
+    a sample from the posterior predictive distribution for $\bm{\nu}^*$.  This 
     projection places all the class probabilities within the same sphere and 
     subject to the same distance measure.  Note here we are first taking the 
     expectation of $\bm{\nu}_i$, then the expectation of the kernel metric taken 
@@ -144,15 +143,15 @@ The \emph{hkde} score applied to the categorical space operates in much the
     to compute local density for observation $i$.  The score is then
     \begin{equation}
         \label{score:cat_hkde}
-        S_{i,\bm{\nu}}^{\text{hkde}} = \text{E}_{\bm{\nu}^*}\left[
+        \score_{i,\bm{\nu}}^{\text{hkde}} = \text{E}_{\bm{\nu}^*}\left[
             \exp\left\lbrace
             -\frac{1}{2}\left(
             \frac{d(\tilde{\text{E}}[\bm{\nu}_i], \bm{\nu}^*)}{\hat{h}}
             \right)^2
             \right\rbrace
-            \right]^{-1} = \left[\frac{1}{K}\sum_{k = 1}^{K}
+            \right]^{-1} \approx \left[\frac{1}{K}\sum_{k = 1}^{K}
                 \exp\left\lbrace-\frac{1}{2}\left(
-                \frac{d(\tilde{\text{E}}[\bm{\nu}_i],\bm{\nu}^*)}{\hat{h}}
+                \frac{d(\tilde{\text{E}}[\bm{\nu}_i],\bm{\nu}_k^*)}{\hat{h}}
                 \right)^2\right\rbrace\right]^{-1}
     \end{equation}
 We use the same routine for calculating $h$ previously established.  
@@ -165,16 +164,16 @@ In the \emph{hkde} metric, we computed the two expectations separately: first
     KDE \emph{(lhkde)}, we compute the expectation jointly:
     \begin{equation}
         \label{score:cat_lhkde}
-        S_{i,\bm{\nu}}^{\text{lhkde}} = \text{E}_{\bm{\nu},\bm{\nu}_i}\left[
+        \score_{i,\bm{\nu}}^{\text{lhkde}} = \text{E}_{\bm{\nu},\bm{\nu}_i}\left[
         \exp\left\lbrace
         -\frac{1}{2}\left(
-        \frac{d(\bm{\nu}_i, \bm{\nu})}{\hat{h}}
+        \frac{d(\bm{\nu}_i, \bm{\nu}^*)}{\hat{h}}
         \right)^2
         \right\rbrace
-        \right]^{-1} = \left[\frac{1}{K_{\bm{\nu}}K_{\bm{\nu}_i}}
-            \sum_{k = 1}^{K_{\bm{\nu}}}\sum_{k = 1}^{K_{\bm{\nu}_i}}
+        \right]^{-1} \approx \left[\frac{1}{K_{\bm{\nu}_i}K_{\bm{\nu}^*}}
+            \sum_{j = 1}^{K_{\bm{\nu}_i}}\sum_{k = 1}^{K_{\bm{\nu}^*}}
             \exp\left\lbrace-\frac{1}{2}
-                \left(\frac{d(\bm{\nu}_i,\bm{\nu})}{\hat{h}}\right)^2
+                \left(\frac{d(\bm{\nu}_{i,j},\bm{\nu}_{k}^*)}{\hat{h}}\right)^2
                 \right\rbrace\right]^{-1}
     \end{equation}
     Computing this for a given sample of size is necessarily more expensive 
@@ -184,18 +183,18 @@ In the \emph{hkde} metric, we computed the two expectations separately: first
 
 If, instead of projecting the unnormalized probability vectors onto a unified 
     hypersphere $\mathbb{S}_{\infty}^{d-1}$, we normalize each $m$-component 
-    onto its associated simplex.  Using Manhattan distance on the simplex, we 
+    onto its associated simplex, $\mathbb{S}_1^{d_m - 1}$.  Using Manhattan distance on the simplex, we 
     arrive at the latent simplex KDE \emph{(lskde)}.
     \begin{equation}
         \label{score:cat_lskde}
-        S_{i,\bm{\pi}}^{\text{lskde}} = \text{E}_{\bm{\pi}_i,\bm{\pi}^*}\left[\exp\left\lbrace
+        \score_{i,\bm{\pi}}^{\text{lskde}} = \text{E}_{\bm{\pi}_i,\bm{\pi}^*}\left[\exp\left\lbrace
         -\frac{1}{2}\left(
         \frac{\lVert \bm{\pi}_i - \bm{\pi}^*\rVert_1}{\hat{h}}
         \right)^2
         \right\rbrace
         \right]
-        = \left[
-            \exp\left\lbrace
+        \approx \left[
+            \frac{1}{K}\sum_{k = 1}^K\exp\left\lbrace
             -\frac{1}{2}\left(\frac{\lVert \bm{\pi}_i - \bm{\pi}_k^*\rVert}{\hat{h}}\right)^2
             \right\rbrace
         \right]^{-1}
@@ -216,8 +215,9 @@ If, instead of projecting the unnormalized probability vectors onto a unified
         \State From $\bm{\alpha}_i\mid\bm{w}_i$ sampled as per Equations~(\ref{eqn:latentposterior}-\ref{eqn:postpredrho})
         
         sample $\bm{\varrho}_{ik}\mid\bm{\alpha}_{i}\sim\prod_{\ell}\mathcal{G}(\alpha_{\ell})$ for $k = 1,\ldots,K_{\nu_i}$
-        \State Take $\bm{v}_{ik}^{*} = T_{\infty}(\bm{\varrho}_{ik})$
-        \State Take $S_{i\bm{v}}$ as per Equations~(\ref{score:cat_hknn}--\ref{score:cat_lskde})
+        \State Take $\bm{v}_{ik} = T_{\infty}(\bm{\varrho}_{ik})$;\hspace{0.15cm}
+            $\bm{\pi}_{ik} = \prod_{m = 1}^MT_{1}(\bm{\varrho}_{ikm})$
+        \State Take $\score_{i\bm{v}}$ as per Equations~(\ref{score:cat_hknn}--\ref{score:cat_lskde})
             %\ref{score:cat_hknn, score:cat_hkde, score:cat_lhkde, score:cat_lskde})
     \end{algorithmic}
 \end{algorithm}

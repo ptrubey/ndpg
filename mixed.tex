@@ -23,7 +23,7 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  \st{Let
     the component that corresponds to the categorical component $\bm{w}$.}
     Then, for the mixed model, let 
     $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\varrho}_{i\bm{w}})$, and 
-    $\bm{\nu} = T_{\infty}(\bm{\varrho})$.  The \emph{hKNN} score can be adapted 
+    $\bm{\nu} = T_{\infty}(\bm{\varrho})$.  The \emph{hknn} score can be adapted 
     to the mixed model by re-projecting the angular data and the latent 
     categorical component into the same sphere. This requires moving $\bm{y}_i$ 
     back to $\mathbb{R}_+^{d_{\bm{y}}}$, by multiplying by the radial component
@@ -40,9 +40,9 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  \st{Let
     generic $\bm{\nu}$ not specifically dependent on observation $i$.  The 
     score is then calculated as
     \[
-        S_{i,\bm{v}}^{\text{h$k$nn}} = \left[\frac{N\pi^{\frac{d-1}{2}}}{
+        \score_{i,\bm{v}}^{\text{h$k$nn}} = \frac{N\pi^{\frac{d-1}{2}}}{
                 k\Gamma\left(\frac{d-1}{2} + 1\right)}
-        D_{k}\left[\expect{\bm{\nu}_i}\right]^{d-1}\right]^{-1}.
+        D_{k}\left(\tilde{\text{E}}\left[\bm{\nu}_i\right]\right)^{d-1}.
     \]
     Note again that we are computing the two expectations separately.  The 
     \emph{hkde} score works in the same manner, this using kernel density 
@@ -50,16 +50,16 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  \st{Let
     $\mathbb{S}_{\infty}^{d-1}$;
     \begin{equation}
         \label{eqn:adhkdecat}
-        S_{i,\bm{v}}^{\text{hkde}} = \text{E}_{\bm{\nu}}\left[\exp\left\lbrace -\frac{1}{2}
+        \score_{i,\bm{v}^*}^{\text{hkde}} = \text{E}_{\bm{\nu}}\left[\exp\left\lbrace -\frac{1}{2}
             \left(
-            \frac{d\left(\tilde{\text{E}}[{\bm{\nu}_i}], \bm{\nu}^*\right)}{h}
+            \frac{d\left(\tilde{\text{E}}[{\bm{\nu}_i}], \bm{\nu}^*\right)}{\hat{h}}
             \right)^2\right\rbrace
             \right]^{-1}
-            = 
+            \approx 
             \left[\frac{1}{K}\sum_{k = 1}^K\exp\left\lbrace
             -\frac{1}{2}
             \left(
-            d(\tilde{\text{E}}[\bm{\nu}_i], \bm{\nu}_k^*)
+            \frac{d\left(\tilde{\text{E}}[\bm{\nu}_i], \bm{\nu}_k^*\right)}{\hat{h}}
             \right)^2
             \right\rbrace
             \right]^{-1}
@@ -68,18 +68,20 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  \st{Let
     $R_i\bm{y}_i$ and $\bm{\varrho}_i$ onto $\mathbb{S}_{\infty}^{d-1}$.  
     \begin{equation}
         \label{eqn:adlhkdecat}
-    S_{i,\bm{v}}^{\text{lhkde}} = \text{E}_{\bm{\nu},\bm{\nu}_i}
+    \score_{i,\bm{v}}^{\text{lhkde}} = \text{E}_{\bm{\nu}^*,\bm{\nu}_i}
         \left[\exp\left\lbrace-\frac{1}{2}\left(
-            \frac{d\left(\bm{\nu}_i, \bm{\nu}\right)}{h}\right)^2
+            \frac{d\left(\bm{\nu}_i, \bm{\nu}^*\right)}{h}\right)^2
         \right\rbrace\right]^{-1}
-        = \left[
-        \frac{1}{K_{\bm{\nu}}K_{\bm{\nu}_i}}\exp\left\lbrace
-        -\frac{1}{2}\left(\frac{d(\bm{\nu}_i,\bm{\nu})}{\hat{h}}\right)^2
+        \approx \left[
+        \frac{1}{K_{\bm{\nu}^*}K_{\bm{\nu}_i}}
+        \sum_{j = 1}^{K_{\bm{\nu}_i}}\sum_{k=1}^{K_{\bm{\nu}^*}}
+        \exp\left\lbrace
+        -\frac{1}{2}\left(\frac{d(\bm{\nu}_{ij},\bm{\nu}_k^*)}{\hat{h}}\right)^2
         \right\rbrace\right]^{-1}
     \end{equation}
-    The difference between the two scores is $S_{i,\bm{v}}^{\text{lhkde}}$
+    The difference between the two scores is $\score_{i,\bm{v}}^{\text{lhkde}}$
     takes the integral with regard to a random 
-    $T_{\infty}(R_i\bm{y}_i,\bm{\varrho}_i)$, and $S_{i,\bm{v}}^{\text{hkde}}$ 
+    $T_{\infty}(R_i\bm{y}_i,\bm{\varrho}_i)$, and $\score_{i,\bm{v}}^{\text{hkde}}$ 
     takes the integral with regard to the expectation of that quantity.
 
 The \emph{lmkde} score serves as a comparison to the above three scores, 
@@ -92,7 +94,7 @@ The \emph{lmkde} score serves as a comparison to the above three scores,
     \begin{equation}
     \label{eqn:lmkdecat}
     \begin{aligned}
-    S_{i,\bm{v}}^{lmkde} &= \text{E}_{\bm{v}^*,\bm{\pi}^*,\bm{\pi}_i}\left[
+    \score_{i,\bm{v}}^{lmkde} &= \text{E}_{\bm{v}^*,\bm{\pi}^*,\bm{\pi}_i}\left[
         \exp
         \left\lbrace 
         -\frac{1}{2}
@@ -105,10 +107,13 @@ The \emph{lmkde} score serves as a comparison to the above three scores,
         \right)^2
         \right\rbrace
         \right]^{-1}\\
-        &= \left[\frac{1}{K_{\bm{\pi}^*}K_{\bm{\pi}_i}}
+        &\approx \left[\frac{1}{K_{\bm{\pi}^*}K_{\bm{\pi}_i}}
+            \sum_{j = 1}^{K_{\bm{\pi}_i}}\sum_{k=1}^{K_{\bm{\pi}^*}}
             \exp\left\lbrace-\frac{1}{2}
-            \sum_{}
             \left(\frac{d(\bm{v}_i,\bm{v}_k^*)}{\hat{h}_{\bm{v}^*}}\right)^2
+            -\frac{1}{2}\left(
+            \frac{\lVert\bm{\pi}_{ij} - \bm{\pi}_k^*\rVert_1}{\hat{h}_{\bm{\pi}^*}}
+            \right)^2
             \right\rbrace\right]^{-1}
     \end{aligned}
     \end{equation}
@@ -126,14 +131,14 @@ The \emph{lmkde} score serves as a comparison to the above three scores,
         \State Fit $(\bm{y},\bm{w})$ using mixed model from Equation~(\ref{model:mixed})
         \State From $\bm{\alpha}\mid\bm{y},\bm{w}$, sample
             $\bm{\varrho}_k^{*}\mid\bm{\alpha}\sim\prod_{\ell}\mathcal{G}(\alpha_{\ell})$ for $k = 1,\ldots,K$
-        \If{$S_{i,v}$ is \emph{hknn}, \emph{hkde}, or \emph{lhkde}}
+        \If{$\score_{i,\bm{v}}$ is \emph{hknn}, \emph{hkde}, or \emph{lhkde}}
             \State From $\bm{\alpha}\mid\bm{y}_i,\bm{w}_i$:
                 sample $R_i$ according to Equation~(\ref{eqn:angularradial}), 
                 $\bm{\varrho}_{iw}$ similar to Algorithm~\ref{alg:adcat}.
             \State Take $\bm{\nu}_i = T_{infty}(R_i\bm{y}_i,\bm{\varrho}_{iw})$;      
                 $\bm{\nu}^* = T_{\infty}(\bm{\varrho}^*)$.
             \State Apply Score function.
-        \ElsIf{metric is \emph{lmkde}}
+        \ElsIf{$\score_{i,\bm{v}}$ is \emph{lmkde}}
             \State From $\bm{\alpha}\mid\bm{y}_i,\bm{w}_i$, 
                 sample $\bm{\varrho}_{iw}$ similar to Algorithm~\ref{alg:adcat}.
             \State Take $\bm{\pi}_i = \prod_{m = 1}^M T_{1}(\bm{\varrho}_{im})$;    
@@ -161,7 +166,7 @@ A valid critique of the model presented thus far is that in order to justify
 Let $z_{i\ell} = 1/(1 - \hat{F}(x_{i\ell}))$ be the 
     \emph{rank-transformation} to the standard Pareto scale.  The lower range 
     of this transformation is bounded at 1. For data transformed in this manner, 
-    let $r_i = \lVert \bm{Z}_i\rVert_{\infty}$ be the radial component, 
+    let $r_i = \lVert \bm{z}_i\rVert_{\infty}$ be the radial component, 
     $\bm{v}_i = \bm{z}_i/r_i$ the angular component of $\bm{z}_i$, and 
     $\bm{y}_i$ its projection onto $\mathbb{S}_p^{d-1}$.  
     As no thresholding is performed we can no longer make the assumption that 

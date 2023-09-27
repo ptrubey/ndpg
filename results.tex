@@ -27,14 +27,6 @@ In assessing model performance, we sideline the issue of threshold selection by
     ROC curve will approach the upper left corner, and the closer its AuROC will 
     approach 1.
 
-\add{\bf \st{Before we go into the results, we need to provide some information 
-    about how we do the computations. I am happy to provide the details of the 
-    MCMC in an appendix, or even in a supplementary material, but some idea of 
-    the computations has to be given in the main body of the paper. Likewise, 
-    we need to provide information on the hyperparameter choice, and how we 
-    tuned the procedure, how we assessed it}, and how log it took to obtain the 
-    results.}\makenote{addressed all but time}
-
 In developing our model, we employ the blocked Gibbs sampler for stick-breaking
     priors detailed in~\cite{ishwaran2001}.  We set a discount factor of $0.1$, 
     and a concentration parameter of $1.0$.  In our testing, in the neighborhood
@@ -48,41 +40,41 @@ In developing our model, we employ the blocked Gibbs sampler for stick-breaking
     To update the cluster shape vectors, we employ a joint proposal step in 
     log-space using a multivariate normal proposal, where the proposal 
     covariance is informed with an adaptive Metropolis 
-    algorithm.\makenote{needs citation}.  To hasten updates to the shape
+    algorithm.\citep{Haario2001}.  To hasten updates to the shape
     parameters, and speed convergence of the model, we employ a parallel
     tempering algorithm where parallel MCMC chains are sampled at an ascending
-    temperature ladder.  Chains with higher temperatures have flatter 
-    posteriors, and thus more readily move around the parameter space.  
-    Chain states are randomly exchanged via a Metropolis step with probability
+    temperature ladder, where density is exponentiated to the reciprocal of the
+    chain temperature: $f_t(\theta) = f(\theta)^{1/t}$.  Chains with 
+    higher temperatures have flatter posteriors, and thus more readily move 
+    around the parameter space.  Chain states are randomly exchanged via a 
+    Metropolis step with probability
     $p_{1,2} = \exp\left\lbrace (t_2^{-1} - t_1^{-1})(L_2-L_1)\right\rbrace$,
     where $t$ refers to chain temperature, and $L$ refers to the
-    \emph{energy}, or log-density of the chain at its current state.  
+    \emph{energy}, or log-density of the chain at its current state.
+    The sample history of the cold chain, where $t:=1$, is preserved as draws
+    from the posterior distribution.
     For each example dataset, the sampler was ran for $50,000$ iterations,
     discarding the first 40,000 as burn-in.  The resulting chain was thinned,
     keeping only every 10th iteration.  For evaluating density under the 
     posterior predictive distribution, we generate 10 replicates from each
     iteration kept.
 
-We tested our scores against several labelled datasets.  These included some 
-    strictly categorical data, as well as categorical transformations of some 
-    mixed datasets.  For mixed datasets, we tested both the thresholding and 
-    rank-transformation regimes. Table~\ref{tab:data} includes an exploratory 
-    analysis of our datasets, both raw and under the various testing regimes.
-
 \begin{table}[t]
     \centering
-    \caption{\makenote{add additional columns covering dimensionality (real, 
-    categorical, total \# of categories)}
-    Characteristics of datasets used in the analysis.  $N$ refers to 
-    number of observations, $A$ number of anomalies, and $P$ the prevalence of 
-    anomalies in the analysis set.  Peaks-over-threshold analysis uses the 
-    set of parameters with the \emph{over} subindex, while rank 
-    transformation and categorical analysis use  the set of parameters with 
-    the \emph{sub} subindex.
-    \label{tab:data}
+    \caption{
+    Characteristics of datasets used in the analysis.  For a given model, 
+    $N$ and $A$ refer to the number of observations and anomalies in the 
+    fitting set, respectively. $M$ identifies the number of categorical 
+    variables, with $d_{\bm{v}}$ and $d_{\bm{w}}$ identifying the total number 
+    of real and categorical columns respectively.  $t$ is the time (in hours) 
+    to fit the model.  Discrepancy in $d$ between peaks--over--threshold 
+    and rank--transformation reflects differences in data transformation,
+    as well as the additional column for the radial component in the
+    rank--transformed model.\label{tab:data}
     }
     \bigskip
-    
+    \scriptsize
+    \setlength\tabcolsep{3pt}
     \input {./tables/data_summary}
     % \makenote{Here lies a table of characteristics of datasets used in analysis.  
     % Imagine first column dataset name, second column number of obsv. original, third 
@@ -91,6 +83,7 @@ We tested our scores against several labelled datasets.  These included some
     % included in rank (include whether subsampling was used); 6th number of obsv. 
     % included in categorical (include whether subsampling was used).  that's too 
     % many columns.  need to work on this.}
+    \setlength\tabcolsep{3pt}
 \end{table}
 
 We compared our four proposed scores against three canonical novelty detection 
@@ -98,11 +91,21 @@ We compared our four proposed scores against three canonical novelty detection
     outlier factor (lof) \cite{breunig2000}, and one-class SVM (svm) 
     \cite{chang2011}.  Each dataset was subject to 5-fold cross-validation, and 
     out-of-sample performance scores were averaged to produce the resulting 
-    performance tables seen in this section. \add{\bf Here you need a description
-    of what was done in each of the three sections that follow. My understanding is
-    that you first used a purely categorical scoring. Then used mixed scoring
-    with thresholding of the continuous variables. Finally you used the ranked 
-    transformation. Is that right?}
+    performance tables seen in this section.  This additional step of 
+    cross--validation turned out to be unnecessary for our model, as 
+    out--of--sample performance did not markedly differ from in--sample or 
+    full--sample performance for the tested datasets.  Table~\ref{tab:data}
+    provides a summary description of the datasets used in the analysis.
+    \makenote{should the ordering of regimes in the table reflect the 
+    ordering in the table?  Also, $N$ and $A$ between rank and categorical are
+    the same.  Should they be combined?}
+    For larger datasets, we subsetted the raw data to reduce computation time
+    for the rank--transformation and categorical applications.
+    Note that the categorical versions of \emph{cover}, \emph{pima}, and 
+    \emph{yeast} are created from discretizing the rank--transformation subsets.
+    First, we present score efficacy on our purely categorical data model, then 
+    mixed scoring with thresholding on continuous variables.  Finally we present 
+    mixed scoring on rank-transformation data.
 
 \subsection{Categorical anomalies}
 The categorical transformation of \emph{cover}, \emph{pima}, and \emph{yeast}
@@ -114,6 +117,7 @@ The categorical transformation of \emph{cover}, \emph{pima}, and \emph{yeast}
     none of the methods offer exceptional performance on this dataset.
 \begin{table}[ht]
     \centering
+    \small
     \caption{Area under the \emph{ROC} curve for various anomaly detection 
         schemes, on \emph{strictly categorical} datasets.  Reported here is 
         arithmetic mean of out-of-sample performance for 5-fold cross-validation.  
@@ -126,7 +130,7 @@ The dataset \emph{solarflare} was also unique in our analysis, being the only
     trailed the performance of \emph{one-class SVM}, the best performing 
     algorithm on this dataset.  On both \emph{pima} and \emph{yeast}, 
     latent-simplex KDE performed significantly better than any of the canonical 
-    methods.  On this analysis, \emph{hkde} and \emph{hKNN} both performed 
+    methods.  On this analysis, \emph{hkde} and \emph{hknn} both performed 
     poorly.  It seems the projection of the categorical probability vectors into 
     a unified sphere induces some loss of information.
 
@@ -145,7 +149,7 @@ We subjected six datasets to multivariate thresholding, only keeping
     canonical scores.  Of the other tested datasets, on \emph{cardio}, 
     \emph{lmkde} approached the performance of \emph{isolation forest} and 
     \emph{one-class SVM}, but all other methods performed worse.  For the 
-    datasets \emph{cover} and \emph{mammography}, \emph{hKNN}, \emph{lhkde}, 
+    datasets \emph{cover} and \emph{mammography}, \emph{hknn}, \emph{lhkde}, 
     and \emph{lmkde} performed comparably, and each significantly better than 
     any of the canonical methods.  We see that \emph{lmkde}, being the inheritor
     of the latent simplex KDE score, performs reasonably well reliably among 
@@ -171,6 +175,7 @@ We subjected six datasets to multivariate thresholding, only keeping
         cross-validation.  Values closer to 1 are preferred.
         \label{tab:perfreal}}
     \bigskip
+    \small
     \input{./tables/ad_real_performance_update}
 \end{table}
 
@@ -187,9 +192,8 @@ As to the poor performance of every method on \emph{pima} and \emph{yeast},
 We subjected the same six datasets used in the peak-over-threshold model to 
     rank transformation on the real and ordinal variables. We then built the 
     mixed model including radius described in Section~\ref{subsec:rank} on the 
-    transformed datasets.  For extremely large datasets, we sub-sampled the 
-    data down to a manageable size.
-    \makenote{need to rewrite sentence}  
+    transformed datasets.  Large datasets used in rank-transformation and 
+    categorical models were sub-sampled to reduce computation time. 
     Note that rank transformation preserves the entire dataset, so we should 
     not consider the values in Table~\ref{tab:perfrank} to be comparable to 
     the values in Table~\ref{tab:perfreal}.
@@ -202,6 +206,7 @@ We subjected the same six datasets used in the peak-over-threshold model to
         arithmetic mean of out-of-sample performance for 5-fold 
         cross-validation.  Values closer to 1 are preferred.
         \label{tab:perfrank}}
+    \small
     \bigskip
     \input{./tables/ad_rank_performance_update}
 \end{table}

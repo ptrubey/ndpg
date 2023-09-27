@@ -58,7 +58,7 @@ The multivariate PoT model considered in this paper has been developed in
 Starting with a collection of observations 
     $\bm{w}_i \in {\mathbb R}^d, i = 1, \ldots, n$, we perform thresholding 
     for each marginal. We use as threshold 
-    $b_{t,l} = \hat{F}^{-1}_{\ell}(1 - 1/t)$, where $\hat{F}_\ell$ is the 
+    $b_{q,l} = \hat{F}^{-1}_{\ell}(1 - 1/q)$, where $\hat{F}_\ell$ is the 
     empirical distribucion function for the $\ell$th component. $t$ is 
     chosen to obtain a large empricial quantile, like 85 or 90\%. Thresholded 
     values are assumed to follow a generalized univariate Pareto distribution, 
@@ -121,7 +121,7 @@ Recall that the radial component $R \in {\mathbb R}_+$ follows a standard
 %     \KwResult{Replicates of $\bm{V}$}
 %     
 % \end{algorithm}
-\begin{algorithm}[htb]
+\begin{algorithm}[tb]
     \caption{Workflow to fit a distribution to data 
         on $\mathbb{S}_{\infty}^{d-1}$.}\label{alg:workflow}
     % \begin{enumerate}[nolistsep]
@@ -159,9 +159,7 @@ Note that $T$ is not differentiable at $p = \infty$, so we can not use it to
     discount parameter along with the concentration parameter, allowing greater 
     control over the formation of new clusters.  A hierarchical formulation of 
     the model for observations 
-    $\bm{y}_i\in \mathbb{S}_{p}^{d-1}i, i=1, \ldots,m$, is
-    \makenote{add reason/justification/workflow for why postpred sample on 
-        $\mathbb{S}_{\infty}^{d-1}$}
+    $\bm{y}_i\in \mathbb{S}_{p}^{d-1}$, $i=1,\ldots,n$, is
     \begin{equation}
         \label{eqn:modelsphere}
         \begin{aligned}
@@ -198,13 +196,15 @@ Pitman--Yor processes, as with other types of mixture models, can be used to gro
         \text{Pr}(\alpha\mid\cdots) = \sum_{j = 1}^{\infty}p_j\delta_{\bm{\alpha}_j};
         \hspace{1cm}\sum_{j = 1}^{\infty}p_j = 1
     \]
-    where $\delta_{\bm{\alpha}_k}$ indicates a point mass at $\bm{\alpha}_k$.
+    where $\delta_{\bm{\alpha}_j}$ indicates a point mass at $\bm{\alpha}_j$,
+    and $\bm{\alpha}_j$ are sampled independently from $G_0$.
+    \makenote{expand; mention the point-masses are sampled from $G_0$}
     In practicality we define a maximum number of possible clusters as a 
     truncation point $J$.  Cluster assignment is accomplished through data 
-    augmentation, where a cluster identifier $\delta_i$ is sampled according to
+    augmentation, where a cluster identifier $\varphi_i$ is sampled according to
     both cluster weight and kernel density of observation $i$ given cluster parameters.
     We make use of the blocked-Gibbs sampler on the stick-breaking representation of the
-    Pitman--Yor model.  Cluster weights are sampled as
+    Pitman--Yor model.  Cluster weights are then sampled as
     \begin{equation}
         \label{eqn:clusterweight}
         \chi_{j} \mid n_j, n_{k>j} \sim \text{Beta}\left(1 + n_j - d, 
@@ -213,15 +213,20 @@ Pitman--Yor processes, as with other types of mixture models, can be used to gro
     \end{equation}
     where $n_j$ is the number of observations in cluster $j$, $\eta$ is a strength 
     parameter governing the formation of new clusters, and $d$ a discount parameter.
-    Then the cluster identifier for observation $i$ is generated as
+    In this form, the Dirichlet process is a special case of the Pitman-Yor process
+    where the discount parameter $d := 0$.
+    Then the cluster identifier for observation $i$, $\varphi_i$, is sampled as
     \begin{equation}
         \label{eqn:clusterid}
         \text{Pr}\left[\varphi_i = j\mid \bm{p},\bm{\alpha}\right] =
             \frac{p_j\;\mathcal{PG}_p\left(\bm{y}_i\mid\bm{\alpha}_j,\bm{1}\right)}{
                 \sum_{k = 1}^J p_k\;
-                \mathcal{PG}_p\left(\bm{y}_i\mid\bm{\alpha}_k,\bm{1}\right)}
+                \mathcal{PG}_p\left(\bm{y}_i\mid\bm{\alpha}_k,\bm{1}\right)}.
     \end{equation}
-
+    Within the blocked-Gibbs algorithm, $\bm{\chi}\mid\bm{\varphi}$ are mutually
+    independent, as are $\bm{\varphi}\mid\bm{\chi}$.  This conditional independence
+    offers an opportunity for parallelization, increasing the speed of sampling.
+    
 The approach proposed in this section produces a sample of the angular measure 
     of the distribution of the tails of the sample. The methods has a number of 
     advantages for anomaly detection: it focuses on the tails, which is where we 

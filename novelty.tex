@@ -5,7 +5,7 @@ As previously stated, a novelty detection algorithm produces an anomaly score
     the notion that anomalies occur in areas of low density, a general Bayesian
     anomaly score for observation $x_i$, can be defined as
     \[
-    S_i = \left[\int_{\Theta}f(x_i\mid\theta)dG(\theta\mid\mathcal{D})\right]^{-1}
+    \score_i = \left[\int_{\Theta}f(x_i\mid\theta)dG(\theta\mid\mathcal{D})\right]^{-1}
     \]
     where $\mathcal{D}$ is the observed data and $\theta$ the distributional
     parameters.  That is, the reciprocal of the posterior predictive density 
@@ -15,20 +15,23 @@ Given the independence between the angular and radial components of an
     extreme observation, we can consider sub-scores for the radial 
     and angular components independently.  That is,
     \[
-        S_i = S_{i,r}\times S_{i,\bm{v}} = 
+        \score_i = \score_{i,r}\times \score_{i,\bm{v}} = 
             f_r(r_i)^{-1}\times
             \left[\int_{\Omega} f_v(\bm{v}_i\mid\bm{\alpha})
                 \,\text{d}G(\bm{\alpha}\mid\mathcal{D})\right]^{-1}
     \]
+    \makenote{I will change the symbol for a score later.  I wanted $S$ to
+        denote posterior sample sizes, so we'll use a different font $S$ for 
+        scores.}
     By construction $r_i$ follows a standard Pareto distribution, so its
     density is $f_r(r_i) = r_i^{-2}$.  As previously discussed in
     Section~\ref{sec:evt}, the kernel $\mathcal{PG}_\infty$, needed for 
     density estimation on the surface of ${\mathbb S}_{\infty}^{d-1}$ is 
-    not available in analytic form, thus, we resorted to transforming the
+    not available in analytic form, thus, we resort\st{ed} to transforming the
     data to $\mathbb{S}_p^{d-1}$ for a large but finite $p$.
     This makes estimation of distributional parameters possible, 
     but in the context of anomaly detection, a score based on
-    $\mathcal{PG}_p$ is problematic.  Recall in 
+    $\mathcal{PG}_p$, for any $p$, is problematic.  Recall in 
     Equation~(\ref{eqn:projgamma}), the value of the Jacobian is dependent
     upon which dimension is replaced in the transformation.  This implies that
     under uniform $\bm{\alpha}$, calculated density can be changed by
@@ -46,7 +49,7 @@ To avoid the problems of angular density evaluation we use a
     non-parametric angular density estimator based on a sample from the 
     posterior predictive distribution of the model developed in 
     Section~\ref{sec:evt}. Here, we consider two well-established
-    methods: $k$-nearest neighbors, or \emph{$k$NN} \citep{mack1979}, and 
+    methods: $k$--nearest neighbors, or \emph{$k$NN} \citep{mack1979}, and 
     kernel density estimation, or \emph{KDE} \citep{parzen1962}.  For both of 
     these methods we make use of pairwise distances between observations 
     from the dataset, and replicates from a posterior predictive sample.  
@@ -57,13 +60,6 @@ As described in \cite{trubey:pg}, the  geodesic distance on
     combinatorically with the number of dimensions.  As an alternative they propose an 
     estimate of distance that is computationally cheap to evaluate, bearing 
     a cost equivalent to that of a Euclidean norm.
-    % \makenote{option 1}
-    % For observations on different faces of 
-    % $\mathbb{S}_{\infty}^{d-1}$, a performant analogue to distance can be
-    % evaluated by rotating the face of the second observation along the axis of
-    % the first observation, and computing the Euclidean norm between the first
-    % observation and the transformed second observation.  
-    % \makenote{option 2}
     Let
     ${\mathbb C}_{\ell}^{d-1} = \lbrace \bm{x} : 
         \bm{x} \in {\mathbb S}_{\infty}^{d-1}, x_{\ell} = 1\rbrace$
@@ -104,7 +100,7 @@ We use the kernel $g$ defined in Equation \ref{eqn:rotation} to obtain
     on $\mathbb{S}_{\infty}^{d-1}$. To this end we consider a locally 
     uniform density within a $d-1$--dimensional ball $\mathbb{B}$, centered on 
     observation $\bm{v}_i$.  The radius $D_{k}(\bm{v}_i)$ is calculated as 
-    $g(\bm{v}_i, \bm{v}_{N(i)})$, where $\bm{v}_{N(i)}$ is the $k$th nearest 
+    $g\left(\bm{v}_i, \bm{v}_{N_k(i)}^*\right)$, where $\bm{v}_{N_k(i)}^*$ is the $k$th nearest 
     neighbor of $\bm{v}_i$ in a sample from the 
     posterior predictive distribution. The volume of the ball is calculated as
     \begin{equation}
@@ -121,36 +117,13 @@ We use the kernel $g$ defined in Equation \ref{eqn:rotation} to obtain
     the angular score under the $k$NN estimator is then
     \begin{equation}
         \label{eqn:ad_knn_h}
-        S_{i,\bm{v}}^{\text{$k$nn}} = \frac{N}{k}
-            \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
-            \Gamma\left(\frac{d-1}{2} - 1\right)}
+        \score_{i,\bm{v}}^{\text{$k$nn}} = 
+            \frac{N\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
+            k\Gamma\left(\frac{d-1}{2} - 1\right)}
     \end{equation}
-    In our experience, using a large posterior predictive sample, 
-        \makenote{this should be quantified}
+    In our experience, using a large posterior predictive sample,
     the resulting ordering of scores was relatively robust to a choice of $k$ 
     between 2 and 10.  We used $k = 5$ in our performance analysis.
-% When implementing this analysis on the hypercube, we lose one degree of freedom,
-%     and as a stand-in for distance, we use the negative definite kernel metric 
-%     previously explored in~\cite{trubey:pg} as a means of establishing a proper 
-%     scoring rule on $\mathbb{S}_{\infty}^{d-1}$.  Thus, the score becomes
-%     \begin{equation}
-%         \label{eq:ad_knn_h}
-%         S_i^{hKNN} = \frac{r_i^{2}N}{k}
-%         \frac{\pi^{\frac{d-1}{2}}D_{k}(\bm{v}_i)^{d-1}}{
-%           \Gamma\left(\frac{d-1}{2} - 1\right)}
-%   \end{equation}
-%     This is of course an approximation to the true posterior predictive density 
-%     at observation $i$.  In addition to the noise induced by using random 
-%     samples from the posterior predictive, there is some bias induced in the 
-%     calculated volume
-%     if $D_k(\bm{v}_i)^{d-1}$ is greater than the distance from $\bm{v}_i$ to 
-%   unity ($\bm{1}_d$), or from $\bm{v}_i$ to some axis.  In practice,
-%   this induced bias seems to have relatively small effect. 
-%   \makenote{worth looking into what proportion of observations experience this 
-%   bias, and what performance outcome is}.
-%   In our experience, using a large posterior predictive sample, the resulting 
-%   ordering of scores in $k$NN based methods was robust to the choice of $k$, for 
-%   values between 2 and 10.
 
 \subsection{Kernel Density Estimation}
 Kernel density estimation is an approach that makes use of 
@@ -159,12 +132,13 @@ Kernel density estimation is an approach that makes use of
     \[
         f_n(x) \;=\; 
             \int_{\Omega}\frac{1}{h}
-                K\left(\frac{ \bm{x} - \bm{s}}{h}\right)dF_n(s) \;\approx\;
-            \frac{1}{nh}\sum_{j = 1}^n
-                K\left(\frac{ \bm{x} - \bm{x}_j^{*}}{h}\right)
+                \mathcal{Q}\left(\frac{ \bm{x} - \bm{t}}{h}\right)dF_n(\bm{t}) 
+            \;\approx\;
+            \frac{1}{Kh}\sum_{k = 1}^K
+                \mathcal{Q}\left(\frac{ \bm{x} - \bm{x}_k^{*}}{h}\right)
     \]
     where $\bm{x}_j^{*}$ are random replicates from $F$.  The choice of kernel function 
-    $K$, and selection of the bandwidth parameter $h$ are both topics that have
+    $\mathcal{Q}$, and selection of the bandwidth parameter $h$ are both topics that have
     been extensively researched. In practice the Gaussian kernel seems to be 
     well regarded for its simplicity, flexibility, and interpretability.  The
     bandwidth parameter in this case corresponds to the standard deviation 
@@ -195,8 +169,8 @@ For selection of the bandwidth parameter $h$, we employ Silverman's rule of
     Finally, the angular score under KDE is then calculated as
     \begin{equation}
     \label{eqn:ad_kde_h}
-    S_{i,\bm{v}}^{\text{kde}} = \text{E}_{\bm{v}^*}\left[\exp\left\lbrace -
-    \left(\frac{g(\bm{v}_i,\bm{v}^*)}{\hat{h}}\right)^2\right\rbrace\mid\bm{v}\right]^{-1}
+    \score_{ii,\bm{v}}^{\text{kde}} = \text{E}_{\bm{v}^*}\left[\exp\left\lbrace -
+    \left(\frac{g(\bm{v}_i,\bm{v}^*)}{\hat{h}}\right)^2\right\rbrace\right]^{-1}
     \approx
     \left[\frac{1}{K}\sum_{k = 1}^{K}
     \exp\left\lbrace-\left(\frac{g(\bm{v}_i,\bm{v}_k^*}{\hat{h}}\right)^2\right\rbrace\right]^{-1}
@@ -218,7 +192,7 @@ For selection of the bandwidth parameter $h$, we employ Silverman's rule of
         \State From $\bm{\alpha}\mid\bm{y}$, sample
             $\bm{\varrho}_k^{*}\mid\bm{\alpha}\sim\prod_{\ell}\mathcal{G}(\alpha_{\ell})$ for $k = 1,\ldots,K$
         \State Take $\bm{v}_k^{*} = T_{\infty}(\bm{\varrho}_k^{*})$
-        \State Take $S_{i,v}$ as per Equations~(\ref{eqn:ad_knn_h},\ref{eqn:ad_kde_h})
+        \State Take $\score_{ii,v}$ as per Equations~(\ref{eqn:ad_knn_h},\ref{eqn:ad_kde_h})
     \end{algorithmic}
 \end{algorithm}
 

@@ -26,20 +26,20 @@ We then expanded the model to handle categorical data, recognizing that in the
     explicitly, we established them based on their latent class probability 
     vector, as calculated by the model conditional on the observation. Samples 
     of these latent probability vectors were either averaged then projected onto
-    $\mathbb{S}_{\infty}^{d-1}$ as in the case of \emph{hKNN} and \emph{hKDE}, 
-    or directly projected onto same as in the case of \emph{lhKDE}, or 
+    $\mathbb{S}_{\infty}^{d-1}$ as in the case of \emph{hknn} and \emph{hkde}, 
+    or directly projected onto same as in the case of \emph{lhkde}, or 
     projected onto $\prod_{m = 1}^M\mathbb{S}_1^{d_{m}-1}$ as in the case 
-    of \emph{lsKDE}.  There, pairwise estimates of distance were calculated to 
+    of \emph{lskde}.  There, pairwise estimates of distance were calculated to 
     a sample from the posterior predictive distribution, and used to calculate 
     the posterior predictive density for observation $i$. We applied the 
     categorical scores to four datasets, three of which were transformed to be 
     categorical from mixed data.  In this analysis, we observed that 
-    \emph{lsKDE} performed reliably well.
+    \emph{lskde} performed reliably well.
 
 We incorporated the categorical data model with the real data model to create a 
     mixed-data model, and adjusted the categorical scores to the mixed-data 
     regime.  We subjected six datasets to our peaks-over-threshold analysis and 
-    observed that \emph{lmKDE} performed reliably well, better than canonical 
+    observed that \emph{lmkde} performed reliably well, better than canonical 
     methods most of the time, but was itself outperformed in some cases by other 
     methods that project the latent probability vector along with the angular 
     vector into a unified space.
