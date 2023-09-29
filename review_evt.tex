@@ -154,7 +154,18 @@ Note that $T$ is not differentiable at $p = \infty$, so we can not use it to
     ${\mathbb S}_{\infty}^{d-1}$. To obtain a flexible model for $\Phi$ we use 
     the projected gamma density as the kernel of a random measure mixture model, 
     based on the Pitman Yor ($\mathcal{PY}$) process introduced 
-    in~\cite{perman1992}. Pitman Yor processes have the advantage over the more 
+    in~\cite{perman1992}. Pitman-Yor processes are fully atomic random 
+    measures that are specified by two parameters and a centering distribution.
+    They can be formulated, using a stick-breaking representation 
+    \citep{Ish-James2001}, as
+    \[
+        \text{Pr}(\alpha\mid\cdots) = \sum_{j = 1}^{\infty}p_j\delta_{\bm{\alpha}_j};
+        \;\;\;\sum_{j = 1}^{\infty}p_j = 1, \;\;\; p_j := \chi_j \prod_{k = 1}^{j-1}(1 - \chi_k)
+    \]
+    where $\delta_{\bm{\alpha}_j}$ indicates a point mass at $\bm{\alpha}_j$,
+    and $\bm{\alpha}_j$ are sampled independently from $G_0$. $\chi_j \sim \text{Beta}(1 - d,
+    \eta+jd)$. $d\in[0,1), \eta>-d$ are refereed to as the discount and the concentration 
+    parameters, respectively. Pitman Yor processes have the advantage over the more 
     commonly used Dirichlet processes \citep{Ferguson74} of including a 
     discount parameter along with the concentration parameter, allowing greater 
     control over the formation of new clusters.  A hierarchical formulation of 
@@ -184,26 +195,16 @@ Note that $T$ is not differentiable at $p = \infty$, so we can not use it to
     the unrestricted form of the $\mathcal{PG}_p$ with both shape and rate 
     parameters offered no improvement in model fidelity on real data compared to 
     the restricted form, where the rate parameters are fixed at 1.  For a more 
-    parsimonious model, and for compatibility with the categorical \st{regime}
+    parsimonious model, and for compatibility with the categorical model
     that will be developed in Section \ref{sec:categorical}, in 
     this paper we choose to use the restricted form.
 
-Pitman--Yor processes, as with other types of mixture models, can be used to group 
+Mixtures of Pitman--Yor processes can be used to group 
     observations into stochastically assigned clusters, where all observations
-    within a cluster share a set of cluster parameters.  The Pitman-Yor process
-    can be expanded in a stick-breaking representation, where
-    \[
-        \text{Pr}(\alpha\mid\cdots) = \sum_{j = 1}^{\infty}p_j\delta_{\bm{\alpha}_j};
-        \hspace{1cm}\sum_{j = 1}^{\infty}p_j = 1
-    \]
-    where $\delta_{\bm{\alpha}_j}$ indicates a point mass at $\bm{\alpha}_j$,
-    and $\bm{\alpha}_j$ are sampled independently from $G_0$.
-    \makenote{expand; mention the point-masses are sampled from $G_0$}
-    In practicality we define a maximum number of possible clusters as a 
-    truncation point $J$.  Cluster assignment is accomplished through data 
+    within a cluster share a set of parameters.  Cluster assignment is accomplished through data 
     augmentation, where a cluster identifier $\varphi_i$ is sampled according to
     both cluster weight and kernel density of observation $i$ given cluster parameters.
-    We make use of the blocked-Gibbs sampler on the stick-breaking representation of the
+    We make use of the blocked-Gibbs sampler on a truncated stick-breaking representation of the
     Pitman--Yor model.  Cluster weights are then sampled as
     \begin{equation}
         \label{eqn:clusterweight}
@@ -211,8 +212,7 @@ Pitman--Yor processes, as with other types of mixture models, can be used to gro
             \eta + \sum_{k = j + 1}^J n_k + jd\right);
         \hspace{1cm}p_j := \chi_j \prod_{k = 1}^{j-1}(1 - \chi_k)
     \end{equation}
-    where $n_j$ is the number of observations in cluster $j$, $\eta$ is a strength 
-    parameter governing the formation of new clusters, and $d$ a discount parameter.
+    where $n_j$ is the number of observations in cluster $j$.
     In this form, the Dirichlet process is a special case of the Pitman-Yor process
     where the discount parameter $d := 0$.
     Then the cluster identifier for observation $i$, $\varphi_i$, is sampled as
@@ -228,7 +228,7 @@ Pitman--Yor processes, as with other types of mixture models, can be used to gro
     offers an opportunity for parallelization, increasing the speed of sampling.
     
 The approach proposed in this section produces a sample of the angular measure 
-    of the distribution of the tails of the sample. The methods has a number of 
+    of the distribution of the tails of the sample. The method has a number of 
     advantages for anomaly detection: it focuses on the tails, which is where we 
     are more likely to find anomalous behavior;  it accounts for asymptotic 
     dependence between the different components of the observation vector; it

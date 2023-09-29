@@ -1,5 +1,5 @@
 \section{Conclusion\label{sec:conclusion}}
-In this paper, we established a method of \emph{scoring} observations as 
+In this paper, we have proposed a method of \emph{scoring} observations as 
     anomalous based on their posterior-predictive angular density, using the 
     result from multivariate extreme value theory that---assuming the existence 
     of a limiting behavior---given observations are in excess of a high 
@@ -7,50 +7,42 @@ In this paper, we established a method of \emph{scoring} observations as
     $\mathbb{S}_{\infty}^{d-1}$ is independent of the radial distribution on 
     $\mathbb{R}_+$.  In the anomaly detection setting, this independence allows
     us to separate anomaly scores into an angular and radial component, and
-    treat them separately.  To establish an angular anomaly score, a Bayesian 
-    non-parametric model is established on the angular data projected onto 
+    treat them separately.  To define an angular anomaly score, a Bayesian 
+    non-parametric model is developed on the angular data projected onto 
     $\mathbb{S}_p^{d-1}$, and as a true density on $\mathbb{S}_{\infty}^{d-1}$ 
-    is not available, anomaly scores are declared using a non-parametric 
+    is not available, anomaly scores are obtained using a non-parametric 
     estimator to that angular density built on a sample from the posterior 
     predictive distribution of the fitted model.  The non-parametric estimators 
     we used were $k$-nearest neighbors, and kernel density estimation.
 
 We then expanded the model to handle categorical data, recognizing that in the 
     real world data does not always fit our assumption of the existence of a 
-    limiting behavior.  We did this by establishing a Bayesian non-parametric 
-    categorical data model, then tying it in with the previously declared 
-    \emph{angular} model, rendering a \emph{mixed} model possible.  We explored 
-    various methods of establishing an anomaly score based on the categorical 
-    data, analogous to the scores established for the angular data.  For the 
-    scores, rather than establishing them based on the categorical data 
-    explicitly, we established them based on their latent class probability 
-    vector, as calculated by the model conditional on the observation. Samples 
-    of these latent probability vectors were either averaged then projected onto
-    $\mathbb{S}_{\infty}^{d-1}$ as in the case of \emph{hknn} and \emph{hkde}, 
-    or directly projected onto same as in the case of \emph{lhkde}, or 
-    projected onto $\prod_{m = 1}^M\mathbb{S}_1^{d_{m}-1}$ as in the case 
-    of \emph{lskde}.  There, pairwise estimates of distance were calculated to 
-    a sample from the posterior predictive distribution, and used to calculate 
-    the posterior predictive density for observation $i$. We applied the 
+    limiting behavior.  We did this by developing a Bayesian non-parametric 
+    categorical data model that provides a general approach for the exploration
+    of the distribution of multivariate data. This was then tied in with the previously 
+    defined angular model, providing an approach to mixed data modelling.  We explored 
+    various methods of defining an anomaly score based on the categorical 
+    data, analogous to the scores considered for the angular data making use of
+    of latent class probability vectors. We applied the 
     categorical scores to four datasets, three of which were transformed to be 
     categorical from mixed data.  In this analysis, we observed that 
     \emph{lskde} performed reliably well.
-
-We incorporated the categorical data model with the real data model to create a 
-    mixed-data model, and adjusted the categorical scores to the mixed-data 
-    regime.  We subjected six datasets to our peaks-over-threshold analysis and 
-    observed that \emph{lmkde} performed reliably well, better than canonical 
+In addition, the analysis of six datasets performed with the mixed model
+    indicated that \emph{lmkde} performed reliably well, better than canonical 
     methods most of the time, but was itself outperformed in some cases by other 
     methods that project the latent probability vector along with the angular 
     vector into a unified space.
 
-We observed that the data thresholding process may not always be applicable, so 
-    finally we applied the mixed model to data with its angular component 
-    transformed via the standard Pareto rank ordering transformation.  We
-    acknowledge that the application of the projected gamma model to this
-    transformation ignores the existence of the moment constraint implied by
-    construction. In this setting, we observed the latent models (\emph{lmkde} 
-    and \emph{lskde}) performed reliably well, exceeding or achieving parity
-    with canonical methods in 5 of 6 tested cases.
+As the data thresholding process may not always be applicable, 
+    we applied the mixed model to data with its angular component 
+    transformed via the standard Pareto rank ordering transformation. 
+    In this setting, we observed that the latent models (\emph{lmkde} 
+    and \emph{lskde}) performed reliably well, as well or better than
+    canonical methods in five of six tested cases.
+
+    {\bf We need some closing remarks here. Maybe something along the lines
+    of having presented a flexible model based method for anomaly detection
+    that works in reasonaly large dimensions, but then say that the is a need
+    to develop and approach to scale up computations.}
 
 % EOF

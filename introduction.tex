@@ -25,12 +25,12 @@ Alternative names for the field of anomaly detection include \emph{outlier} dete
     belonging to the distribution as trained.  \cite{Chandola2009} refer to 
     this practice as semi-supervised anomaly detection. For our purpose, we do 
     not assume the existence of labels in the training 
-    dataset, and seek an algorithm that can produce anomaly scores in an absence 
+    dataset, and seek an algorithm that can produce anomaly scores in the absence 
     of class labels. As such, we will offer a brief overview of unsupervised 
     anomaly detection methods, as well as discussion of the methods we are 
-    preparing here as competing models.
+    proposing here as competing models.
     
-    Core to the 
+    \st{Core to the 
     development of a method lies a basic the question of what is an anomaly.  
     The answer to this question depends on what we hope to
     learn in a specific application. Common to most 
@@ -43,21 +43,21 @@ Alternative names for the field of anomaly detection include \emph{outlier} dete
     unsupervised learning problem.  Instead we seek anomaly \emph{scores}, 
     which rank observations in terms of their likelihood of being anomalous.  The 
     decision threshold---the score value above which observations would be 
-    declared anomalous---is then set heuristically.
+    declared anomalous---is then set heuristically.}
 
-The applicability of extreme value theory to anomaly detection is predicated on 
-    the assumption that extreme observations are more likely to be anomalous.  
-    A discussion on this point is provided by \cite{goix2017}, stating that 
-    extreme observations exist at the border between anomalous and non-anomalous 
-    regions.  Indeed, for most datasets in our testing, the probability an 
-    individual observation is anomalous is higher for data in the tails of the 
-    distribution. This relative abundance of anomalies among extremes might 
-    cause a naive classifier that does not take into account the dependence 
-    structure of extremes to classify all extremes as anomalous.  If we follow 
-    the assumption that anomalies stand apart, then extreme observations that 
-    cluster into a homogenous group should not be considered anomalous.  For 
-    this reason, we desire a classifier that considers the dependence structure 
-    of the extremes as well.
+%The applicability of extreme value theory to anomaly detection is predicated on 
+%    the assumption that extreme observations are more likely to be anomalous.  
+%    A discussion on this point is provided by \cite{goix2017}, stating that 
+%    extreme observations exist at the border between anomalous and non-anomalous 
+%    regions.  Indeed, for most datasets in our testing, the probability an 
+%    individual observation is anomalous is higher for data in the tails of the 
+%    distribution. This relative abundance of anomalies among extremes might 
+%    cause a naive classifier that does not take into account the dependence 
+%    structure of extremes to classify all extremes as anomalous.  If we follow 
+%    the assumption that anomalies stand apart, then extreme observations that 
+%    cluster into a homogenous group should not be considered anomalous.  For 
+%    this reason, we desire a classifier that considers the dependence structure 
+%    of the extremes as well.
 
 % EOF
 
