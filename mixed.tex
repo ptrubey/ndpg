@@ -9,7 +9,8 @@ To obtain a joint model for the density of a vector with mixed components
         \;\mathcal{CDM}(\bm{w}\mid\bm{\alpha}_{\bm{w}})\;dG(\bm{\alpha})
     \end{equation}
   with the distribution of $\bm{\alpha}=(\bm{\alpha_\bm{y},\bm{\alpha_\bm{w}})}$ as
-    defined in Equation~\ref{eqn:modelcat}. Note that for 
+    defined in Equation~\ref{eqn:modelcat}. The dimensions are, respectively, 
+    $d_{\bm{y}}$ and $d_{\bm{w}}$. Note that for 
     the projected gamma distribution, we restrict the rate parameters 
     to $\beta_{\ell} := 1$.  Also note that for the mixed model, the hyperparameter 
     for the covariance matrix $\Sigma_{\bm{\alpha}}$ is taken as a blocked diagonal 
@@ -37,60 +38,63 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  \st{Let
     latent projection of both the real component and categorical component into 
     the same sphere.  \add{\bf Maybe here we could add a figure with a graphical
     explanation} Also, let $\bm{\nu} = T_{\infty}(\bm{\varrho})$ be the 
-    generic $\bm{\nu}$ not specifically dependent on observation $i$.  The 
-    score is then calculated as
-    \[
-        \score_{i,\bm{v}}^{\text{h$k$nn}} = \frac{N\pi^{\frac{d-1}{2}}}{
-                k\Gamma\left(\frac{d-1}{2} + 1\right)}
-        D_{k}\left(\tilde{\text{E}}\left[\bm{\nu}_i\right]\right)^{d-1}.
-    \]
-    Note again that we are computing the two expectations separately.  The 
-    \emph{hkde} score works in the same manner, this using kernel density 
-    estimation rather than $k$-nearest neighbors density estimation on 
-    $\mathbb{S}_{\infty}^{d-1}$;
-    \begin{equation}
-        \label{eqn:adhkdecat}
-        \score_{i,\bm{v}^*}^{\text{hkde}} = \text{E}_{\bm{\nu}}\left[\exp\left\lbrace -\frac{1}{2}
-            \left(
-            \frac{d\left(\tilde{\text{E}}[{\bm{\nu}_i}], \bm{\nu}^*\right)}{\hat{h}}
-            \right)^2\right\rbrace
-            \right]^{-1}
-            \approx 
-            \left[\frac{1}{K}\sum_{k = 1}^K\exp\left\lbrace
-            -\frac{1}{2}
-            \left(
-            \frac{d\left(\tilde{\text{E}}[\bm{\nu}_i], \bm{\nu}_k^*\right)}{\hat{h}}
-            \right)^2
-            \right\rbrace
-            \right]^{-1}
-    \end{equation}
-    The \emph{lhkde} score works similarly to the \emph{hkde} score, projecting
-    $R_i\bm{y}_i$ and $\bm{\varrho}_i$ onto $\mathbb{S}_{\infty}^{d-1}$.  
-    \begin{equation}
-        \label{eqn:adlhkdecat}
-    \score_{i,\bm{v}}^{\text{lhkde}} = \text{E}_{\bm{\nu}^*,\bm{\nu}_i}
-        \left[\exp\left\lbrace-\frac{1}{2}\left(
-            \frac{d\left(\bm{\nu}_i, \bm{\nu}^*\right)}{h}\right)^2
-        \right\rbrace\right]^{-1}
-        \approx \left[
-        \frac{1}{K_{\bm{\nu}^*}K_{\bm{\nu}_i}}
-        \sum_{j = 1}^{K_{\bm{\nu}_i}}\sum_{k=1}^{K_{\bm{\nu}^*}}
-        \exp\left\lbrace
-        -\frac{1}{2}\left(\frac{d(\bm{\nu}_{ij},\bm{\nu}_k^*)}{\hat{h}}\right)^2
-        \right\rbrace\right]^{-1}
-    \end{equation}
-    The difference between the two scores is $\score_{i,\bm{v}}^{\text{lhkde}}$
-    takes the integral with regard to a random 
-    $T_{\infty}(R_i\bm{y}_i,\bm{\varrho}_i)$, and $\score_{i,\bm{v}}^{\text{hkde}}$ 
-    takes the integral with regard to the expectation of that quantity.
-
-The \emph{lmkde} score serves as a comparison to the above three scores, 
-    which seek to unify all data onto a single sphere and calculate a 
-    consistent distance metric.  Instead, \emph{lmkde} evaluates distances 
-    between angular data in its own space, and latent posterior class 
-    probabilities in its own space, with the appropriate distance metric for 
-    each.  In effect, this combines \emph{hkde} from
-    the angular component and \emph{lskde} from the categorical component.
+    generic $\bm{\nu}$ not specifically dependent on observation $i$.  To obtain the 
+    corresponding anomaly scores we can proceed by using the expression in equations
+    (\ref{score:cat_hknn}), (\ref{score:cat_hkde}) and (\ref{score:cat_lhkde})  {\bf Is
+    this not good enough? I don't think we need to repeat all the formulas that are 
+    pretty much the same as before.}
+%    The  score is then calculated as
+%    \[
+%        \score_{i,\bm{v}}^{\text{h$k$nn}} = \frac{N\pi^{\frac{d-1}{2}}}{
+%                k\Gamma\left(\frac{d-1}{2} + 1\right)}
+%        D_{k}\left(\tilde{\text{E}}\left[\bm{\nu}_i\right]\right)^{d-1}.
+%    \]
+%    Note again that we are computing the two expectations separately.  The 
+%    \emph{hkde} score works in the same manner, this using kernel density 
+%    estimation rather than $k$-nearest neighbors density estimation on 
+%    $\mathbb{S}_{\infty}^{d-1}$;
+%    \begin{equation}
+%        \label{eqn:adhkdecat}
+%        \score_{i,\bm{v}^*}^{\text{hkde}} = \text{E}_{\bm{\nu}}\left[\exp\left\lbrace -\frac{1}{2}
+%            \left(
+%            \frac{d\left(\tilde{\text{E}}[{\bm{\nu}_i}], \bm{\nu}^*\right)}{\hat{h}}
+%            \right)^2\right\rbrace
+%            \right]^{-1}
+%            \approx 
+%            \left[\frac{1}{K}\sum_{k = 1}^K\exp\left\lbrace
+%            -\frac{1}{2}
+%            \left(
+%            \frac{d\left(\tilde{\text{E}}[\bm{\nu}_i], \bm{\nu}_k^*\right)}{\hat{h}}
+%            \right)^2
+%            \right\rbrace
+%            \right]^{-1}
+%    \end{equation}
+%    The \emph{lhkde} score works similarly to the \emph{hkde} score, projecting
+%    $R_i\bm{y}_i$ and $\bm{\varrho}_i$ onto $\mathbb{S}_{\infty}^{d-1}$.  
+%    \begin{equation}
+%        \label{eqn:adlhkdecat}
+%    \score_{i,\bm{v}}^{\text{lhkde}} = \text{E}_{\bm{\nu}^*,\bm{\nu}_i}
+%        \left[\exp\left\lbrace-\frac{1}{2}\left(
+%            \frac{d\left(\bm{\nu}_i, \bm{\nu}^*\right)}{h}\right)^2
+%        \right\rbrace\right]^{-1}
+%        \approx \left[
+%        \frac{1}{K_{\bm{\nu}^*}K_{\bm{\nu}_i}}
+%        \sum_{j = 1}^{K_{\bm{\nu}_i}}\sum_{k=1}^{K_{\bm{\nu}^*}}
+%        \exp\left\lbrace
+%        -\frac{1}{2}\left(\frac{d(\bm{\nu}_{ij},\bm{\nu}_k^*)}{\hat{h}}\right)^2
+%        \right\rbrace\right]^{-1}
+%    \end{equation}
+%    The difference between the two scores is $\score_{i,\bm{v}}^{\text{lhkde}}$
+%    takes the integral with regard to a random 
+%    $T_{\infty}(R_i\bm{y}_i,\bm{\varrho}_i)$, and $\score_{i,\bm{v}}^{\text{hkde}}$ 
+%    takes the integral with regard to the expectation of that quantity.
+All three scores seek a unifying approach for all data, projecting onto a the same 
+sphere, and calculating a 
+    consistent distance metric.  An alternative is to, instead, evaluate distances 
+    between angular data their own space, and, separately, latent posterior class 
+    probabilities in their own space, with the appropriate distance metric for 
+    each.  In effect, this approach combines \emph{hkde} from
+    the angular component and \emph{lskde} from the categorical component yielding:
     \begin{equation}
     \label{eqn:lmkdecat}
     \begin{aligned}
@@ -119,8 +123,8 @@ The \emph{lmkde} score serves as a comparison to the above three scores,
     \end{equation}
     This choice to evaluate each component within its own space presents some 
     loss of information as to the dependence structure between $\bm{y}$ and 
-    $\bm{w}$ within the score.  We will see to what extent that loss of 
-    information is damning.
+    $\bm{w}$ within the score.  We will eplore to what extent that loss of 
+    information is relevant.
 
 \begin{algorithm}[htb]
     \caption{Workflow for anomaly detection for \emph{mixed} data}\label{alg:admixed}
@@ -150,11 +154,10 @@ The \emph{lmkde} score serves as a comparison to the above three scores,
 
 \subsection{Relaxing the assumption of independence\label{subsec:rank}}
 A valid critique of the model presented thus far is that in order to justify 
-    modelling the radial component of $\bm{Z}$ independent its angular 
+    modelling the radial component of $\bm{Z}$ as independent to its angular 
     component---the fundamental result of the multivariate extreme value theory 
-    presented---it is necessary to subset data (and thus ability to score 
-    anomalies) strictly to those observations $\bm{X}$ which exceeded a large 
-    multivariate threshold in at least one dimension.  For some applications, 
+    presented---it is necessary to subset data to those observations $\bm{X}$ which exceeded a large 
+    threshold in at least one dimension.  For some applications, 
     this represents a very powerful data reduction with little loss of 
     information pertaining to anomalies, as anomalies tend to be in the tails 
     (see, for  example, Table~\ref{tab:data}).  For other applications, this 

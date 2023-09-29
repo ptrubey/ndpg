@@ -20,32 +20,38 @@ Given the independence between the angular and radial components of an
             \left[\int_{\Omega} f_v(\bm{v}_i\mid\bm{\alpha})
                 \,\text{d}G(\bm{\alpha}\mid\mathcal{D})\right]^{-1}
     \]
-    \makenote{I will change the symbol for a score later.  I wanted $S$ to
-        denote posterior sample sizes, so we'll use a different font $S$ for 
-        scores.}
     By construction $r_i$ follows a standard Pareto distribution, so its
     density is $f_r(r_i) = r_i^{-2}$.  As previously discussed in
     Section~\ref{sec:evt}, the kernel $\mathcal{PG}_\infty$, needed for 
     density estimation on the surface of ${\mathbb S}_{\infty}^{d-1}$ is 
-    not available in analytic form, thus, we resort\st{ed} to transforming the
+    not available in analytic form, thus, we resort to transforming the
     data to $\mathbb{S}_p^{d-1}$ for a large but finite $p$.
     This makes estimation of distributional parameters possible, 
     but in the context of anomaly detection, a score based on
-    $\mathcal{PG}_p$, for any $p$, is problematic.  Recall in 
-    Equation~(\ref{eqn:projgamma}), the value of the Jacobian is dependent
-    upon which dimension is replaced in the transformation.  This implies that
-    under uniform $\bm{\alpha}$, calculated density can be changed by
-    permuting the order of dimensions.  This is problematic in an anomaly
-    detection application, because a relative ordering of density between 
-    observations is specifically what we're trying to calculate.
+    $\mathcal{PG}_p$, for any $p$, is problematic.  In fact, the 
+    transformation from ${\mathbb R}_+^p$ to $\mathbb{S}_p^{d-1}$ is not
+    unique, as we can take any of the components of the original vector
+    as a reference. \st{Recall in 
+    , the value of the Jacobian is dependent
+    upon which dimension is replaced in the transformation.}  This implies that
+    under uniform $\bm{\alpha}$, the density can be changed by
+    permuting the order of components.  This is not appropriate for anomaly
+    detection, because a relative ordering of density between 
+    observations is specifically what we're trying to calculate. In addition
+    we have observed instabilities in the evaluation of (\ref{eqn:projgamma}) 
+    for small arguments, when the shape parameter is small. On the other hand,
+    we notice that $T_\infty$ is unique, as the reference is the largest value
+    of the array. Thus, we fit the mixture model in $\mathbb{S}_p^{d-1}$, generate
+    posterior predictive samples, and transform those samples to 
+    $\mathbb{S}_\infty^{d-1}$.
     % \add{\bf Can you make this argument more clear? I am not sure I get it.}
     % \makenote{I think its now sufficiently clear?}
-    Further, for an observation near 0 evaluated on a gamma-related distribution 
+    \st{Further, for an observation near 0 evaluated on a gamma-related distribution 
     with a shape parameter $\alpha$ near 0, evaluated density can be divergent.
     This instability would play havoc on any directly 
-    calculated density-based scores.
+    calculated density-based scores.}
 
-To avoid the problems of angular density evaluation we use a 
+To avoid the problems of angular density evaluation in $\mathbb{S}_\infty^{d-1}$ we use a 
     non-parametric angular density estimator based on a sample from the 
     posterior predictive distribution of the model developed in 
     Section~\ref{sec:evt}. Here, we consider two well-established

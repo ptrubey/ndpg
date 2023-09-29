@@ -68,6 +68,20 @@ Non-statistical---or algorithmic---models beyond clustering are generally adapta
     decision boundary in kernel space around \emph{normal} behavior. A higher 
     distance to that decision boundary on the anomalous side is regarded as 
     more anomalous.
+
+The applicability of extreme value theory to anomaly detection is predicated on 
+    the assumption that extreme observations are more likely to be anomalous.  
+    A discussion on this point is provided by \cite{goix2017}, stating that 
+    extreme observations exist at the border between anomalous and non-anomalous 
+    regions.  Indeed, for most datasets in our testing, the probability an 
+    individual observation is anomalous is higher for data in the tails of the 
+    distribution. This relative abundance of anomalies among extremes might 
+    cause a naive classifier that does not take into account the dependence 
+    structure of extremes to classify all extremes as anomalous.  If we follow 
+    the assumption that anomalies stand apart, then extreme observations that 
+    cluster into a homogenous group should not be considered anomalous.  For 
+    this reason, we desire a classifier that considers the dependence structure 
+    of the extremes as well.
     
 The intersection of extreme value theory and anomaly detection is a current 
     topic of research.  Some methods employ univariate EVT on estimated 
@@ -76,28 +90,26 @@ The intersection of extreme value theory and anomaly detection is a current
     then employ EVT on the estimated densities to establish a decision 
     threshold theoretically, avoiding the process of determining said
     threshold heuristically.
-
-The application of multivariate extreme value theory to anomaly detection is 
+\st{The application of multivariate extreme value theory to anomaly detection is 
     based on the  assumption that extreme observations are more likely to be 
-    anomalous, as argued in \cite{goix2017}. In fact, extreme observations 
+    anomalous, as argued in }\st{In fact, extreme observations 
     exist at the border between anomalous and non-anomalous regions, and it is 
     often the case that the probability an individual observation being 
     anomalous is higher for data in the tails of the distribution.
-    \makenote{duplicated sentence from earlier in introduction.  
-        which one stays?} 
+%    \makenote{duplicated sentence from earlier in introduction.  
+%        which one stays?} 
     This relative abundance of anomalies among extremes might cause a naive 
     classifier, that does not take into account the dependence structure of 
     extremes, to classify all extremes as anomalous. Yet, extreme observations 
-    that cluster into a homogenous group should not be considered anomalous.
-    \cite{goix2017} offers one example of considering the dependence structure 
-    of extremes; subjecting the data to a standard Pareto rank transformation 
-    $T(x) = 1/(1 - \hat{F}(x))\;\in\;[1,\infty)$, where $\hat{F}$ corresponds 
-    to the empirical distribution function, 
-    and partitioning the space $[1,\infty)^d$ into $\alpha$-cones---where 
-    $\alpha$ the subset of dimensions in excess of a threshold---and bins 
-    data according to which $\alpha$-cone it falls into.  $\alpha$-cones with 
-    few observations are analogous to lower-density regions, so observations 
-    falling into these cones are considered more likely to be anomalous.
+    that cluster into a homogenous group should not be considered anomalous.}
+    \cite{goix2017} offers an example of the use of the dependence structure 
+    of extremes. Their method is based on transforming the data to a standard 
+    Pareto suing the transformation  $T(x) = 1/(1 - \hat{F}(x))\;\in\;[1,\infty)$, 
+    where $\hat{F}$ corresponds  to the empirical distribution function. Then the 
+    the space $[1,\infty)^d$ is partitioned into $\alpha$-cones, defined as 
+    subsets where in each dimension the observations are in excess of a $\alpha$.
+    $\alpha$-cones with few observations correspond to lower-density regions, so 
+    observations  falling into these cones are considered more likely to be anomalous.
 
 A central result of multivariate EVT is that, conditional on an observation 
     being extreme, its radial component---or magnitude---is independent of its 
@@ -115,16 +127,17 @@ A central result of multivariate EVT is that, conditional on an observation
     model for categorical data, and it efficiently pairs with the projected 
     gamma model for angular data.  We develop several anomaly scoring metrics 
     applicable to the angular data, categorical data, and \emph{mixed} data 
-    regimes.  The major contributions of this paper are thus three-fold: we 
-    establish a flexible distribution on categorical data that efficiently
-    captures the dependence structure between categories in multiple variables, 
-    as well as anomaly scores in this regime.  We establish an anomaly detection 
-    algorithm for extreme data that accounts for the dependence structure 
-    between extremes, approaching density estimation in a continuous space 
-    rather than discrete binning in a partition of the space.  Finally, we 
-    provide a means of linking scores developed in these two regimes.
+    regimes.  The major contributions of this paper are thus three-fold: We 
+    develop an anomaly detection algorithm for extreme data that accounts for 
+    the dependence structure between extremes, approaching density estimation 
+    in a continuous space  rather than discrete binning in a partition of the 
+    space. We obtain a flexible model for multivariate categorical data that 
+    efficiently captures the dependence structure between categories in multiple 
+    variables, as well as anomaly scores in this setting. Finally, we 
+    provide a model that links the scores developed in these two cases, tackling
+    multivariate observations with components of different types.
 
-From here on, the paper proceeds as follows: Section~\ref{sec:evt} provides a 
+The paper proceeds as follows: Section~\ref{sec:evt} provides a 
     brief review of multivariate EVT, explaining the separation of the radial 
     and angular components of the extreme data, as well as an introduction of 
     the angular data model.  Section~\ref{sec:novelty} introduces our anomaly 
@@ -141,6 +154,6 @@ From here on, the paper proceeds as follows: Section~\ref{sec:evt} provides a
     Section~\ref{sec:results} provides the resulting performance of our anomaly 
     scores as applied to seven reference anomaly detection datasets, as well as 
     comparing to three canonical anomaly scoring methods.  
-    Finally, Section~\ref{sec:conclusion} concludes.
+    Finally, Section~\ref{sec:conclusion} provides concluding remarks and discussion.
 
  % EOF
