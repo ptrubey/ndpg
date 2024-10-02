@@ -29,8 +29,8 @@ Suppose $\bm{C}$ is a vector of $M$ random categorical variables.  Then $C_m$
         \bm{w}_{m}\mid\bm{\alpha}_m 
         &\sim 
         \mathcal{DC}(\bm{w}_m\mid\bm{\alpha}_m) = 
-        \frac{\Gamma(\sum_{\ell=1}^d \alpha_{\ell})}{\Gamma(1 + \sum_{\ell = 1}^d\alpha_{\ell})}
-        \prod_{\ell = 1}^d \frac{\Gamma(w_{\ell} + \alpha_{\ell})}{\Gamma(\alpha_{\ell})}
+        \frac{\Gamma(\sum_{\ell=1}^d \alpha_{m\ell})}{\Gamma(1 + \sum_{\ell = 1}^d\alpha_{m\ell})}
+        \prod_{\ell = 1}^d \frac{\Gamma(w_{m\ell} + \alpha_{m\ell})}{\Gamma(\alpha_{m\ell})}
         \end{aligned}
     \end{equation}
     We then consider a \emph{concatenated} 
@@ -94,14 +94,15 @@ We start by considering the cluster identifiers. Extrapolating Equation~(\ref{eq
     analogous to the ones proposed in the continuous case can then be obtained by
     letting $\bm{\nu}_i = T_{\infty}(\bm{\varrho}_i)$, the transformation of $\bm{\varrho}_i$ 
     onto $\mathbb{S}_{\infty}^{d-1}$.
-\st{To establish an anomaly detection algorithm using the data model described in 
-    Equation, we consider a method using logic similar to 
-    that described in Section.  We desire a transformation that 
-    can be projected onto the unit sphere $\mathbb{S}_{\infty}^{d-1}$.  To that 
-    end, rather than using $\bm{w}_i$ directly, we use data augmentation
-    described in Equation~ to generate $\bm{\varrho}_i$, 
-    the latent unnormalized posterior class probabilities for observation $i$, 
-    sampled given $\bm{w}_i$.}  It is important to notice that distance metrics 
+% \st{To establish an anomaly detection algorithm using the data model described in 
+%     Equation, we consider a method using logic similar to 
+%     that described in Section.  We desire a transformation that 
+%     can be projected onto the unit sphere $\mathbb{S}_{\infty}^{d-1}$.  To that 
+%     end, rather than using $\bm{w}_i$ directly, we use data augmentation
+%     described in Equation~ to generate $\bm{\varrho}_i$, 
+%     the latent unnormalized posterior class probabilities for observation $i$, 
+%     sampled given $\bm{w}_i$.}  
+    It is important to notice that distance metrics 
     between projections of $\bm{\varrho}_i$ and  replicates of $\bm{\varrho}^*$ 
     from the posterior predictive distribution is straightforward. This provides
     a distinct advantage to the approach based on the distance between the 
@@ -165,7 +166,7 @@ in sequence. A variant of the score is obtained by computing the
     expectations jointly:
     \begin{equation}
         \label{score:cat_lhkde}
-        \score_{i,\bm{\nu}}^{\text{lhkde}} = \text{E}_{\bm{\nu},\bm{\nu}_i}\left[
+        \score_{i,\bm{\nu}}^{\text{lhkde}} = \text{E}_{\bm{\nu}^*,\bm{\nu}_i}\left[
         \exp\left\lbrace
         -\frac{1}{2}\left(
         \frac{g(\bm{\nu}_i, \bm{\nu}^*)}{\hat{h}}
@@ -195,8 +196,8 @@ If, instead of projecting the unnormalized probability vectors onto a unified
         \right\rbrace
         \right]
         \approx \left[
-            \frac{1}{K}\sum_{k = 1}^K\exp\left\lbrace
-            -\frac{1}{2}\left(\frac{\lVert \bm{\pi}_i - \bm{\pi}_k^*\rVert}{\hat{h}}\right)^2
+            \frac{1}{K_{\bm{\pi}^*}K_{\bm{\pi}_i}}\sum_{j=1}^{K_{\bm{\pi}_i}}\sum_{k=1}^{K_{\bm{\pi}^*}}\exp\left\lbrace
+            -\frac{1}{2}\left(\frac{\lVert \bm{\pi}_{ij} - \bm{\pi}_k^*\rVert}{\hat{h}}\right)^2
             \right\rbrace
         \right]^{-1}
     \end{equation}

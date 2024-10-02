@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage[margin=1in]{geometry}
+
+\title{Zero-inflated Dirichlet}
+\date{}
+
+\begin{document}
+\maketitle 
+The main issue with a novelty detection using density estimation as an approach 
+(even in $\mathbb{S}_p^{d-1}$ is density estimation for edge cases 
+(observations with values near 0) causing density evaluation to diverge.  I \emph{want} a
+Dirichlet-like distribution that allows for a point-mass at 0, in presumably all but 1 dimension.
+
+I had thought that one means of dealing with that would be a \emph{zero-inflated} projected 
+Gamma. I thought I'd try it for Dirichlet first, as its Jacobian is easier to handle.
+(evaluates to $r^{d-1}$).
+
+Given the construction of Dirichlet as a normalization of Gamma RV's to the unit simplex,
+then we start with a zero-inflated Dirichlet,
+\[
+f(x\mid\pi,\alpha) \sim (1 - \pi)\delta_{(0)}(x) + \pi\mathcal{G}(x\mid\alpha).
+\]
+But we need it in product form, rather than sum form, so
+\[
+f(x\mid\alpha) = \int_{\nu}\delta_{(0)}(x)^{1 - \nu}\mathcal{G}(x\mid\alpha,1)^{\nu}\text{d}G(\nu).
+\]
+Let $\bm{Y} \in \mathbb{S}_1^{d-1} \implies \sum_{\ell = 1}^d Y_{\ell} = 1$, $Y_{\ell} \in [0, 1] \forall \ell$.  Then, the distribution of $\bm{y}\mid\bm{\alpha} = \int_r \int_{\nu} \prod_{\ell = 1}^d f(ry_{\ell}\mid\alpha_{\ell},\nu_{\ell})\text{d}G(\nu)\text{d}r$.
+\[
+\begin{aligned}
+f(\bm{y}\mid\bm{\alpha}) &= \int_r \int_{\nu} \prod_{\ell = 1}^d \delta_{(0)}(ry_{i\ell})^{1 - \nu_{\ell}}\mathcal{G}(ry_{\ell}\mid\alpha_{\ell},1)^{\nu_{\ell}}r^{d-1}\text{d}G(\nu)\text{r} \\ 
+&= \int_r\int_{\nu}\prod_{\ell = 1}^d\delta_{(0)}(y_{i\ell})^{1 - \nu_{\ell}}\left(\frac{(ry_{\ell})^{\alpha_{\ell} - 1} e^{-ry_{ell}}}{\Gamma(\alpha_{\ell})}\right)^{\nu_{\ell}}\text{d}G(\nu)\text{d}r
+\end{aligned}
+\]
+Note the omission of $r$ from the Dirac delta in the second line; $r$ will never be 0, so the Dirac delta function is the same either way.  Then this breaks apart as:
+\[
+f(\bm{y}\mid\bm{\alpha}) = \int_{r}\int_{\nu}\prod_{\ell = 1}^{d}\delta_{(0)}(y_{i\ell})^{1 - \nu_{\ell}}\left(\frac{y_{\ell}^{\alpha_{\ell} - 1} e^{-y_{ell}}}{\Gamma(\alpha_{\ell})}\right)^{\nu_{\ell}}\times r^{\sum_{\ell = 1}^d\nu_\ell(\alpha_{\ell} - 1)}e^{-r\sum_{\ell = 1}^dy_{\ell}}r^{d-1}\text{d}G(\nu)\text{d}r
+\]
+Pulling the full conditional for $r$ from the above equation, we get:
+\[
+\begin{aligned}
+f(r\mid\bm{\alpha},\nu) &\propto 
+    r^{\sum_{\ell = 1}^d\nu_\ell(\alpha_{\ell} - 1)}
+    e^{-r\sum_{\ell = 1}^dy_{\ell}}
+    r^{d-1}
+    \text{d}r\\
+    &= r^{\sum_{\ell = 1}^d\nu_\ell\alpha_{\ell} - \sum_{\ell - 1}^{d}\nu_{\ell} + d - 1}\times e^{-r\sum_{\ell = 1}^dy_{\ell}}
+\end{aligned}
+\]
+The problem arises here.  In Dirichlet, $d$ in the Jacobian is cancelled out by $f(r\bm{y}\mid\alpha)$  Here, we're only cancelling out $\sum_{\ell = 1}^d\nu_{\ell}$ of that $d$.
+That'll be a valid gamma RV, so we can integrate it out from the above, but I'm thinking that that mismatch is going to cause a sampler to diverge.
+
+Do you see a way out?
+    
+\end{document}
+
+% EOF

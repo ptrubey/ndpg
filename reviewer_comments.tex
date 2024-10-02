@@ -1,0 +1,165 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\linespread{1.3}
+
+\title{Reviewer Comments for Novelty Detection using Projected Gammas}
+\author{}
+\date{}
+
+\newcommand{\comment}[1]{\textcolor{olive}{#1}}
+\newcommand{\response}[1]{\textcolor{teal}{#1}}
+
+\begin{document}
+
+\section{Reviewer's Comments}
+The paper presents a novel score based anomaly detection algorithms for categorical data. The use 
+    of angular and radial components of tail data (Pareto distribution ) to address challenges 
+    associated with high dimensional and multivariate data is refreshing. The distribution of 
+    data from radial component seems to be estimated as mixtures of Pitman Yor processed based 
+    Bayesian non-parametric mixture while the angular data seems to be modeled and scored using 
+    KNN and KDE approach. The entire approach is finally extended for categorical data followed 
+    by a mixed model that collectively explained the joint distribution of the radial and 
+    angular components is presented. The paper has multiple components that have been thoroughly 
+    detailed but difficult to collectively assess. I would recommend a short flowchart or 
+    briefing to improve readability.
+
+I have the following comments:
+
+\begin{description}
+    \item[Major Comments]
+    \begin{enumerate}
+        \item The choice of thresholds for tail data could influence the final model results. 
+            Though the actual threshold have been listed for the datasets, I would encourage 
+            the authors to elaborate on the models' sensitivity to thresholds.
+
+            \comment{I did tests, it didn't seem to change much.  the choice of threshold here is more about controlling the quantity of data under consideration than any other consideration.}
+            
+        \item The hknn, hkde, lhkde, lmkde, lskde models have each outperformed no more than 
+            2 datasets which seems to not highlight the strengths of these models accurately. 
+            Could the authors provide more details on why or where certain models have thrived 
+            while others did not? (Note: maybe a bar chart instead of a table could provide a 
+            more clear distinction of the models' performance as compared to SOTA).
+        \item I would encourage the authors to elaborate on the computational complexity 
+            associated with each of the models. Though it might not seem trivial, the final 
+            user might highly benefit from understanding this which in turn could improve the 
+            read/citation/use of the algorithm. I would also encourage making the code 
+            open-source for further use.
+        \item Have the authors considered proving MCMC convergence or presenting the posterior 
+            probability calculations for the listed methods? I would like to read that if possible.
+            
+            \comment{I'm not sure what he's referring to by posterior probability calculations.}
+        \item Please reconsider the title. I do not think it is reflecting the work properly 
+            and under-representing your contributions.
+            \comment{I think we discussed this as well.  "On anomaly detection using a peaks-over-threshold and angular representation of categorical data"?  Wow that's terrible.}
+    \end{enumerate}
+    \item[Minor Comments]
+    \begin{enumerate}
+        \item Remark 1 in Page 7 is undefined. Not sure if it is the remark form the De Haan book 
+            or something else. Need more clarity.
+        \item The authors informed that the radial component follows a Pareto distribution. It 
+            would help if any citation or additional content on it could be provided, specially 
+            to non-statistics based readers. 
+        \item Algorithm 1: $f(\alpha, \beta | y)$ the function or pdf $f$ is not defined.
+        \item Page 9, Line 16, the distribution $G_a$ is not defined.
+        \item Personally, I prefer using upper case notations for CDF and lower case for density
+            notations.
+        \item Pages 11 and 12, $f$, $f_v$, and $G$ have not been defined. (Assuming they refer to 
+            densities of vector components and sampling distribution generating the hyperparameter 
+            alpha based on the context.)
+        \item Some of the equations have not been numbered. 
+    \end{enumerate}
+\end{description}
+
+Overall this was an interesting approach to anomaly detection in multivariate data. The work is very timely given the wide range of challenges with categorical/mixed multivariate data. I believe that the work has some potential but requires a little bit of fine tuning.
+
+\section{Associate Editor's Comments}
+This paper develops a novel anomaly detection approach based on recent modeling developments in 
+    multivariate extreme value theory (EVT), which leverage the independence of radial and angular 
+    components of random vectors. Central to this approach is the multivariate peaks-over-threshold 
+    (PoT) model from Trubey and Sanso (2022), which provide a flexible Bayesian nonparametric 
+    framework for generalized extreme-value modeling via its radial and angular components. In 
+    Section 2, the paper presents a tractable approximation of the angular distribution on the 
+    $L_\infty$ ball, via a carefully-constructed Pitman-Yor mixture model of projected gammas. 
+    Section 3 outlines the employed anomaly score, and discusses several approaches for angular 
+    density estimation (via k-NN and kernel density estimators) for fitting this model. Section 4 
+    extends this approach for anomaly detection of binary, categorical and mixed data. Section 5 
+    outlines numerical experiments on baseline datasets, comparing the proposed approach to some 
+    existing methods in the literature.
+
+While the proposed method has promise, there are serious issues with the manuscript in its present
+    form, which puts it below the bar for acceptance to Technometrics. These issues involve writing 
+    clarity (particularly for the typical Technometrics reader), practical motivation and 
+    applicability of the proposed method, and novelty over the state-of-the-art. Provided below 
+    is a detailed discussion of each point:
+
+\begin{enumerate}
+
+\item Writing clarity \& style: The current manuscript writing lacks the level of refinement 
+    required for a Technometrics paper. Even in the abstract, there are writing issues 
+    ("extemes", comma ending keywords list); these then persist throughout the manuscript 
+    (see below for a non-comprehensive list), which along with later issues, makes the paper 
+    quite difficult to follow at times. Such issues can be remedied with a quick read-over of 
+    the manuscript, and I recommend the authors to more carefully proofread their paper. In 
+    general, the methodology writing (from the review on EVT in Section 2 onwards) is much too 
+    technical, and does not provide context on when or for what practical problems your method 
+    is most effective for. I would suggest taking a look at recent papers on Technometrics for 
+    a template. Some papers even start off Section 2 with a practical motivating application 
+    for their approach, demonstrating the limitations of the state-of-the-art, then addressing 
+    such limitations with their method. Significant rewriting and restructuring is needed for 
+    this paper to progress forward in my view. 
+
+    A list of easily-addressable writing issues from a quick pass of the paper:
+    \begin{itemize}
+    \item Title of paper is missing
+    \item Issues with abstract (see above)
+    \item Section 1, first sentence: grammar - do you need first period? 
+    \item End of page 3: "the maximum pairwise between a point"
+    \item Page 4: why is means capitalized in "$k$-Means"?
+    \item Page 4: "For each observation, and anomaly score"
+    \item Page 5: "suing" the transformation
+    \item Page 5: "Then the the space"
+    \item References: Many journal papers without page numbers, journal names need to be 
+        capitalized, what is "kdd" in the Ester reference? Some words need to be capitalized 
+        (e.g., Metropolis).
+    \end{itemize}
+
+\item Practical motivation and applicability: A key weakness of the paper is that it lacks a 
+    tangible and convincing application that motivates method development, an important 
+    ingredient in a Technometrics paper. While the numerical experiments explore a set of 
+    standard baseline datasets, there is little discussion of the corresponding applications 
+    aside from its names, e.g., "cardio", "solarflare", "yeast", etc. This is particularly 
+    critical in anomaly detection, where the notion of what constitutes as an "anomaly" is 
+    very much dependent on the application! Such considerations guide practitioners on when 
+    your method should be used over competing methods, and thus should directly motivate your 
+    method development. A rewrite and restructuring of the paper is critical in my view: a 
+    tangible motivating problem should be used to guide method development (and demonstrate 
+    limitations of the state-of-the-art) at the start of the paper, and then revisited at the 
+    end to show your method indeed addresses such limitations. 
+
+\item Novelty over the state-of-the-art: The contributions and impact of the proposed method 
+    over the state-of-the-art is also unclear to me, given the rather poorly-structured 
+    Introduction and the lack of a tangible application motivating your method. In the 
+    Introduction, the authors provide a prolonged discussion of different classes of anomaly 
+    detection methods: statistical, non-statistical and clustering methods (this classification 
+    is also rather odd to me... clustering approaches have clear connections to statistical 
+    approaches, and the non-statistical approaches all involve standard ML models, which have 
+    statistical connections - this needs to be fully clarified). But little insight is provided 
+    on why such methods need extensions or modifications for practical use! The authors then 
+    discuss the recent use of EVT for anomaly detection, which although interesting, is again 
+    poorly motivated: why and when is EVT a better approach to take? Is this when extremes 
+    arise at the border between anomalous and non-anomalous regions (as alluded in the paper)? 
+    But this again depends on what the domain expert deems as anomalies and the context from 
+    which they arise, which is highly dependent on the application! The authors also make 
+    frequent reference to a recent technical report (Trubey \& Sanso 2022), but it is not made 
+    clear what the specific contributions of this work is over this report - is it the modeling 
+    framework, anomaly detection procedure, or algorithm? The authors also assert that one 
+    novelty of their approach is that it extends to the categorical and mixed data regimes, but 
+    much work has been done on that front for anomaly detection, and it is again unclear what
+    are the key practical advantages of your approach over the state-of-the-art.
+\end{enumerate}
+
+\end{document}
+% EOF

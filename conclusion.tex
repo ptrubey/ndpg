@@ -19,30 +19,33 @@ We then expanded the model to handle categorical data, recognizing that in the
     real world data does not always fit our assumption of the existence of a 
     limiting behavior.  We did this by developing a Bayesian non-parametric 
     categorical data model that provides a general approach for the exploration
-    of the distribution of multivariate data. This was then tied in with the previously 
-    defined angular model, providing an approach to mixed data modelling.  We explored 
-    various methods of defining an anomaly score based on the categorical 
-    data, analogous to the scores considered for the angular data making use of
-    of latent class probability vectors. We applied the 
+    of the distribution of multivariate data. This was then tied in with the
+    previously defined angular model, providing an approach to mixed data 
+    modelling.  We explored various methods of defining an anomaly score based 
+    on the categorical data, analogous to the scores considered for the angular 
+    data making use of of latent class probability vectors. We applied the 
     categorical scores to four datasets, three of which were transformed to be 
     categorical from mixed data.  In this analysis, we observed that 
     \emph{lskde} performed reliably well.
+
 In addition, the analysis of six datasets performed with the mixed model
     indicated that \emph{lmkde} performed reliably well, better than canonical 
     methods most of the time, but was itself outperformed in some cases by other 
     methods that project the latent probability vector along with the angular 
-    vector into a unified space.
+    vector into a unified space.  Finally, As the data thresholding process 
+    may not always be applicable, we applied the mixed model to data with its 
+    angular component transformed via the standard Pareto rank ordering 
+    transformation. In this setting, we observed that the latent 
+    models---\emph{lmkde} and \emph{lskde}---performed reliably well, as well 
+    or better than canonical methods in five of six tested cases.
 
-As the data thresholding process may not always be applicable, 
-    we applied the mixed model to data with its angular component 
-    transformed via the standard Pareto rank ordering transformation. 
-    In this setting, we observed that the latent models (\emph{lmkde} 
-    and \emph{lskde}) performed reliably well, as well or better than
-    canonical methods in five of six tested cases.
-
-    {\bf We need some closing remarks here. Maybe something along the lines
-    of having presented a flexible model based method for anomaly detection
-    that works in reasonaly large dimensions, but then say that the is a need
-    to develop and approach to scale up computations.}
+In this paper, we have presented a highly flexible model--based method for
+    anomaly detection that scales to moderately large dimensions and sample
+    sizes.  However, as seen in Table~\ref{tab:data}, even for the dimensions
+    and sample sizes presented, model fitting can take several hours.  Scaling
+    this model beyond some thousands of observations or tens of columns
+    will require a paradigm shift in \emph{how} the model is fit.  For this 
+    reason, we are investigating faster means of model fitting, including
+    a variational approach.
 
 % EOF

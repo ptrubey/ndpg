@@ -69,7 +69,29 @@ Non-statistical---or algorithmic---models beyond clustering are generally adapta
     distance to that decision boundary on the anomalous side is regarded as 
     more anomalous.
 
-The applicability of extreme value theory to anomaly detection is predicated on 
+% \makenote{This paragraph seems out of place.}
+% The applicability of extreme value theory to anomaly detection is predicated on 
+%     the assumption that extreme observations are more likely to be anomalous.  
+%     A discussion on this point is provided by \cite{goix2017}, stating that 
+%     extreme observations exist at the border between anomalous and non-anomalous 
+%     regions.  Indeed, for most datasets in our testing, the probability an 
+%     individual observation is anomalous is higher for data in the tails of the 
+%     distribution. This relative abundance of anomalies among extremes might 
+%     cause a naive classifier that does not take into account the dependence 
+%     structure of extremes to classify all extremes as anomalous.  If we follow 
+%     the assumption that anomalies stand apart, then extreme observations that 
+%     cluster into a homogenous group should not be considered anomalous.  For 
+%     this reason, we desire a classifier that considers the dependence structure 
+%     of the extremes as well.
+    
+The intersection of extreme value theory and anomaly detection is a current 
+    topic of research.  Some methods employ univariate EVT on estimated 
+    densities calculated via other means, such as \cite{clifton2011} using a 
+    Gaussian Mixture model, and \cite{gu2021} using a Gaussian process.  Both 
+    then employ EVT on the estimated densities to establish a decision 
+    threshold theoretically, avoiding the process of determining said
+    threshold heuristically.  Beyond these applications,
+    the applicability of extreme value theory to anomaly detection is predicated on 
     the assumption that extreme observations are more likely to be anomalous.  
     A discussion on this point is provided by \cite{goix2017}, stating that 
     extreme observations exist at the border between anomalous and non-anomalous 
@@ -82,38 +104,19 @@ The applicability of extreme value theory to anomaly detection is predicated on
     cluster into a homogenous group should not be considered anomalous.  For 
     this reason, we desire a classifier that considers the dependence structure 
     of the extremes as well.
-    
-The intersection of extreme value theory and anomaly detection is a current 
-    topic of research.  Some methods employ univariate EVT on estimated 
-    densities calculated via other means, such as \cite{clifton2011} using a 
-    Gaussian Mixture model, and \cite{gu2021} using a Gaussian process.  Both 
-    then employ EVT on the estimated densities to establish a decision 
-    threshold theoretically, avoiding the process of determining said
-    threshold heuristically.
-\st{The application of multivariate extreme value theory to anomaly detection is 
-    based on the  assumption that extreme observations are more likely to be 
-    anomalous, as argued in }\st{In fact, extreme observations 
-    exist at the border between anomalous and non-anomalous regions, and it is 
-    often the case that the probability an individual observation being 
-    anomalous is higher for data in the tails of the distribution.
-%    \makenote{duplicated sentence from earlier in introduction.  
-%        which one stays?} 
-    This relative abundance of anomalies among extremes might cause a naive 
-    classifier, that does not take into account the dependence structure of 
-    extremes, to classify all extremes as anomalous. Yet, extreme observations 
-    that cluster into a homogenous group should not be considered anomalous.}
-    \cite{goix2017} offers an example of the use of the dependence structure 
-    of extremes. Their method is based on transforming the data to a standard 
+    \cite{goix2017} offers one such example.
+    %of the use of the dependence structure of extremes. 
+    Their method is based on transforming the data to a standard 
     Pareto suing the transformation  $T(x) = 1/(1 - \hat{F}(x))\;\in\;[1,\infty)$, 
     where $\hat{F}$ corresponds  to the empirical distribution function. Then the 
     the space $[1,\infty)^d$ is partitioned into $\alpha$-cones, defined as 
     subsets where in each dimension the observations are in excess of a $\alpha$.
     $\alpha$-cones with few observations correspond to lower-density regions, so 
-    observations  falling into these cones are considered more likely to be anomalous.
+    observations falling into these cones are considered more likely to be anomalous.
 
 A central result of multivariate EVT is that, conditional on an observation 
     being extreme, its radial component---or magnitude---is independent of its 
-    angular component.  In this paper, following \cite{trubey:pg}
+    angular component.  In this paper, following \cite{trubey:pg},
     we fit a Bayesian non-parametric mixture 
     of projected gammas to the angular component, and use samples from its 
     posterior predictive distribution to compute an estimate of the density 

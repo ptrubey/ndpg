@@ -4,8 +4,8 @@ To obtain a joint model for the density of a vector with mixed components
     both kernels in order to capture the dependence between components. Thus,
     \begin{equation}
         \label{model:mixed}
-        (\bm{y},\bm{w})\sim \int_{\bm{\alpha}}\mathcal{PRG}_{p}
-            (\bm{y}\mid\bm{\alpha}_{\bm{y}})
+        (\bm{y},\bm{w})\sim \int_{\bm{\alpha}}\mathcal{PG}_{p}
+            (\bm{y}\mid\bm{\alpha}_{\bm{y}}, \bm{1})
         \;\mathcal{CDM}(\bm{w}\mid\bm{\alpha}_{\bm{w}})\;dG(\bm{\alpha})
     \end{equation}
   with the distribution of $\bm{\alpha}=(\bm{\alpha_\bm{y},\bm{\alpha_\bm{w}})}$ as
@@ -18,10 +18,11 @@ To obtain a joint model for the density of a vector with mixed components
     diagonal matrix.
 
 \subsection{Mixed Model Anomaly Scores\label{sec:mixedscores}}
-Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  \st{Let 
-    $\bm{\alpha}_{\bm{y}}$ be the component of the $\bm{\alpha}$ vector that 
-    corresponds  to the angular component $\bm{y}$, and $\bm{\alpha}_{\bm{w}}$ 
-    the component that corresponds to the categorical component $\bm{w}$.}
+Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  
+    % \st{Let 
+    % $\bm{\alpha}_{\bm{y}}$ be the component of the $\bm{\alpha}$ vector that 
+    % corresponds  to the angular component $\bm{y}$, and $\bm{\alpha}_{\bm{w}}$ 
+    % the component that corresponds to the categorical component $\bm{w}$.}
     Then, for the mixed model, let 
     $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\varrho}_{i\bm{w}})$, and 
     $\bm{\nu} = T_{\infty}(\bm{\varrho})$.  The \emph{hknn} score can be adapted 
@@ -36,13 +37,15 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  \st{Let
     \end{equation}
     Then $\bm{\nu}_i = T_{\infty}(R_i\bm{y}_i, \bm{\varrho}_{i\bm{w}})$ is the 
     latent projection of both the real component and categorical component into 
-    the same sphere.  \add{\bf Maybe here we could add a figure with a graphical
-    explanation} Also, let $\bm{\nu} = T_{\infty}(\bm{\varrho})$ be the 
+    the same sphere.  
+    % \add{\bf Maybe here we could add a figure with a graphical explanation} 
+    Also, let $\bm{\nu} = T_{\infty}(\bm{\varrho})$ be the 
     generic $\bm{\nu}$ not specifically dependent on observation $i$.  To obtain the 
     corresponding anomaly scores we can proceed by using the expression in equations
-    (\ref{score:cat_hknn}), (\ref{score:cat_hkde}) and (\ref{score:cat_lhkde})  {\bf Is
-    this not good enough? I don't think we need to repeat all the formulas that are 
-    pretty much the same as before.}
+    (\ref{score:cat_hknn}), (\ref{score:cat_hkde}) and (\ref{score:cat_lhkde}) 
+    % {\bf Is
+    % this not good enough? I don't think we need to repeat all the formulas that are 
+    % pretty much the same as before.}
 %    The  score is then calculated as
 %    \[
 %        \score_{i,\bm{v}}^{\text{h$k$nn}} = \frac{N\pi^{\frac{d-1}{2}}}{
@@ -89,7 +92,7 @@ Let $d = d_{\bm{y}} + d_{\bm{w}}$ be the total number of dimensions.  \st{Let
 %    $T_{\infty}(R_i\bm{y}_i,\bm{\varrho}_i)$, and $\score_{i,\bm{v}}^{\text{hkde}}$ 
 %    takes the integral with regard to the expectation of that quantity.
 All three scores seek a unifying approach for all data, projecting onto a the same 
-sphere, and calculating a 
+    sphere, and calculating a 
     consistent distance metric.  An alternative is to, instead, evaluate distances 
     between angular data their own space, and, separately, latent posterior class 
     probabilities in their own space, with the appropriate distance metric for 
@@ -123,7 +126,7 @@ sphere, and calculating a
     \end{equation}
     This choice to evaluate each component within its own space presents some 
     loss of information as to the dependence structure between $\bm{y}$ and 
-    $\bm{w}$ within the score.  We will eplore to what extent that loss of 
+    $\bm{w}$ within the score.  We will explore to what extent that loss of 
     information is relevant.
 
 \begin{algorithm}[htb]

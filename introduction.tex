@@ -1,7 +1,9 @@
 \section{Introduction}
 
 Anomaly detection, describes a field of methods for identifying observations as 
-    \emph{anomalous}, which is a term that needs defining. For this paper, following 
+    \emph{anomalous}; % which is 
+    a term that requires defining. 
+    For this paper, following 
     the general trend in the literature, we define anomalies as observations that 
     are in some manner different than non-anomalous data. We interpret 
     this to say that anomalies are data that were not produced by the same 
@@ -30,20 +32,20 @@ Alternative names for the field of anomaly detection include \emph{outlier} dete
     anomaly detection methods, as well as discussion of the methods we are 
     proposing here as competing models.
     
-    \st{Core to the 
-    development of a method lies a basic the question of what is an anomaly.  
-    The answer to this question depends on what we hope to
-    learn in a specific application. Common to most 
-    methods of anomaly detection is the belief that anomalous data is in some 
-    manner different than the rest of the data. This belief implies that data 
-    belonging to regions of relative data sparsity are more likely to be 
-    anomalous, and thus, the goal is to identify the regions of relative 
-    data sparsity. It is common in most approaches not to assume the existence 
-    of labels in the training dataset, meaning anomaly detection is an 
-    unsupervised learning problem.  Instead we seek anomaly \emph{scores}, 
-    which rank observations in terms of their likelihood of being anomalous.  The 
-    decision threshold---the score value above which observations would be 
-    declared anomalous---is then set heuristically.}
+    % \st{Core to the 
+    % development of a method lies a basic the question of what is an anomaly.  
+    % The answer to this question depends on what we hope to
+    % learn in a specific application. Common to most 
+    % methods of anomaly detection is the belief that anomalous data is in some 
+    % manner different than the rest of the data. This belief implies that data 
+    % belonging to regions of relative data sparsity are more likely to be 
+    % anomalous, and thus, the goal is to identify the regions of relative 
+    % data sparsity. It is common in most approaches not to assume the existence 
+    % of labels in the training dataset, meaning anomaly detection is an 
+    % unsupervised learning problem.  Instead we seek anomaly \emph{scores}, 
+    % which rank observations in terms of their likelihood of being anomalous.  The 
+    % decision threshold---the score value above which observations would be 
+    % declared anomalous---is then set heuristically.}
 
 %The applicability of extreme value theory to anomaly detection is predicated on 
 %    the assumption that extreme observations are more likely to be anomalous.  

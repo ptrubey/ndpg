@@ -44,15 +44,14 @@ In developing our model, we employ the blocked Gibbs sampler for stick-breaking
     parameters, and speed convergence of the model, we employ a parallel
     tempering algorithm where parallel MCMC chains are sampled at an ascending
     temperature ladder, where density is exponentiated to the reciprocal of the
-    chain temperature: $f_t(\theta) = f(\theta)^{1/t}$.  Chains with 
+    chain temperature $t$: $f_t(\theta) = f(\theta)^{1/t}$.  Chains with 
     higher temperatures have flatter posteriors, and thus more readily move 
     around the parameter space.  Chain states are randomly exchanged via a 
     Metropolis step with probability
     $p_{1,2} = \exp\left\lbrace (t_2^{-1} - t_1^{-1})(L_2-L_1)\right\rbrace$,
-    where $t$ refers to chain temperature, and $L$ refers to the
-    \emph{energy}, or log-density of the chain at its current state.
-    The sample history of the cold chain, where $t:=1$, is preserved as draws
-    from the posterior distribution.
+    where $L$ refers to the \emph{energy}, or log-density of the chain at 
+    its current state. The sample history of the cold chain, where $t:=1$, 
+    is preserved as draws from the posterior distribution.
     For each example dataset, the sampler was ran for $50,000$ iterations,
     discarding the first 40,000 as burn-in.  The resulting chain was thinned,
     keeping only every 10th iteration.  For evaluating density under the 
@@ -96,9 +95,9 @@ We compared our four proposed scores against three canonical novelty detection
     out--of--sample performance did not markedly differ from in--sample or 
     full--sample performance for the tested datasets.  Table~\ref{tab:data}
     provides a summary description of the datasets used in the analysis.
-    \makenote{should the ordering of regimes in the table reflect the 
-    ordering in the table?  Also, $N$ and $A$ between rank and categorical are
-    the same.  Should they be combined?}
+    % \makenote{should the ordering of regimes in the table reflect the 
+    % ordering in the table?  Also, $N$ and $A$ between rank and categorical are
+    % the same.  Should they be combined?}
     For larger datasets, we subsetted the raw data to reduce computation time
     for the rank--transformation and categorical applications.
     Note that the categorical versions of \emph{cover}, \emph{pima}, and 
@@ -136,11 +135,12 @@ The dataset \emph{solarflare} was also unique in our analysis, being the only
 
 \subsection{Peaks-over-Threshold anomalies}
 We subjected six datasets to multivariate thresholding, only keeping 
-    observations that exceeded the threshold in at least one dimension.  For 
-    most datasets, this threshold was set at $\hat{F}_{\ell}^{-1}(0.95)$ for 
-    each dimension.  For \emph{cover}, we sub-sampled the data to produce a 
-    more manageable sized dataset.  For variables on these datasets that did 
-    not exhibit properties that would allow for a peak-over-threshold model to 
+    observations that exceeded the threshold in at least one dimension.  
+    Table~\ref{tab:data} indicates what quantile was used for the threshold, as
+    well as the number of anomalies in excess of the threshold.
+    For \emph{cover}, we further sub-sampled the excesses to produce a 
+    more manageable sized dataset.  For variables that did not exhibit 
+    properties that would allow for a peak-over-threshold model to 
     apply, these variables were instead converted to discrete values with two 
     or three categories.  We built the mixed data model, and evaluated 
     performance of the mixed scores, compared against the canonical methods.  
