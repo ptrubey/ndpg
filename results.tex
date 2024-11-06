@@ -75,13 +75,6 @@ In developing our model, we employ the blocked Gibbs sampler for stick-breaking
     \scriptsize
     \setlength\tabcolsep{3pt}
     \input {./tables/data_summary}
-    % \makenote{Here lies a table of characteristics of datasets used in analysis.  
-    % Imagine first column dataset name, second column number of obsv. original, third 
-    % threshold; 4th prevalence of anomalies/above threshold, fourth number of obsv. 
-    % after thresholding (include whether subsampling was used), 5th number of obsv. 
-    % included in rank (include whether subsampling was used); 6th number of obsv. 
-    % included in categorical (include whether subsampling was used).  that's too 
-    % many columns.  need to work on this.}
     \setlength\tabcolsep{3pt}
 \end{table}
 
@@ -95,9 +88,6 @@ We compared our four proposed scores against three canonical novelty detection
     out--of--sample performance did not markedly differ from in--sample or 
     full--sample performance for the tested datasets.  Table~\ref{tab:data}
     provides a summary description of the datasets used in the analysis.
-    % \makenote{should the ordering of regimes in the table reflect the 
-    % ordering in the table?  Also, $N$ and $A$ between rank and categorical are
-    % the same.  Should they be combined?}
     For larger datasets, we subsetted the raw data to reduce computation time
     for the rank--transformation and categorical applications.
     Note that the categorical versions of \emph{cover}, \emph{pima}, and 

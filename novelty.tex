@@ -1,8 +1,6 @@
 \section{Novelty Detection Methods\label{sec:novelty}}
 As previously stated, a novelty detection algorithm produces an anomaly score 
-    which provides a ranked ordering of 
-    observations in their likelihood of being
-    %which observations are likely to be 
+    which provides a ranked ordering of observations in their likelihood of being
     anomalous, with higher scores indicating more likely anomalous. Building on 
     the notion that anomalies occur in areas of low density, a general Bayesian
     anomaly score for observation $x_i$, can be defined as
@@ -33,11 +31,7 @@ Given the independence between the angular and radial components of an
     $\mathcal{PG}_p$, for any $p$, is problematic.  In fact, the 
     transformation from ${\mathbb R}_+^p$ to $\mathbb{S}_p^{d-1}$ is not
     unique, as we can take any of the components of the original vector
-    as a reference. 
-    % \st{Recall in 
-    % , the value of the Jacobian is dependent
-    % upon which dimension is replaced in the transformation.}  
-    This implies that
+    as a reference.  This implies that
     under uniform $\bm{\alpha}$, the density can be changed by
     permuting the order of components.  This is not appropriate for anomaly
     detection, because a relative ordering of density between 
@@ -48,12 +42,6 @@ Given the independence between the angular and radial components of an
     of the array. Thus, we fit the mixture model in $\mathbb{S}_p^{d-1}$, generate
     posterior predictive samples, and transform those samples to 
     $\mathbb{S}_\infty^{d-1}$.
-    % \add{\bf Can you make this argument more clear? I am not sure I get it.}
-    % \makenote{I think its now sufficiently clear?}
-    % \st{Further, for an observation near 0 evaluated on a gamma-related distribution 
-    % with a shape parameter $\alpha$ near 0, evaluated density can be divergent.
-    % This instability would play havoc on any directly 
-    % calculated density-based scores.}
 
 To avoid the problems of angular density evaluation in $\mathbb{S}_\infty^{d-1}$ we use a 
     non-parametric angular density estimator based on a sample from the 
@@ -94,15 +82,6 @@ As described in \cite{trubey:pg}, the  geodesic distance on
     $\bm{b}^{\prime}$ corresponds to a negative definite kernel that
     provides an upper bound on geodesic distance on 
     $\mathbb{S}_{\infty}^{d-1}$ between $\bm{a}$ and $\bm{b}$.
-
-% \add{\bf This whole section needs to rewritten. First we have to connect to 
-%     the previous section. As a result of what the methods presented in the 
-%     previous section we have a sample from the angular density that 
-%     characterizes the extreme behavior of our observations. We have samples, 
-%     but we have no way to evaluate it. At this point you provide information 
-%     about estimated of the density, and then you have to mention that a 
-%     measure of distance on ${\mathbb S}_{\infty}^{d-1}$, and you refer to the 
-%     previous paper.}
 
 \subsection{Nearest Neighbor Density estimation}
 We use the kernel $g$ defined in Equation \ref{eqn:rotation} to obtain 
@@ -194,8 +173,6 @@ For selection of the bandwidth parameter $h$, we employ Silverman's rule of
 
 \begin{algorithm}[htb]
     \caption{Workflow for anomaly detection on $\mathbb{S}_{\infty}^{d-1}$.}\label{alg:adreal}
-    % \begin{enumerate}[nolistsep]
-        % \item
     \begin{algorithmic}[1]
         \State Take $r_i$, $\bm{y}_i$ according to Algorithm~(\ref{alg:workflow})
         \State Fit $\bm{y}\sim\mathcal{PYPG}$ from Equation~(\ref{eqn:modelsphere})

@@ -68,21 +68,6 @@ Non-statistical---or algorithmic---models beyond clustering are generally adapta
     decision boundary in kernel space around \emph{normal} behavior. A higher 
     distance to that decision boundary on the anomalous side is regarded as 
     more anomalous.
-
-% \makenote{This paragraph seems out of place.}
-% The applicability of extreme value theory to anomaly detection is predicated on 
-%     the assumption that extreme observations are more likely to be anomalous.  
-%     A discussion on this point is provided by \cite{goix2017}, stating that 
-%     extreme observations exist at the border between anomalous and non-anomalous 
-%     regions.  Indeed, for most datasets in our testing, the probability an 
-%     individual observation is anomalous is higher for data in the tails of the 
-%     distribution. This relative abundance of anomalies among extremes might 
-%     cause a naive classifier that does not take into account the dependence 
-%     structure of extremes to classify all extremes as anomalous.  If we follow 
-%     the assumption that anomalies stand apart, then extreme observations that 
-%     cluster into a homogenous group should not be considered anomalous.  For 
-%     this reason, we desire a classifier that considers the dependence structure 
-%     of the extremes as well.
     
 The intersection of extreme value theory and anomaly detection is a current 
     topic of research.  Some methods employ univariate EVT on estimated 
@@ -103,9 +88,7 @@ The intersection of extreme value theory and anomaly detection is a current
     the assumption that anomalies stand apart, then extreme observations that 
     cluster into a homogenous group should not be considered anomalous.  For 
     this reason, we desire a classifier that considers the dependence structure 
-    of the extremes as well.
-    \cite{goix2017} offers one such example.
-    %of the use of the dependence structure of extremes. 
+    of the extremes as well. \cite{goix2017} offers one such example.
     Their method is based on transforming the data to a standard 
     Pareto suing the transformation  $T(x) = 1/(1 - \hat{F}(x))\;\in\;[1,\infty)$, 
     where $\hat{F}$ corresponds  to the empirical distribution function. Then the 
