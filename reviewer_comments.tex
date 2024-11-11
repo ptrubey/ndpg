@@ -12,6 +12,7 @@
 
 \newcommand{\comment}[1]{\textcolor{olive}{#1}}
 \newcommand{\response}[1]{\textcolor{teal}{#1}}
+\newcommand{\makenote}[1]{\textcolor{red}{#1}}
 
 \begin{document}
 
@@ -35,46 +36,95 @@ I have the following comments:
         \item The choice of thresholds for tail data could influence the final model results. 
             Though the actual threshold have been listed for the datasets, I would encourage 
             the authors to elaborate on the models' sensitivity to thresholds.
+            \comment{I did tests, it didn't seem to change much.  the choice of threshold here 
+                is more about controlling the quantity of data under consideration than any other 
+                consideration.}
 
-            \comment{I did tests, it didn't seem to change much.  the choice of threshold here is more about controlling the quantity of data under consideration than any other consideration.}
+            \makenote{Add discussion of sensitivity to thresholds.}
             
         \item The hknn, hkde, lhkde, lmkde, lskde models have each outperformed no more than 
             2 datasets which seems to not highlight the strengths of these models accurately. 
             Could the authors provide more details on why or where certain models have thrived 
             while others did not? (Note: maybe a bar chart instead of a table could provide a 
             more clear distinction of the models' performance as compared to SOTA).
+            
+            \makenote{Bar Chart - Facet by dataset is probably easiest.}
+
+
         \item I would encourage the authors to elaborate on the computational complexity 
             associated with each of the models. Though it might not seem trivial, the final 
             user might highly benefit from understanding this which in turn could improve the 
             read/citation/use of the algorithm. I would also encourage making the code 
             open-source for further use.
+
+            \makenote{Code is available on author's github.  Maybe place that in public view?}
+
         \item Have the authors considered proving MCMC convergence or presenting the posterior 
             probability calculations for the listed methods? I would like to read that if possible.
             
-            \comment{I'm not sure what he's referring to by posterior probability calculations.}
+            \comment{I'm still not sure what he's referring to by posterior probability calculations.}
+
         \item Please reconsider the title. I do not think it is reflecting the work properly 
             and under-representing your contributions.
-            \comment{I think we discussed this as well.  "On anomaly detection using a peaks-over-threshold and angular representation of categorical data"?  Wow that's terrible.}
+            \comment{I think we discussed this as well.  "On anomaly detection using a 
+                peaks-over-threshold and angular representation of categorical data"?  
+                Wow that's terrible.}
+            
+            \makenote{Provisionally changed title to something along those lines.}
+    
     \end{enumerate}
     \item[Minor Comments]
     \begin{enumerate}
         \item Remark 1 in Page 7 is undefined. Not sure if it is the remark form the De Haan book 
             or something else. Need more clarity.
+
+            \response{We have restructured the sentence to make the source of the comment more clear.  
+            It refers to remark 1 of \emph{rootzen2018}, the paper mentioned in the preceding sentence.}
+
         \item The authors informed that the radial component follows a Pareto distribution. It 
             would help if any citation or additional content on it could be provided, specially 
             to non-statistics based readers. 
+
+            \makenote{The proof thereof is detailed in the linked \emph{ferreira2014}}.
+
         \item Algorithm 1: $f(\alpha, \beta | y)$ the function or pdf $f$ is not defined.
+
+            \response{We have renamed the algorithm and expanded the caption to more clearly articulate
+                its contents.  The function $f$ was intended to be a general placeholder for any
+                distribution on $\mathbb{S}_p^{d-1}$, but having particular parameters belied that goal.
+                We have replaced $\alpha,\beta$ with $\theta$ and made clear that it's serving as a
+                placeholder.}
+
         \item Page 9, Line 16, the distribution $G_a$ is not defined.
+
+            \response{We were unable to find a $G_a$.  I believe the reviewer is referring to $Ga$,
+            which was intended to merely denote the gamma distribution.  As it's not used elswhere
+            in the document, we have resolved to simply replace it with $\text{Gamma}(\cdot)$.}
+
         \item Personally, I prefer using upper case notations for CDF and lower case for density
             notations.
+
+            \makenote{Not sure what to say.  Things like the stylized $\mathcal{N}$ to denote the
+                normal distribution are kind of standard in literature; maybe it's the non-script
+                caps that he takes issue with?  I could use $\text{d}G$, $\text{d}G_0$?}
+
+            \makenote{Think this is referring to $G_0$ and the like?  In that case, in the definition
+                equation env, say $\text{d}G_0 = \ldots$}
+
         \item Pages 11 and 12, $f$, $f_v$, and $G$ have not been defined. (Assuming they refer to 
             densities of vector components and sampling distribution generating the hyperparameter 
             alpha based on the context.)
-        \item Some of the equations have not been numbered. 
+
+        \item Some of the equations have not been numbered.
+
+            \makenote{Add Equation numbers to relevant equation environments if they *may* be referenced
+                again,  even if not referenced here.}
     \end{enumerate}
 \end{description}
 
-Overall this was an interesting approach to anomaly detection in multivariate data. The work is very timely given the wide range of challenges with categorical/mixed multivariate data. I believe that the work has some potential but requires a little bit of fine tuning.
+Overall this was an interesting approach to anomaly detection in multivariate data. The work is very 
+    timely given the wide range of challenges with categorical/mixed multivariate data. I believe 
+    that the work has some potential but requires a little bit of fine tuning.
 
 \section{Associate Editor's Comments}
 This paper develops a novel anomaly detection approach based on recent modeling developments in 
@@ -115,6 +165,9 @@ While the proposed method has promise, there are serious issues with the manuscr
     A list of easily-addressable writing issues from a quick pass of the paper:
     \begin{itemize}
     \item Title of paper is missing
+        
+        \makenote{Wha?}
+
     \item Issues with abstract (see above)
     \item Section 1, first sentence: grammar - do you need first period? 
     \item End of page 3: "the maximum pairwise between a point"
@@ -160,6 +213,7 @@ While the proposed method has promise, there are serious issues with the manuscr
     novelty of their approach is that it extends to the categorical and mixed data regimes, but 
     much work has been done on that front for anomaly detection, and it is again unclear what
     are the key practical advantages of your approach over the state-of-the-art.
+
 \end{enumerate}
 
 \end{document}

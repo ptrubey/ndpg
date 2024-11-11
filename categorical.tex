@@ -94,14 +94,6 @@ We start by considering the cluster identifiers. Extrapolating Equation~(\ref{eq
     analogous to the ones proposed in the continuous case can then be obtained by
     letting $\bm{\nu}_i = T_{\infty}(\bm{\varrho}_i)$, the transformation of $\bm{\varrho}_i$ 
     onto $\mathbb{S}_{\infty}^{d-1}$.
-% \st{To establish an anomaly detection algorithm using the data model described in 
-%     Equation, we consider a method using logic similar to 
-%     that described in Section.  We desire a transformation that 
-%     can be projected onto the unit sphere $\mathbb{S}_{\infty}^{d-1}$.  To that 
-%     end, rather than using $\bm{w}_i$ directly, we use data augmentation
-%     described in Equation~ to generate $\bm{\varrho}_i$, 
-%     the latent unnormalized posterior class probabilities for observation $i$, 
-%     sampled given $\bm{w}_i$.}  
     It is important to notice that distance metrics 
     between projections of $\bm{\varrho}_i$ and  replicates of $\bm{\varrho}^*$ 
     from the posterior predictive distribution is straightforward. This provides
@@ -112,9 +104,7 @@ We start by considering the cluster identifiers. Extrapolating Equation~(\ref{eq
     We develop four methods based
     on applications of the KNN and KDE metrics previously described.
     Making an abuse of notation for simplicity of presentation, let 
-    $\tilde{\text{E}}\left[\bm{\nu}_i\right] := T_{\infty}(\expect{\bm{\nu}_i\mid\bm{w}_i})$, 
-    % $\add{\bf What is $\bm{\nu}_i$? } % I think comment no longer relevant; 
-    % $\nu$ introduced at end of previous paragraph.
+    $\tilde{\text{E}}\left[\bm{\nu}_i\right] := T_{\infty}(\expect{\bm{\nu}_i\mid\bm{w}_i})$,
     the projection of the expectation of $\bm{\nu}_i$ back onto 
     $\mathbb{S}_{\infty}^{d-1}$.  Evaluating this expectation by
     Monte Carlo approximation is equivalent calculating the spherical mean 

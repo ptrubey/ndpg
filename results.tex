@@ -124,12 +124,13 @@ The dataset \emph{solarflare} was also unique in our analysis, being the only
     a unified sphere induces some loss of information.
 
 \subsection{Peaks-over-Threshold anomalies}
-We subjected six datasets to multivariate thresholding, only keeping 
+We subjected six datasets to multivariate thresholding on their numerical 
+    variables, only keeping 
     observations that exceeded the threshold in at least one dimension.  
     Table~\ref{tab:data} indicates what quantile was used for the threshold, as
     well as the number of anomalies in excess of the threshold.
     For \emph{cover}, we further sub-sampled the excesses to produce a 
-    more manageable sized dataset.  For variables that did not exhibit 
+    more manageably sized dataset.  For variables that did not exhibit 
     properties that would allow for a peak-over-threshold model to 
     apply, these variables were instead converted to discrete values with two 
     or three categories.  We built the mixed data model, and evaluated 

@@ -39,11 +39,11 @@ The multivariate PoT model considered in this paper has been developed in
         \end{aligned}
     \end{equation*}
     where $H$ is the multivariate Pareto distribution. \cite{RoSeWa2018a}
-    provides a number of stochastic representations for $H$. In particular
-    Remark 1 justifies the representation given in \cite{ferreira2014},
+    provides a number of stochastic representations for $H$---in particular
+    Remark 1 from same justifies the representation given in \cite{ferreira2014},
     consisting of taking $\bm{W}$, in the limit, as $\bm{W} = R\bm{V}$ 
-    where $R$ and $\bm{V}$ are independent. $R = ||\bm{W}||_\infty$ is 
-    distributed as a standard Pareto  random variable, and
+    where $R$ and $\bm{V}$ are independent. $R = \lVert\bm{W}\rVert_\infty$ is 
+    distributed as a standard Pareto random variable, and
     $\bm{V} = \bm{W}/||\bm{W}||_\infty$ is a random vector in  
     $\mathbb{S}_{\infty}^{d-1}$, the positive orthant of the 
     unit  sphere in infinite norm, with distribution $\Phi$. 
@@ -92,7 +92,7 @@ Recall that the radial component $R \in {\mathbb R}_+$ follows a standard
     Thus, a distribution on $\bm{X}$ induces a distribution on 
     $\mathbb{S}_{p}^{d-1}$. In particular, assume that $\bm{X}$ has independent 
     components, each of them distributed as 
-    $\mathcal{G}a(\alpha_{\ell}, \beta_{\ell})$, then it can be seen that the 
+    $\text{Gamma}(\alpha_{\ell}, \beta_{\ell})$, then it can be seen that the 
     density of $\bm{y}$ is
     \begin{equation}
         \label{eqn:projgamma}
@@ -122,25 +122,23 @@ Recall that the radial component $R \in {\mathbb R}_+$ follows a standard
 %     
 % \end{algorithm}
 \begin{algorithm}[tb]
-    \caption{Workflow to fit a distribution to data 
-        on $\mathbb{S}_{\infty}^{d-1}$.}\label{alg:workflow}
-    % \begin{enumerate}[nolistsep]
-        % \item
+    \caption{Workflow to project extreme data onto $\mathbb{S}_{\infty}^{d-1}$.
+        The transformation is not differentiable, so to fit a distribution
+        we project onto $\mathbb{S}_p^{d-1}$ instead, and project samples from
+        the posterior predictive distribution onto $\mathbb{S}_{\infty}^{d-1}$.
+        \label{alg:workflow}}
     \begin{algorithmic}[1]
         \State $b_{t\ell} := \hat{F}_{\ell}^{-1}\left(1 - \frac{1}{t}\right)$; 
             For $w_{i\ell} > b_{t\ell}$, fit $a_{\ell}$, $\xi_{\ell}$ 
             by likelihood-based method.
-        % \item 
         \State Transform 
             $\bm{z}_{i\ell} = \left(1 + \xi_{\ell}\frac{w_{i\ell} 
                 - b_{t\ell}}{a_{\ell}}\right)_+$ for $\bm{w}_i\not< \bm{b}_t$.
-        %\item 
         \State Transform $(r_i,\bm{v}_i) = \left(\lVert \bm{z}_i\rVert_\infty, 
             \frac{\bm{z}_i}{\lVert \bm{z}_i\rVert_{\infty}}\right)$.
-        % \item 
-        \State $\bm{y}_i = \frac{\bm{z}_i}{\lVert \bm{z}_i\rVert_p}$ is used to facilitate fitting $f(\bm{\alpha}, \bm{\beta}\mid\bm{y})$.
-        % \item 
-    % \end{enumerate}
+        \State $\bm{y}_i = \frac{\bm{z}_i}{\lVert \bm{z}_i\rVert_p}$ is used to 
+            facilitate fitting the parameters for some $f(\bm{\theta}\mid\bm{y})$, 
+            a distribution on $\mathbb{S}_p^{d-1}$.
     \end{algorithmic}
 \end{algorithm}
 

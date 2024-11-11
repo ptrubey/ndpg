@@ -14,12 +14,13 @@ As previously stated, a novelty detection algorithm produces an anomaly score
 Given the independence between the angular and radial components of an
     extreme observation, we can consider sub-scores for the radial 
     and angular components independently.  That is,
-    \[
+    \begin{equation}
+        \label{eqn:score}
         \score_i = \score_{i,r}\times \score_{i,\bm{v}} = 
             f_r(r_i)^{-1}\times
             \left[\int_{\Omega} f_v(\bm{v}_i\mid\bm{\alpha})
                 \,\text{d}G(\bm{\alpha}\mid\mathcal{D})\right]^{-1}
-    \]
+    \end{equation}
     By construction $r_i$ follows a standard Pareto distribution, so its
     density is $f_r(r_i) = r_i^{-2}$.  As previously discussed in
     Section~\ref{sec:evt}, the kernel $\mathcal{PG}_\infty$, needed for 
@@ -43,8 +44,8 @@ Given the independence between the angular and radial components of an
     posterior predictive samples, and transform those samples to 
     $\mathbb{S}_\infty^{d-1}$.
 
-To avoid the problems of angular density evaluation in $\mathbb{S}_\infty^{d-1}$ we use a 
-    non-parametric angular density estimator based on a sample from the 
+To avoid the problems of angular density evaluation in $\mathbb{S}_\infty^{d-1}$ 
+    we use a non-parametric angular density estimator based on a sample from the 
     posterior predictive distribution of the model developed in 
     Section~\ref{sec:evt}. Here, we consider two well-established
     methods: $k$--nearest neighbors, or \emph{$k$NN} \citep{mack1979}, and 
