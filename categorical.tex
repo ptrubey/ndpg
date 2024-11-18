@@ -19,9 +19,10 @@ Suppose $\bm{C}$ is a vector of $M$ random categorical variables.  Then $C_m$
     by convention.  We consider a Dirichlet-multinomial distribution, $\mathcal{DM}$
     that is obtained by integrating out the latent categorical probability vector 
     from the product of Dirichlet and multinomial distributions; 
-    $\mathcal{DM}(\bm{w}\mid\bm{\alpha}) = \int_{\pi}\mathcal{M}(\bm{w}\mid\pi)\mathcal{D}(\pi\mid\bm{\alpha})d\pi$.
-    Recalling that a categorical random variable can be considered as a multinomial with 
-    size $1$, we can further simplify the Dirichlet-multinomial to a 
+    $\mathcal{DM}(\bm{w}\mid\bm{\alpha}) = \int_{\pi}\mathcal{M}(\bm{w}\mid\pi)
+        \mathcal{D}(\pi\mid\bm{\alpha})d\pi$.
+    Recalling that a categorical random variable can be considered as a multinomial 
+    with size $1$, we can further simplify the Dirichlet-multinomial to a 
     Dirichlet-categorical, reducing the computational burden. Thus,
     \begin{equation}
         \begin{aligned}
@@ -76,7 +77,12 @@ We start by considering the cluster identifiers. Extrapolating Equation~(\ref{eq
     to the categorical model, cluster identifiers $\varphi_i$ are sampled with probabilities
     \begin{equation}
         \label{eqn:latentposterior}
-        \text{Pr}[\varphi_i = j\mid \bm{\alpha}, \bm{p}, \bm{w}_i] = \frac{p_j\,\mathcal{CDC}\left(\bm{w}_i\mid\bm{\alpha}_j\right)}{\sum_{k = 1}^J\,p_k\,\mathcal{CDC}\left(\bm{w}_i\mid\bm{\alpha}_k\right)}
+        \text{Pr}[\varphi_i = j\mid \bm{\alpha}, \bm{p}, \bm{w}_i] = 
+        \frac{
+            p_j\,\mathcal{CDC}\left(\bm{w}_i\mid\bm{\alpha}_j\right)
+            }{
+            \sum_{k = 1}^J\,p_k\,\mathcal{CDC}\left(\bm{w}_i\mid\bm{\alpha}_k\right)
+            }
             \;\;\;\text{ for }j = 1, \ldots, J.
     \end{equation}
     For a given sample from the posterior for $\bm{\alpha}$,
